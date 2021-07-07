@@ -1,21 +1,37 @@
 # from django.shortcuts import render
-from django.contrib.auth.models import User
-from rest_framework import viewsets
+# from django.contrib.auth.models import User
+from rest_framework import generics, viewsets
 from rest_framework import permissions
 from .permissions import IsOwnerOrAdmin
-from .models import Address
+from .models import Address, User
 from .serializers import UserSerializer, AddressSerializer
 
 
 # Create your views here.
-class AddressViewSet(viewsets.ModelViewSet):
+class AddressList(generics.ListAPIView):
     """
     This viewset automatically provides `list` and `retrieve` actions.
     """
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
-    permission_classes = [IsOwnerOrAdmin]
+    permission_classes = [permissions.IsAdminUser]
     filterset_fields = ['owner']
+
+
+class AddressDetail(generics.RetrieveAPIView):
+    """
+    """
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    permission_classes = [IsOwnerOrAdmin]
+
+
+class AddressCreation(generics.CreateAPIView):
+    """
+    """
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
