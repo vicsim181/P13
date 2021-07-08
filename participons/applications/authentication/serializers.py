@@ -1,8 +1,8 @@
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from rest_framework.validators import UniqueValidator
 from rest_framework import serializers
-from .models import Address, User
+from .models import Address
 
 
 class AddressSerializer(serializers.ModelSerializer):

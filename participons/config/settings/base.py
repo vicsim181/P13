@@ -109,7 +109,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # AUTHENTICATION_BACKENDS = ['applications.authentication.backends.CustomModelBackend',]
 
-AUTH_USER_MODEL = "authentication.User"
+# AUTH_USER_MODEL = "authentication.User"
+AUTH_USER_MODEL = "auth.User"
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
