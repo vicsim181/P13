@@ -44,7 +44,4 @@ class Address(models.Model):
     class Meta:
         ordering = ['id_address']
         db_table = 'authentication_address'
-        constraints = [
-            models.UniqueConstraint(fields=['owner_id'],
-                                    name='unique_address_owner')
-        ]
+        unique_together = ['owner_id']

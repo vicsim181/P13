@@ -1,9 +1,9 @@
 # from django.shortcuts import render
-# from django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from rest_framework import generics, viewsets
 from rest_framework import permissions
 from .permissions import IsOwnerOrAdmin
-from .models import Address, User
+from .models import Address
 from .serializers import UserSerializer, AddressSerializer
 
 
@@ -43,15 +43,15 @@ class AddressViewSet(viewsets.ModelViewSet):
     serializer_class = AddressSerializer
 
     def get_permissions(self):
-        if self.action == 'list':
-            self.permission_classes = [permissions.IsAdminUser]
-        elif self.action == 'retrieve':
-            self.permission_classes = [IsOwnerOrAdmin]
+        if self.action == 'retrieve':
+            permission_classes = [IsOwnerOrAdmin]
         elif self.action == 'create':
-            self.permission_classes = [permissions.IsAuthenticated]
+            permission_classes = [permissions.IsAuthenticated]
         elif self.action == 'destroy':
-            self.permission_classes = [IsOwnerOrAdmin]
-        return super().get_permissions()
+            permission_classes = [IsOwnerOrAdmin]
+        else:
+            permission_classes = [permissions.IsAdminUser]
+        return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
