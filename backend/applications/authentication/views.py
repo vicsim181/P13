@@ -1,14 +1,15 @@
 # from django.shortcuts import render
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from rest_framework import viewsets, generics
 from rest_framework import permissions
 from .permissions import IsOwnerOrAdmin
-from .models import Address
+from .models import Address, CustomUser
 from .serializers import AddressSerializer, UserRegisterSerializer, UserSerializer
 
 
 class AddressViewSet(viewsets.ModelViewSet):
     """
+    Class allowing to 
     """
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
@@ -30,8 +31,9 @@ class AddressViewSet(viewsets.ModelViewSet):
 
 class UserRegisterView(generics.CreateAPIView):
     """
+    Class allowing a new user to register.
     """
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserRegisterSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -41,10 +43,11 @@ class UserRegisterView(generics.CreateAPIView):
         instance.save()
 
 
-class UserDataView(generics.RetrieveUpdateDestroyAPIView):
+class UserDataView(generics.RetrieveDestroyAPIView):
     """
+    Class allowing a user to consult its data.
     """
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -54,7 +57,8 @@ class UserDataView(generics.RetrieveUpdateDestroyAPIView):
 
 class UserListView(generics.ListAPIView):
     """
+    Class allowing the Admin to consult the list of users registered.
     """
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
