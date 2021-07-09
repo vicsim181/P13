@@ -20,7 +20,7 @@ from rest_framework.authtoken import views as rest_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api-token-auth/', rest_views.obtain_auth_token),
-    path('api-auth/', include('rest_framework.urls')),
+    path('login/', rest_views.obtain_auth_token),
+    # path('api-auth/', include('rest_framework.urls')),
     path('', include('applications.authentication.urls')),
 ]
