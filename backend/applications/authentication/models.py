@@ -25,10 +25,10 @@ class CustomUser(AbstractUser):
         return self.email
 
 
-@receiver(post_save, sender=CustomUser)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        Token.objects.create(user=instance)
+# @receiver(post_save, sender=CustomUser)
+# def create_auth_token(sender, instance=None, created=False, **kwargs):
+#     if created:
+#         Token.objects.create(user=instance)
 
 
 class Address(models.Model):

@@ -9,7 +9,7 @@ router.register(r'address', views.AddressViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('users/register/', views.UserRegisterView.as_view(), name='registration'),
-    path('users/me/', views.UserDataView.as_view(), name='user-detail'),
+    path('register/', views.UserRegisterView.as_view(), name='registration'),
+    path('me/', views.UserDataView.as_view(), name='user-detail'),
     path('users/', views.UserListView.as_view(), name='users-list'),
 ]
