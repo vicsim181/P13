@@ -15,15 +15,19 @@ class AddressViewSet(viewsets.ModelViewSet):
     serializer_class = AddressSerializer
 
     def get_permissions(self):
-        if self.action == 'retrieve':
-            permission_classes = [IsOwnerOrAdmin]
-        elif self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated]
-        elif self.action == 'destroy':
+        if self.action == 'retrieve' or self.action == 'destroy':
             permission_classes = [IsOwnerOrAdmin]
         else:
             permission_classes = [permissions.IsAdminUser]
         return [permission() for permission in permission_classes]
+
+
+class CreateAddressView(generics.CreateAPIView):
+    """
+    """
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -36,11 +40,6 @@ class UserRegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = UserRegisterSerializer
     permission_classes = [permissions.AllowAny]
-
-    def perform_create(self, serializer):
-        instance = serializer.save()
-        instance.set_password(instance.password)
-        instance.save()
 
 
 class UserDataView(generics.RetrieveDestroyAPIView):

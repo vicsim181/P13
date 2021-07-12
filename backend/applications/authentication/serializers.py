@@ -38,7 +38,9 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
         )
         user.set_password(validated_data['password'])
+        print('PASSWORD BEFORE:  ' + str(validated_data['password']))
         user.save()
+        print('PASSWORD AFTER:     ' + str(user.password))
         return user
 
 
@@ -50,11 +52,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     last_name = serializers.CharField(max_length=50)
     email = serializers.EmailField(required=True, validators=[UniqueValidator(message='This email already exists',
                                                                               queryset=CustomUser.objects.all())])
-    password = serializers.CharField(required=True, write_only=True, min_length=8, max_length=89,
-                                     style={'input_type': 'password'}, validators=[validate_password])
+    # password = serializers.CharField(required=True, min_length=8, write_only=True, style={'input_type': 'password'}, validators=[validate_password])
     address = serializers.HyperlinkedRelatedField(view_name='address-detail', read_only=True, many=True)
     date_joined = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'last_name', 'date_joined', 'address']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_joined', 'address']
