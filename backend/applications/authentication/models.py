@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
     """
     Custom model class of User.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # Si id_user, pose problème à certains moments avec l'authentication
     username = models.CharField(default="", max_length=7)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50)

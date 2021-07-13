@@ -16,7 +16,7 @@ class UserRegistrationTests(APITestCase):
         self.response = self.view(self.request)
 
     def test_register_user(self):
-        print("\nTEST - UserRegisterView --> test_register_user()\n")
+        print("\nTEST - UserRegisterTests --> test_register_user()\n")
         print("assert response.status_code == 201")
         self.assertEqual(self.response.status_code, 201)
         print("ASSERT DONE")
@@ -24,7 +24,7 @@ class UserRegistrationTests(APITestCase):
         print(str(user_test))
 
     def test_user_str(self):
-        print("\nTEST - UserRegisterView --> test_user_str()\n")
+        print("\nTEST - UserRegisterTests --> test_user_str()\n")
         user_test = models.CustomUser.objects.get(email='test@email.fr')
         print("self.assertEqual(user_test, 'test@email.fr')")
         self.assertEqual(str(user_test), 'test@email.fr')
@@ -34,7 +34,6 @@ class UserRegistrationTests(APITestCase):
 class UserDataTests(APITestCase):
     """
     Test class for the data visualization of a user profile.
-
     """
 
     def setUp(self):
@@ -45,7 +44,7 @@ class UserDataTests(APITestCase):
         self.view = views.UserDataView.as_view()
 
     def test_user_data(self):
-        print("\nTEST - UserDataView --> test_user_data()\n")
+        print("\nTEST - UserDataTests --> test_user_data()\n")
         request = self.factory.get('/me/')
         force_authenticate(request, user=self.user_test)
         response = self.view(request)
@@ -72,7 +71,7 @@ class AddressRegistrationTests(APITestCase):
         self.user_test.save()
 
     def test_address_register_through_defined_url(self):
-        print("\nTEST - UserDataView --> test_address_register_through_defined_url()\n")
+        print("\nTEST - AddressRegistrationTests --> test_address_register_through_defined_url()\n")
         test_view = views.CreateAddressView.as_view()
         test_address_infos = {'num': 120, 'street': 'Avenue Mickey', 'postal_code': 99999, 'city': 'Mickeyville'}
         request = self.factory.post('create/address/', test_address_infos)
@@ -83,7 +82,7 @@ class AddressRegistrationTests(APITestCase):
         print("ASSERT 1 DONE")  # Tester les infos de l'adresse ???
 
     def test_address_viewset_nonadminuser(self):
-        print("\nTEST - UserDataView --> test_address_viewset_nonadminuser()\n")
+        print("\nTEST - AddressRegistrationTests --> test_address_viewset_nonadminuser()\n")
         test_view = views.AddressViewSet.as_view({'post': 'create'})
         test_address_infos = {'num': 120, 'street': 'Avenue Mickey', 'postal_code': 99999, 'city': 'Mickeyville'}
         request = self.factory.post('address/', test_address_infos)
@@ -96,9 +95,96 @@ class AddressRegistrationTests(APITestCase):
 
 class AddressViewSetTests(APITestCase):
     """
-    Test class for the AddressViewSet.
-    We test the options and permissions with and without an AdminUser test profile.
+    Test class for the AddressViewSet, other than post requests.
+    We test the options and permissions set in the viewset.
     """
 
     def setUp(self):
-        pass
+        self.factory = APIRequestFactory()
+        self.user_test_1 = models.CustomUser(email='donald@duck.us', password=None, first_name="Donald", last_name="Duck")
+        self.user_test_1.set_password("sup€Rp@sswoRd")
+        self.user_test_1.save()
+        self.test_address = models.Address(num=120, street='Avenue Mickey', postal_code=99999, city='Mickeyville', owner=self.user_test_1)
+        self.test_address.save()
+        self.user_test_2 = models.CustomUser(email='mickey@mouse.us', password=None, first_name="Mickey", last_name="Mouse")
+        self.user_test_2.set_password("sup€rp@ssw0Rd")
+        self.user_test_2.save()
+        self.user_test_3 = models.CustomUser(email='darth@side.st', password=None, first_name="Darth", last_name="Vador", is_superuser=True)
+        self.user_test_3.set_password("sup€rp@ssw0Rd")
+        self.user_test_3.save()
+
+    def test_delete_address_non_authenticated(self):
+        print("\nTEST - AddressViewSetTests --> test_delete_address_non_authenticated()\n")
+        test_address_to_delete = models.Address.objects.get(num=120, street='Avenue Mickey', postal_code=99999, city='Mickeyville', owner=self.user_test_1)
+        test_view = views.AddressViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('address/')
+        response = test_view(request, pk=test_address_to_delete.id_address)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_delete_address_non_authorized(self):
+        print("\nTEST - AddressViewSetTests --> test_delete_address_non_authorized()\n")
+        test_address_to_delete = models.Address.objects.get(num=120, street='Avenue Mickey', postal_code=99999, city='Mickeyville', owner=self.user_test_1)
+        test_view = views.AddressViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('address/')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=test_address_to_delete.id_address)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_delete_address_owner(self):
+        print("\nTEST - AddressViewSetTests --> test_delete_address_owner()\n")
+        test_address_to_delete = models.Address.objects.get(num=120, street='Avenue Mickey', postal_code=99999, city='Mickeyville', owner=self.user_test_1)
+        test_view = views.AddressViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('address/')
+        force_authenticate(request, user=self.user_test_1)
+        response = test_view(request, pk=test_address_to_delete.id_address)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response.status_code, 204)
+        print("ASSERT DONE")
+
+    def test_delete_address_adminuser(self):
+        print("\nTEST - AddressViewSetTests --> test_delete_address_adminuser()\n")
+        test_address_to_delete = models.Address.objects.get(num=120, street='Avenue Mickey', postal_code=99999, city='Mickeyville', owner=self.user_test_1)
+        test_view = views.AddressViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('address/')
+        force_authenticate(request, user=self.user_test_3)
+        response = test_view(request, pk=test_address_to_delete.id_address)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response.status_code, 204)
+        print("ASSERT DONE")
+
+    def test_retrieve_non_owner_non_admin(self):
+        print("\nTEST - AddressViewSetTests --> test_retrieve_non_owner_non_admin()\n")
+        test_address_to_retrieve = models.Address.objects.get(num=120, street='Avenue Mickey', postal_code=99999, city='Mickeyville', owner=self.user_test_1)
+        test_view = views.AddressViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('address/')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=test_address_to_retrieve.id_address)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_retrieve_non_owner_admin(self):
+        print("\nTEST - AddressViewSetTests --> test_retrieve_non_owner_admin()\n")
+        test_address_to_retrieve = models.Address.objects.get(num=120, street='Avenue Mickey', postal_code=99999, city='Mickeyville', owner=self.user_test_1)
+        test_view = views.AddressViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('address/')
+        force_authenticate(request, user=self.user_test_3)
+        response = test_view(request, pk=test_address_to_retrieve.id_address)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT DONE")
+
+    def test_retrieve_owner(self):
+        print("\nTEST - AddressViewSetTests --> test_retrieve_owner()\n")
+        test_address_to_retrieve = models.Address.objects.get(num=120, street='Avenue Mickey', postal_code=99999, city='Mickeyville', owner=self.user_test_1)
+        test_view = views.AddressViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('address/')
+        force_authenticate(request, user=self.user_test_1)
+        response = test_view(request, pk=test_address_to_retrieve.id_address)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT DONE")
