@@ -43,7 +43,7 @@ class Address(models.Model):
     street = models.CharField(max_length=50)
     postal_code = models.IntegerField()
     city = models.CharField(max_length=100)
-    owner = models.ForeignKey(CustomUser, related_name='address', on_delete=CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name='address', on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['id_address']

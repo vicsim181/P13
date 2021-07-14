@@ -9,5 +9,5 @@
         "**/__pycache__": true,
         "**/venv": true
     },
-    "python.pythonPath": "C:\\Users\\V_199\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
+    "python.pythonPath": "C:\\Users\\Victor\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
 }

@@ -7,7 +7,7 @@ from .models import Address, CustomUser
 
 
 class AddressSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
+    owner = serializers.ReadOnlyField(source='owner.email')
 
     class Meta:
         model = Address
@@ -38,9 +38,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
         )
         user.set_password(validated_data['password'])
-        # print('PASSWORD BEFORE:  ' + str(validated_data['password']))
         user.save()
-        # print('PASSWORD AFTER:     ' + str(user.password))
         return user
 
 

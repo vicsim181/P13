@@ -77,7 +77,7 @@ class UnitaryAddressRegistrationTests(APITestCase):
         response = test_view(request)
         print("self.assertEqual(response.status_code, 201)")
         self.assertEqual(response.status_code, 201)
-        print("ASSERT 1 DONE")  # Tester les infos de l'adresse ???
+        print("ASSERT 1 DONE")
 
     def test_address_viewset_nonadminuser(self):
         print("\nTEST - AddressRegistrationTests --> test_address_viewset_nonadminuser()\n")
@@ -229,5 +229,42 @@ class IntegrationAddressTests(APITestCase):
 
     def setUp(self):
         self.factory = APIRequestFactory()
+        self.user_test = models.CustomUser(email='donald@duck.us', password=None, first_name="Donald", last_name="Duck")
+        self.user_test.set_password("sup€Rp@sswoRd")
+        self.user_test.save()
 
-
+    def test_create_address_consult_delete(self):
+        test_view_1 = views.CreateAddressView.as_view()
+        test_address_infos = {'num': 120, 'street': 'Avenue Mickey', 'postal_code': 99999, 'city': 'Mickeyville'}
+        request_1 = self.factory.post('create/address/', test_address_infos)
+        force_authenticate(request_1, user=self.user_test)
+        response_1 = test_view_1(request_1)
+        print("self.assertEqual(response.status_code, 201)")
+        self.assertEqual(response_1.status_code, 201)
+        print("ASSERT 1 DONE")
+        test_view_2 = views.AddressViewSet.as_view({'get': 'retrieve'})
+        address_test = models.Address.objects.get(owner=self.user_test)
+        request_2 = self.factory.get('address/')
+        force_authenticate(request_2, user=self.user_test)
+        response_2 = test_view_2(request_2, pk=1)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_2.status_code, 200)
+        print("ASSERT 2 DONE")
+        data_1 = json.loads(response_2.render().content)
+        print("self.assertEqual(data['owner'], self.user_test_1.id)")
+        self.assertEqual(data_1['owner'], self.user_test.email)
+        print("ASSERT 3 DONE")
+        print("self.assertEqual(data['num'], 120)")
+        self.assertEqual(data_1['num'], '120')
+        print("ASSERT 4 DONE")
+        test_view_3 = views.AddressViewSet.as_view({'delete': 'destroy'})
+        request_3 = self.factory.delete('address/')
+        force_authenticate(request_3, user=self.user_test)
+        response_3 = test_view_3(request_3, pk=address_test.id_address)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response_3.status_code, 204)
+        print("ASSERT 5 DONE")
+        check_addresses = models.Address.objects.all()
+        print("self.assertEqual(check_addresses, [])")
+        self.assertEqual(str(check_addresses), '<QuerySet []>')
+        print("ASSERT 6 DONE")
