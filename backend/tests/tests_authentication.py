@@ -3,7 +3,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate, APITestCa
 from applications.authentication import views, models
 
 
-class UserRegistrationTests(APITestCase):
+class UnitaryUserRegistrationTests(APITestCase):
     """
     Test class for the registration functionnality.
     Sends a post request with a new user informations and check the response.status_code.
@@ -20,8 +20,6 @@ class UserRegistrationTests(APITestCase):
         print("assert response.status_code == 201")
         self.assertEqual(self.response.status_code, 201)
         print("ASSERT DONE")
-        user_test = models.CustomUser.objects.all()
-        print(str(user_test))
 
     def test_user_str(self):
         print("\nTEST - UserRegisterTests --> test_user_str()\n")
@@ -31,7 +29,7 @@ class UserRegistrationTests(APITestCase):
         print("ASSERT DONE")
 
 
-class UserDataTests(APITestCase):
+class UnitaryUserDataTests(APITestCase):
     """
     Test class for the data visualization of a user profile.
     """
@@ -57,7 +55,7 @@ class UserDataTests(APITestCase):
         print("ASSERT 2 DONE")
 
 
-class AddressRegistrationTests(APITestCase):
+class UnitaryAddressRegistrationTests(APITestCase):
     """
     Test class for the registration of an address.
     We check it's possible to create an address through post request on CreateAddressView.
@@ -93,7 +91,7 @@ class AddressRegistrationTests(APITestCase):
         print("ASSERT DONE")
 
 
-class AddressViewSetTests(APITestCase):
+class UnitaryAddressViewSetTests(APITestCase):
     """
     Test class for the AddressViewSet, other than post requests.
     We test the options and permissions set in the viewset.
@@ -188,3 +186,48 @@ class AddressViewSetTests(APITestCase):
         print("self.assertEqual(response.status_code, 200)")
         self.assertEqual(response.status_code, 200)
         print("ASSERT DONE")
+
+
+class IntegrationUserTests(APITestCase):
+    """
+    Integration tests related to the User model and views.
+    """
+
+    def setUp(self):
+        self.factory = APIRequestFactory()
+        self.user_test = {'email': 'test@email.fr', 'password': 'sup€rp@ssW0rd', 'first_name': 'Test', 'last_name': 'REGISTER'}
+
+    def test_register_and_get_data(self):
+        print("\nTEST - IntegrationUserTests --> test_register_and_get_data()\n")
+        test_view_1 = views.UserRegisterView.as_view()
+        request_1 = self.factory.post('/register/', self.user_test)
+        response_1 = test_view_1(request_1)
+        print("assert response.status_code == 201")
+        self.assertEqual(response_1.status_code, 201)
+        print("ASSERT 1 DONE")
+        user_test = models.CustomUser.objects.get(email='test@email.fr')
+        print("self.assertEqual(user_test, 'test@email.fr')")
+        self.assertEqual(str(user_test), 'test@email.fr')
+        print("ASSERT 2 DONE")
+        request_2 = self.factory.get('/me/')
+        force_authenticate(request_2, user=user_test)
+        test_view_2 = views.UserDataView.as_view()
+        response_2 = test_view_2(request_2)
+        data = json.loads(response_2.render().content)
+        print("self.assertEqual(data['first_name'], 'Test')")
+        self.assertEqual(data['first_name'], 'Test')
+        print("ASSERT 3 DONE")
+        print("self.assertEqual(data['address'], [])")
+        self.assertEqual(data['address'], [])
+        print("ASSERT 4 DONE")
+
+
+class IntegrationAddressTests(APITestCase):
+    """
+    Integration tests for the Address model and views.
+    """
+
+    def setUp(self):
+        self.factory = APIRequestFactory()
+
+
