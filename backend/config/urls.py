@@ -19,12 +19,21 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from rest_framework.routers import DefaultRouter
+from applications.project.urls import router as projectrouter
+from applications.authentication.urls import router as authenticationrouter
 
+
+router = DefaultRouter()
+router.registry.extend(projectrouter.registry)
+router.registry.extend(authenticationrouter.registry)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('', include(router.urls)),
+    path('user/', include('applications.authentication.urls')),
+    path('create/', include('applications.project.urls'))
     # path('api-auth/', include('rest_framework.urls')),
-    path('', include('applications.authentication.urls')),
 ]

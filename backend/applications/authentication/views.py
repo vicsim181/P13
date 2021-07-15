@@ -1,15 +1,14 @@
 # from django.shortcuts import render
 # from django.contrib.auth.models import User
-from rest_framework import viewsets, generics
-from rest_framework import permissions
-from .permissions import IsOwnerOrAdmin
+from rest_framework import viewsets, generics, permissions
+from ..permissions import IsOwnerOrAdmin
 from .models import Address, CustomUser
 from .serializers import AddressSerializer, UserRegisterSerializer, UserSerializer
 
 
 class AddressViewSet(viewsets.ModelViewSet):
     """
-    Class allowing to 
+    Class 
     """
     queryset = Address.objects.all()
     serializer_class = AddressSerializer
