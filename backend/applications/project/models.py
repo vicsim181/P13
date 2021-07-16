@@ -21,26 +21,36 @@ class Project(models.Model):
     publication = models.DateTimeField(null=True)
     description = models.TextField()
     project_type = models.ForeignKey(ProjectType, related_name='project', on_delete=models.CASCADE)
-    creator = models.ForeignKey(CustomUser, related_name='project', on_delete=models.CASCADE)
+    owner = models.ForeignKey(CustomUser, related_name='project', on_delete=models.CASCADE)
     is_over = models.BooleanField(default=False)
     end_date = models.DateTimeField(null=True)
+    ready_for_publication = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.name
 
 
-class Form(models.Model):
-    id_form = models.AutoField(primary_key=True)
-    project = models.ForeignKey(Project, related_name='form', on_delete=models.CASCADE)
+# class Form(models.Model):
+#     id_form = models.AutoField(primary_key=True)
+#     project = models.ForeignKey(Project, related_name='form', on_delete=models.CASCADE)
 
 
 class Question(models.Model):
     id_question = models.AutoField(primary_key=True)
     wording = models.CharField(max_length=200)
     question_type = models.ForeignKey('QuestionType', related_name='question', on_delete=models.CASCADE)
-    form = models.ForeignKey(Form, related_name='question', on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name='form', on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return self.wording
 
 
 class QuestionType(models.Model):
     id_type = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class MultipleChoiceAnswer(models.Model):

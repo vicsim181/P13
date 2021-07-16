@@ -10,7 +10,7 @@ class UnitaryUserRegistrationTests(APITestCase):
     """
     def setUp(self):
         self.factory = APIRequestFactory()
-        self.view = views.UserRegisterView.as_view()
+        self.view = views.UserViewSet.as_view({'post': 'create'})
         self.user_test = {'email': 'test@email.fr', 'password': 'sup€rp@ssW0rd', 'first_name': 'Test', 'last_name': 'REGISTER'}
         self.request = self.factory.post('/register/', self.user_test)
         self.response = self.view(self.request)
@@ -39,7 +39,7 @@ class UnitaryUserDataTests(APITestCase):
         self.user_test = models.CustomUser(email='donald@duck.us', password=None, first_name="Donald", last_name="Duck")
         self.user_test.set_password("sup€Rp@sswoRd")
         self.user_test.save()
-        self.view = views.UserDataView.as_view()
+        self.view = views.UserViewSet.as_view({'get': 'retrieve'})
 
     def test_user_data(self):
         print("\nTEST - UserDataTests --> test_user_data()\n")
@@ -70,24 +70,23 @@ class UnitaryAddressRegistrationTests(APITestCase):
 
     def test_address_register_through_defined_url(self):
         print("\nTEST - AddressRegistrationTests --> test_address_register_through_defined_url()\n")
-        test_view = views.CreateAddressView.as_view()
+        test_view = views.AddressViewSet.as_view({'post': 'create'})
         test_address_infos = {'num': 120, 'street': 'Avenue Mickey', 'postal_code': 99999, 'city': 'Mickeyville'}
-        request = self.factory.post('create/address/', test_address_infos)
+        request = self.factory.post('address/', test_address_infos)
         force_authenticate(request, user=self.user_test)
         response = test_view(request)
         print("self.assertEqual(response.status_code, 201)")
         self.assertEqual(response.status_code, 201)
         print("ASSERT 1 DONE")
 
-    def test_address_viewset_nonadminuser(self):
+    def test_address_viewset_non_authenticated(self):
         print("\nTEST - AddressRegistrationTests --> test_address_viewset_nonadminuser()\n")
         test_view = views.AddressViewSet.as_view({'post': 'create'})
         test_address_infos = {'num': 120, 'street': 'Avenue Mickey', 'postal_code': 99999, 'city': 'Mickeyville'}
         request = self.factory.post('address/', test_address_infos)
-        force_authenticate(request, user=self.user_test)
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 403)")
-        self.assertEqual(response.status_code, 403)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
         print("ASSERT DONE")
 
 
@@ -199,7 +198,7 @@ class IntegrationUserTests(APITestCase):
 
     def test_register_and_get_data(self):
         print("\nTEST - IntegrationUserTests --> test_register_and_get_data()\n")
-        test_view_1 = views.UserRegisterView.as_view()
+        test_view_1 = views.UserViewSet.as_view({'post': 'create'})
         request_1 = self.factory.post('/register/', self.user_test)
         response_1 = test_view_1(request_1)
         print("assert response.status_code == 201")
@@ -211,7 +210,7 @@ class IntegrationUserTests(APITestCase):
         print("ASSERT 2 DONE")
         request_2 = self.factory.get('/me/')
         force_authenticate(request_2, user=user_test)
-        test_view_2 = views.UserDataView.as_view()
+        test_view_2 = views.UserViewSet.as_view({'get': 'retrieve'})
         response_2 = test_view_2(request_2)
         data = json.loads(response_2.render().content)
         print("self.assertEqual(data['first_name'], 'Test')")
@@ -234,7 +233,7 @@ class IntegrationAddressTests(APITestCase):
         self.user_test.save()
 
     def test_create_address_consult_delete(self):
-        test_view_1 = views.CreateAddressView.as_view()
+        test_view_1 = views.AddressViewSet.as_view({'post': 'create'})
         test_address_infos = {'num': 120, 'street': 'Avenue Mickey', 'postal_code': 99999, 'city': 'Mickeyville'}
         request_1 = self.factory.post('create/address/', test_address_infos)
         force_authenticate(request_1, user=self.user_test)
