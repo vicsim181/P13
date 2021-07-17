@@ -1,21 +1,26 @@
 import datetime
-import datetime
 from rest_framework import serializers
 from . import models
+
+
+# class ProjectTypeSerializer(serializers.Serializer):
+#     class Meta:
+#         model = models.ProjectType
+#         fields = '__all__'
 
 
 class ProjectSerializer(serializers.ModelSerializer):
     publication = serializers.DateTimeField(read_only=True)
     end_date = serializers.DateTimeField(read_only=True)
     is_over = serializers.ReadOnlyField()
-    ready_for_publication = serializers.ReadOnlyField()
+    # ready_for_publication = serializers.ReadOnlyField()
     owner = serializers.ReadOnlyField(source='owner.email')
-    question = serializers.ReadOnlyField(source='question.wording')
+    question = serializers.HyperlinkedRelatedField(view_name='question-detail', read_only=True, many=True)
 
-    def publicate(self, instance):
-        instance['publication'] = datetime.datetime.now()
-        instance['end_date'] = instance['publication'] + datetime.timedelta(days=90)
-        return instance
+    # def publicate(self, instance):
+    #     instance['publication'] = datetime.datetime.now()
+    #     instance['end_date'] = instance['publication'] + datetime.timedelta(days=90)
+    #     return instance
 
     class Meta:
         model = models.Project
@@ -23,8 +28,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         # exclude = ['ready_for_publication']
 
 
-class QuestionCreationSerializer(serializers.ModelSerializer):
-    # project = serializers.Field(source='project.name')
+class QuestionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Question

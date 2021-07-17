@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
     """
     Custom model class of User.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # Si id_user, pose problème à certains moments avec l'authentication
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # Si id_user, pose problème pour obtenir token avec Simple JWT
     username = models.CharField(default="", max_length=7)
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=50)
@@ -38,7 +38,7 @@ class Address(models.Model):
     """
     Model defined to host the address of the users.
     """
-    id_address = models.AutoField(primary_key=True)
+    id_address = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     num = models.CharField(max_length=5)
     street = models.CharField(max_length=50)
     postal_code = models.IntegerField()
