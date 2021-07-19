@@ -2,7 +2,6 @@
 # from datetime import timedelta
 import uuid
 from django.db import models
-from django.db.models.deletion import CASCADE
 from ..authentication.models import CustomUser
 
 
@@ -65,3 +64,14 @@ class UserProject(models.Model):
     project = models.ForeignKey(Project, related_name='userproject', on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, related_name='userproject', on_delete=models.CASCADE)
     has_participated = models.BooleanField(default=False)
+
+
+class Comment(models.Model):
+    id_comment = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(CustomUser, related_name='comment', on_delete=models.CASCADE)
+    text = models.TextField(max_length=300)
+
+
+class ProjectComment(models.Model):
+    project = models.ForeignKey(Project, related_name='projectcomment', on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, related_name='projectcomment', on_delete=models.CASCADE)
