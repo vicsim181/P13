@@ -53,11 +53,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
                                      style={'input_type': 'password'}, validators=[validate_password])
     address = serializers.HyperlinkedRelatedField(view_name='address-detail', read_only=True, many=True)
     project = serializers.HyperlinkedRelatedField(view_name='project-detail', read_only=True, many=True)
+    comment = serializers.HyperlinkedRelatedField(view_name='comment-detail', read_only=True, many=True)
     date_joined = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'email', 'password', 'first_name', 'last_name', 'date_joined', 'address', 'project']
+        fields = ['id', 'email', 'password', 'first_name', 'last_name', 'date_joined', 'address', 'project', 'comment']
 
     def create(self, validated_data):
         user = CustomUser(

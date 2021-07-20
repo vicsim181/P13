@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Project
+from .models import Comment, Project
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -15,5 +15,10 @@ class ProjectAdmin(admin.ModelAdmin):
     filter_horizontal = ()
 
 
+class CommentAdmin(admin.ModelAdmin):
+    pass
+
+
 # Register your models here.
 admin.site.register(Project, ProjectAdmin)
+admin.site.register(Comment, admin.ModelAdmin)

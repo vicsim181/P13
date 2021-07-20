@@ -6,8 +6,8 @@ from . import views
 router = DefaultRouter()
 router.register(r'project', views.ProjectViewSet)
 router.register(r'question', views.QuestionViewSet)
-# router.register(r'project_type', views.ProjectTypeViewSet)
+router.register(r'comment', views.CommentViewSet)
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', include(router.urls))
 ]

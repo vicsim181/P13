@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from applications import authentication, project
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import (
@@ -33,7 +34,6 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),
-    path('user/', include('applications.authentication.urls')),
-    # path('create/', include('applications.project.urls'))
-    # path('api-auth/', include('rest_framework.urls')),
+    path('me/', authentication.views.UserDataView.as_view(), name='user-detail'),
+    path('like/<uuid:project_id>', project.views.LikeViews.as_view(), name='like-view')
 ]

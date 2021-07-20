@@ -1,12 +1,13 @@
 import datetime
 from rest_framework import serializers
 from . import models
+from ..authentication.serializers import CustomUser
 
 
-# class ProjectTypeSerializer(serializers.Serializer):
-#     class Meta:
-#         model = models.ProjectType
-#         fields = '__all__'
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CustomUser
+        fields = ['id']
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -16,11 +17,8 @@ class ProjectSerializer(serializers.ModelSerializer):
     # ready_for_publication = serializers.ReadOnlyField()
     owner = serializers.ReadOnlyField(source='owner.email')
     question = serializers.HyperlinkedRelatedField(view_name='question-detail', read_only=True, many=True)
-
-    # def publicate(self, instance):
-    #     instance['publication'] = datetime.datetime.now()
-    #     instance['end_date'] = instance['publication'] + datetime.timedelta(days=90)
-    #     return instance
+    comment = serializers.HyperlinkedRelatedField(view_name='comment-detail', read_only=True, many=True)
+    liked_by = LikeSerializer(read_only=True, many=True)
 
     class Meta:
         model = models.Project
@@ -29,7 +27,17 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.email')
 
     class Meta:
         model = models.Question
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    publication = serializers.DateTimeField(read_only=True)
+    owner = serializers.ReadOnlyField(source='owner.username')
+
+    class Meta:
+        model = models.Comment
         fields = '__all__'

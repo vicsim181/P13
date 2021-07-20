@@ -17,12 +17,12 @@ class ProjectUnitaryTests(APITestCase):
                                            last_name="Duck")
         self.user_test.set_password("sup€Rp@sswoRd")
         self.user_test.save()
-        self.user_test_2user_test_2 = models.CustomUser(email='donald@duck.us',
-                                                        password=None,
-                                                        first_name="Donald",
-                                                        last_name="Duck")
-        self.user_test_2user_test_2.set_password("sup€Rp@sswoRd")
-        self.user_test_2user_test_2.save()
+        self.user_test_2 = models.CustomUser(email='mickey@mouse.us',
+                                             password=None,
+                                             first_name="Mickey",
+                                             last_name="Mouse")
+        self.user_test_2.set_password("sup€Rp@sswoRd")
+        self.user_test_2.save()
         self.admin_test = models.CustomUser(email='admin@email.fr',
                                             password=None,
                                             first_name='Dark',
@@ -281,7 +281,8 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 2 DONE")
         question_test = models.Question(wording='Que pensez-vous de ce test ?',
                                         question_type=question_type_test,
-                                        project=project_test)
+                                        project=project_test,
+                                        owner=self.admin_test)
         question_test.save()
         response_2 = test_view(request, pk=project_test.id_project)
         data = json.loads(response_2.render().content)
@@ -295,8 +296,21 @@ class ProjectUnitaryTests(APITestCase):
         self.assertEqual(str(question_type_test), 'Réponse libre')
         print("ASSERT 5 DONE")
 
-    def test_publicate_projet(self):
-        pass
+    def test_project_ready_for_publication(self):
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=petition_type_test)
+        project_test.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('project/')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request, project_id=project_test.id_project)
+        data = json.loads(response.render().content)
+        print(data)
 
     def test_publish_comment_on_petition(self):
         print("\nTEST - UnitaryProjectTests --> test_publish_comment_on_petition()\n")
@@ -308,12 +322,13 @@ class ProjectUnitaryTests(APITestCase):
                                       owner=self.user_test,
                                       project_type=petition_type_test)
         project_test.save()
-        comment_to_post = {'user': self.user_test_2,
-                           'text': 'Je trouve le test de cette fonctionnalité très pertinent. Je recommende vivement !'}
-        test_view = views.ProjectViewSet.as_view({'post': 'create'})
-        request = self.factory.post('project/comment', comment_to_post)
+        comment_to_post = {'owner': self.user_test_2,
+                           'text': 'Je trouve le test de cette fonctionnalité très pertinent. Je recommende vivement !',
+                           'project': project_test.id_project}
+        test_view = views.CommentViewSet.as_view({'post': 'create'})
+        request = self.factory.post('comment/', comment_to_post)
         force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, pk=project_test.id_project)
+        response = test_view(request)
         print("self.assertEqual(response.status_code, 201)")
         self.assertEqual(response.status_code, 201)
         print("ASSERT DONE")
@@ -328,14 +343,12 @@ class ProjectUnitaryTests(APITestCase):
                                       owner=self.user_test,
                                       project_type=petition_type_test)
         project_test.save()
-        like_to_post = {'user': self.user_test_2,
-                        'project': project_test.id_project}
-        test_view = views.ProjectViewSet.as_view({'post': 'create'})
-        request = self.factory.post('project/like', like_to_post)
+        test_view = views.LikeViews.as_view()
+        request = self.factory.post('like/')
         force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, pk=project_test.id_project)
-        print("self.assertEqual(response.status_code, 201)")
-        self.assertEqual(response.status_code, 201)
+        response = test_view(request, project_id=project_test.id_project)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
         print("ASSERT DONE")
 
 
@@ -441,3 +454,6 @@ class ProjectQuestionIntegrationTests(APITestCase):
         print("self.assertEqual(response.status_code, 404)")
         self.assertEqual(response_3.status_code, 404)
         print("ASSERT 3 DONE")
+
+    def test_like_project_post_update_delete_comment(self):
+        pass
