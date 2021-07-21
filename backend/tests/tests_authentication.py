@@ -3,7 +3,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate, APITestCa
 from applications.authentication import views, models
 
 
-class UnitaryUserRegistrationTests(APITestCase):
+class UnitaryUserViewSetTests(APITestCase):
     """
     Test class for the registration functionnality.
     Sends a post request with a new user informations and check the response.status_code.
@@ -12,21 +12,65 @@ class UnitaryUserRegistrationTests(APITestCase):
         self.factory = APIRequestFactory()
         self.view = views.UserViewSet.as_view({'post': 'create'})
         self.user_test = {'email': 'test@email.fr', 'password': 'sup€rp@ssW0rd', 'first_name': 'Test', 'last_name': 'REGISTER'}
-        self.request = self.factory.post('/register/', self.user_test)
+        self.request = self.factory.post('users/', self.user_test)
         self.response = self.view(self.request)
+        self.user_test_2 = models.CustomUser(email='donald@duck.us', password=None, first_name="Donald", last_name="Duck")
+        self.user_test_2.set_password("sup€Rp@sswoRd")
+        self.user_test_2.save()
+        self.admin_test = models.CustomUser(email='mickey@mouse.us', password=None, first_name="Mickey", last_name="Mouse", is_staff=True)
+        self.admin_test.set_password("sup€Rp@sswoRd")
+        self.admin_test.save()
 
     def test_register_user(self):
-        print("\nTEST - UserRegisterTests --> test_register_user()\n")
+        print("\nTEST - UnitaryViewSetTests --> test_register_user()\n")
         print("assert response.status_code == 201")
         self.assertEqual(self.response.status_code, 201)
         print("ASSERT DONE")
 
     def test_user_str(self):
-        print("\nTEST - UserRegisterTests --> test_user_str()\n")
+        print("\nTEST - UnitaryViewSetTests --> test_user_str()\n")
         user_test = models.CustomUser.objects.get(email='test@email.fr')
         print("self.assertEqual(user_test, 'test@email.fr')")
         self.assertEqual(str(user_test), 'test@email.fr')
         print("ASSERT DONE")
+
+    def test_update_user_non_owner_then_owner(self):
+        print("\nTEST - UnitaryViewSetTests --> test_update_user_non_owner_then_owner()\n")
+        user_test = models.CustomUser.objects.get(email='test@email.fr')
+        test_view = views.UserViewSet.as_view({'put': 'update'})
+        infos_update = {'first_name': 'Modifié', 'last_name': 'Modifié aussi', 'email': 'test@email.fr', 'password': 'sup€rp@ssW0rd'}
+        request = self.factory.put('users/', infos_update)
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=user_test.id)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 1 DONE")
+        force_authenticate(request, user=user_test)
+        response = test_view(request, pk=user_test.id)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 2 DONE")
+
+    def test_delete_user_non_admin_then_admin(self):
+        print("\nTEST - UnitaryViewSetTests --> test_delete_user_non_admin_then_admin()\n")
+        user_test = models.CustomUser.objects.get(email='test@email.fr')
+        test_view = views.UserViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('users/')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=user_test.id)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 1 DONE")
+        request_2 = self.factory.delete('users/')
+        response = test_view(request_2, pk=user_test.id)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT 2 DONE")
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request, pk=user_test.id)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response.status_code, 204)
+        print("ASSERT 3 DONE")
 
 
 class UnitaryUserDataTests(APITestCase):
@@ -39,10 +83,11 @@ class UnitaryUserDataTests(APITestCase):
         self.user_test = models.CustomUser(email='donald@duck.us', password=None, first_name="Donald", last_name="Duck")
         self.user_test.set_password("sup€Rp@sswoRd")
         self.user_test.save()
-        self.view = views.UserViewSet.as_view({'get': 'retrieve'})
+        self.view = views.UserDataView.as_view()
 
     def test_user_data(self):
         print("\nTEST - UserDataTests --> test_user_data()\n")
+
         request = self.factory.get('/me/')
         force_authenticate(request, user=self.user_test)
         response = self.view(request)
@@ -106,9 +151,34 @@ class UnitaryAddressViewSetTests(APITestCase):
         self.user_test_2 = models.CustomUser(email='mickey@mouse.us', password=None, first_name="Mickey", last_name="Mouse")
         self.user_test_2.set_password("sup€rp@ssw0Rd")
         self.user_test_2.save()
-        self.user_test_3 = models.CustomUser(email='darth@side.st', password=None, first_name="Darth", last_name="Vador", is_superuser=True)
+        self.user_test_3 = models.CustomUser(email='darth@side.st', password=None, first_name="Darth", last_name="Vador", is_staff=True)
         self.user_test_3.set_password("sup€rp@ssw0Rd")
         self.user_test_3.save()
+
+    def test_list_address_admin_not_admin_not_authenticated(self):
+        print("\nTEST - AddressViewSetTests --> test_list_address_admin_not_admin_not_authenticated()\n")
+        test_view = views.AddressViewSet.as_view({'get': 'list'})
+        request = self.factory.get('address/')
+        force_authenticate(request, user=self.user_test_3)
+        response_1 = test_view(request)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_1.status_code, 200)
+        print("ASSERT 1 DONE")
+        data = json.loads(response_1.render().content)
+        print("self.assertEqual(len(data), 1)")
+        self.assertEqual(len(data), 1)
+        print("ASSERT 2 DONE")
+        force_authenticate(request, user=self.user_test_1)
+        response_2 = test_view(request)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response_2.status_code, 403)
+        print("ASSERT 3 DONE")
+        test_view_3 = views.AddressViewSet.as_view({'get': 'list'})
+        request_3 = self.factory.get('address/')
+        response_3 = test_view_3(request_3)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response_3.status_code, 401)
+        print("ASSERT 4 DONE")
 
     def test_delete_address_non_authenticated(self):
         print("\nTEST - AddressViewSetTests --> test_delete_address_non_authenticated()\n")
@@ -210,7 +280,7 @@ class IntegrationUserTests(APITestCase):
         print("ASSERT 2 DONE")
         request_2 = self.factory.get('/me/')
         force_authenticate(request_2, user=user_test)
-        test_view_2 = views.UserViewSet.as_view({'get': 'retrieve'})
+        test_view_2 = views.UserDataView.as_view()
         response_2 = test_view_2(request_2)
         data = json.loads(response_2.render().content)
         print("self.assertEqual(data['first_name'], 'Test')")
@@ -245,7 +315,7 @@ class IntegrationAddressTests(APITestCase):
         address_test = models.Address.objects.get(owner=self.user_test)
         request_2 = self.factory.get('address/')
         force_authenticate(request_2, user=self.user_test)
-        response_2 = test_view_2(request_2, pk=1)
+        response_2 = test_view_2(request_2, pk=address_test.id_address)
         print("self.assertEqual(response.status_code, 200)")
         self.assertEqual(response_2.status_code, 200)
         print("ASSERT 2 DONE")

@@ -28,7 +28,7 @@ class ProjectUnitaryTests(APITestCase):
                                             first_name='Dark',
                                             last_name='Vador',
                                             username='Admin',
-                                            is_superuser=True)
+                                            is_staff=True)
         self.admin_test.set_password('Sup€rp@ssw0rd')
         self.admin_test.save()
 
@@ -59,7 +59,7 @@ class ProjectUnitaryTests(APITestCase):
                                   'project_type': project_type_test.id_project_type}
         request = self.factory.post('project/', test_project_to_create)
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 401)")
+        print("self.assertEqual(response.status_code, 401) --> user used is not authenticated")
         self.assertEqual(response.status_code, 401)
         print("ASSERT DONE")
 
@@ -103,7 +103,7 @@ class ProjectUnitaryTests(APITestCase):
         test_view = views.ProjectViewSet.as_view({'get': 'list'})
         request = self.factory.get('project/')
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 401)")
+        print("self.assertEqual(response.status_code, 401) --> user used is not authenticated")
         self.assertEqual(response.status_code, 401)
         print("ASSERT DONE")
 
@@ -121,7 +121,7 @@ class ProjectUnitaryTests(APITestCase):
         request = self.factory.delete('project/')
         force_authenticate(request, user=self.user_test)
         response = test_view(request, pk=project_test.id_project)
-        print("self.assertEqual(response.status_code, 403)")
+        print("self.assertEqual(response.status_code, 403) --> user used not the owner of the project")
         self.assertEqual(response.status_code, 403)
         print("ASSERT DONE")
 
@@ -162,7 +162,7 @@ class ProjectUnitaryTests(APITestCase):
         request = self.factory.put('project/', infos_update)
         force_authenticate(request, user=self.user_test)
         response = test_view(request, pk=project_test.id_project)
-        print("self.assertEqual(response.status_code, 403)")
+        print("self.assertEqual(response.status_code, 403) --> user used not the owner of the project")
         self.assertEqual(response.status_code, 403)
         print("ASSERT DONE")
 
@@ -306,11 +306,33 @@ class ProjectUnitaryTests(APITestCase):
                                       project_type=petition_type_test)
         project_test.save()
         test_view = views.ProjectPublication.as_view()
-        request = self.factory.put('project/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, project_id=project_test.id_project)
-        data = json.loads(response.render().content)
-        print(data)
+        request_1 = self.factory.get('publication/')
+        force_authenticate(request_1, user=self.user_test)
+        response_1 = test_view(request_1, project_id=project_test.id_project)
+        data_1 = json.loads(response_1.render().content)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_1.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(str(data), 'False')")
+        self.assertEqual(str(data_1), 'False')
+        print("ASSERT 2 DONE")
+        question_type_test = models.QuestionType(name='Réponse libre')
+        question_type_test.save()
+        question_test = models.Question(wording='Que pensez-vous de ce test ?',
+                                        question_type=question_type_test,
+                                        project=project_test,
+                                        owner=self.user_test)
+        question_test.save()
+        request_2 = self.factory.get('publication/')
+        force_authenticate(request_2, user=self.user_test)
+        response_2 = test_view(request_2, project_id=project_test.id_project)
+        data_2 = json.loads(response_2.render().content)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_2.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(str(data), 'True')")
+        self.assertEqual(str(data_2), 'True')
+        print("ASSERT 2 DONE")
 
     def test_publish_comment_on_petition(self):
         print("\nTEST - UnitaryProjectTests --> test_publish_comment_on_petition()\n")
@@ -363,12 +385,18 @@ class ProjectQuestionIntegrationTests(APITestCase):
                                            last_name="Duck")
         self.user_test.set_password("sup€Rp@sswoRd")
         self.user_test.save()
+        self.user_test_2 = models.CustomUser(email='mickey@mouse.us',
+                                             password=None,
+                                             first_name="Mickey",
+                                             last_name="Mouse")
+        self.user_test_2.set_password("sup€Rp@sswoRd")
+        self.user_test_2.save()
         self.admin_test = models.CustomUser(email='admin@email.fr',
                                             password=None,
                                             first_name='Dark',
                                             last_name='Vador',
                                             username='Admin',
-                                            is_superuser=True)
+                                            is_staff=True)
         self.admin_test.set_password('Sup€rp@ssw0rd')
         self.admin_test.save()
         self.consultation_type_test = models.ProjectType(name='Consultation')
@@ -380,8 +408,8 @@ class ProjectQuestionIntegrationTests(APITestCase):
         self.question_type_test = models.QuestionType(name='Réponse libre')
         self.question_type_test.save()
 
-    def test_create_project_question_consult(self):
-        print("\nTEST - ProjectQuestionIntegrationTests --> test_create_project_question_consult()\n")
+    def test_create_project_question_consult_delete_question(self):
+        print("\nTEST - ProjectQuestionIntegrationTests --> test_create_project_question_consult_delete_question()\n")
         test_view_1 = views.ProjectViewSet.as_view({'post': 'create'})
         test_project_to_create = {"name": "Essai de Consultation",
                                   "place": "Paris",
@@ -423,7 +451,26 @@ class ProjectQuestionIntegrationTests(APITestCase):
         print("ASSERT 5 DONE")
         print("self.assertEqual(test_project_to_create, 'Essai de Consultation')")
         self.assertEqual(str(test_project_to_retrieve), "Essai de Consultation")
-        print("ASSERT 2 DONE")
+        print("ASSERT 6 DONE")
+        test_view_4 = views.QuestionViewSet.as_view({'get': 'retrieve'})
+        request_4 = self.factory.get('question/')
+        force_authenticate(request_4, user=self.user_test)
+        response_4 = test_view_4(request_4, pk=test_question_to_retrieve.id_question)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_4.status_code, 200)
+        print("ASSERT 7 DONE")
+        test_view_5 = views.QuestionViewSet.as_view({'delete': 'destroy'})
+        request_5 = self.factory.delete('question/')
+        force_authenticate(request_5, user=self.user_test)
+        response_5 = test_view_5(request_5, pk=test_question_to_retrieve.id_question)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response_5.status_code, 403)
+        print("ASSERT 8 DONE")
+        force_authenticate(request_5, user=self.admin_test)
+        response_6 = test_view_5(request_5, pk=test_question_to_retrieve.id_question)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response_6.status_code, 204)
+        print("ASSERT 9 DONE")
 
     def test_create_project_delete(self):
         print("\nTEST - ProjectQuestionIntegrationTests -->test_create_project_delete()\n")
@@ -455,5 +502,116 @@ class ProjectQuestionIntegrationTests(APITestCase):
         self.assertEqual(response_3.status_code, 404)
         print("ASSERT 3 DONE")
 
-    def test_like_project_post_update_delete_comment(self):
-        pass
+    def test_like_project_post_update_delete_comment_delete_like(self):
+        print("\nTEST - ProjectQuestionIntegrationTests -->test_like_project_post_update_delete_comment_delete_like()\n")
+        test_view_1 = views.ProjectViewSet.as_view({'post': 'create'})
+        test_project_to_create = {"name": "Essai de Consultation",
+                                  "place": "Paris",
+                                  "description": "Essai de création de pétition via un test utilisateur admin.",
+                                  "project_type": self.consultation_type_test.id_project_type,
+                                  "ready_for_publication": True
+                                  }
+        request_1 = self.factory.post('project/', test_project_to_create)
+        force_authenticate(request_1, user=self.admin_test)
+        response_1 = test_view_1(request_1)
+        print("self.assertEqual(response.status_code, 201)")
+        self.assertEqual(response_1.status_code, 201)
+        print("ASSERT 1 DONE")
+        test_view_2 = views.ProjectViewSet.as_view({'get': 'list'})
+        request_2 = self.factory.get('project/')
+        force_authenticate(request_2, user=self.user_test)
+        response_2 = test_view_2(request_2)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_2.status_code, 200)
+        print("ASSERT 2 DONE")
+        data_1 = json.loads(response_2.render().content)
+        print("self.assertEqual(data[0], 'Essai de Consultation')")
+        self.assertEqual(data_1[0]['name'], 'Essai de Consultation')
+        print("ASSERT 3 DONE")
+        test_view = views.LikeViews.as_view()
+        request = self.factory.post('like/')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request, project_id=data_1[0]['id_project'])
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 4 DONE")
+        comment_to_post = {'owner': self.user_test,
+                           'text': 'Je trouve le test de cette fonctionnalité très pertinent. Je recommande vivement !',
+                           'project': data_1[0]['id_project']}
+        test_view_3 = views.CommentViewSet.as_view({'post': 'create'})
+        request_3 = self.factory.post('comment/', comment_to_post)
+        force_authenticate(request_3, user=self.user_test)
+        response_3 = test_view_3(request_3)
+        print("self.assertEqual(response.status_code, 201)")
+        self.assertEqual(response_3.status_code, 201)
+        print("ASSERT 5 DONE")
+        test_view_4 = views.ProjectViewSet.as_view({'get': 'list'})
+        request_4 = self.factory.get('project/')
+        force_authenticate(request_4, user=self.user_test)
+        response_4 = test_view_4(request_4)
+        data_2 = json.loads(response_4.render().content)
+        print("self.assertEqual(data[0]['liked_by'], self.user_test.id)")
+        self.assertEqual(data_2[0]['liked_by'][0]['id'], str(self.user_test.id))
+        print("ASSERT 6 DONE")
+        comment_to_find = models.Comment.objects.get(owner=self.user_test.id, project=data_1[0]['id_project'])
+        print("self.assertEqual(data_2[0]['comment'][0], str(comment_to_find.id))")
+        self.assertEqual(data_2[0]['comment'][0], 'http://testserver/comment/' + str(comment_to_find.id_comment) + '/')
+        print("ASSERT 7 DONE")
+        comment_update = {'text': "En fait je ne trouve pas l'utilité à ce test...",
+                          'project': data_1[0]['id_project']}
+        test_view_5 = views.CommentViewSet.as_view({'put': 'update'})
+        request_5 = self.factory.put('comment/', comment_update)
+        force_authenticate(request_5, user=self.user_test_2)
+        response_5 = test_view_5(request_5, pk=comment_to_find.id_comment)
+        print("self.assertEqual(response.status_code, 403) --> user used not the owner of the comment")
+        self.assertEqual(response_5.status_code, 403)
+        print("ASSERT 8 DONE")
+        force_authenticate(request_5, user=self.user_test)
+        response_6 = test_view_5(request_5, pk=comment_to_find.id_comment)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_6.status_code, 200)
+        print("ASSERT 9 DONE")
+        test_view_6 = views.CommentViewSet.as_view({'delete': 'destroy'})
+        request_6 = self.factory.delete('comment/', comment_update)
+        force_authenticate(request_6, user=self.user_test_2)
+        response_6 = test_view_6(request_6, pk=comment_to_find.id_comment)
+        print("self.assertEqual(response.status_code, 403) --> user used not the owner of the comment")
+        self.assertEqual(response_6.status_code, 403)
+        print("ASSERT 10 DONE")
+        force_authenticate(request_6, user=self.user_test)
+        response_7 = test_view_6(request_6, pk=comment_to_find.id_comment)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response_7.status_code, 204)
+        print("ASSERT 11 DONE")
+        force_authenticate(request_4, user=self.user_test)
+        response_8 = test_view_4(request_4)
+        data_3 = json.loads(response_8.render().content)
+        print("self.assertEqual(data_3[0]['comment'], [])")
+        self.assertEqual(data_3[0]['comment'], [])
+        print("ASSERT 12 DONE")
+        test_view_7 = views.LikeViews.as_view()
+        request_7 = self.factory.delete('like/')
+        force_authenticate(request_7, user=self.user_test_2)
+        response_8 = test_view_7(request_7, project_id=data_1[0]['id_project'])
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_8.status_code, 200)
+        print("ASSERT 13 DONE")
+        test_view = views.ProjectViewSet.as_view({'get': 'list'})
+        request = self.factory.get('project/')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request)
+        data = json.loads(response.render().content)
+        print("self.assertEqual(data[0]['liked_by'][0]['id'], str(self.user_test.id))")
+        self.assertEqual(data[0]['liked_by'][0]['id'], str(self.user_test.id))
+        print("ASSERT 14 DONE")
+        force_authenticate(request_7, user=self.user_test)
+        response_8 = test_view_7(request_7, project_id=data_1[0]['id_project'])
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response_8.status_code, 200)
+        print("ASSERT 15 DONE")
+        force_authenticate(request, user=self.user_test)
+        response_9 = test_view(request)
+        data_5 = json.loads(response_9.render().content)
+        print("self.assertEqual(data[0]['liked_by'], [])")
+        self.assertEqual(data_5[0]['liked_by'], [])
+        print("ASSERT 16 DONE")

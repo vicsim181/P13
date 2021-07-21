@@ -1,9 +1,7 @@
-# from django.db.models.base import Model
 import uuid, datetime
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models
 from django.db.utils import IntegrityError
-from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.shortcuts import get_object_or_404
 from ..authentication.models import CustomUser
 
 
@@ -47,23 +45,22 @@ class Project(models.Model):
         project_to_publicate.save()
         return
 
-    def like_project(project_id, liker_id):
-        project_to_like = Project.objects.get(id_project=project_id)
-        try:
+    def like_project(project_id, liker_id, action):
+        project_to_like = get_object_or_404(Project, id_project=project_id)
+        if action == 'add':
+            likers = project_to_like.liked_by.all()
+            for liker in likers:
+                if liker_id == liker.id:
+                    return IntegrityError
             project_to_like.liked_by.add(liker_id)
-            project_to_like.save()
-            print('Like added to the Database !!  with  ' + str(liker_id) + ' and ' + str(project_to_like.id_project))
-            return HttpResponse('Like added to the database')
-        except IntegrityError:
-            return HttpResponseForbidden
-        except KeyError:
-            return HttpResponseBadRequest('Requête erronée')
-        except ObjectDoesNotExist:
-            return HttpResponseBadRequest('Requête erronée')
-        except ValueError:
-            return HttpResponseBadRequest('Requête erronée')
-        except ValidationError:
-            return HttpResponseBadRequest('Requête erronée')
+            return "L'utilisateur a liké le projet."
+        elif action == 'delete':
+            likers = project_to_like.liked_by.all()
+            for liker in likers:
+                if liker_id == liker.id:
+                    project_to_like.liked_by.remove(liker_id)
+                    return
+            return "Seul un like existant peut être supprimé."
 
 
 class Question(models.Model):

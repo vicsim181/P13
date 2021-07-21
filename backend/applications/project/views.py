@@ -87,21 +87,24 @@ class LikeViews(generics.CreateAPIView, generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, project_id):
-        user = self.request.user
-        response = models.Project.like_project(project_id, user.id)
+        liker_id = self.request.user.id
+        action = 'add'
+        response = models.Project.like_project(project_id, liker_id, action)
         return Response(response)
 
     def delete(self, request, project_id):
-        user = self.request.user
-        pass
+        liker_id = self.request.user.id
+        action = 'delete'
+        response = models.Project.like_project(project_id, liker_id, action)
+        return Response(response)
 
 
 class ProjectPublication(APIView):
     permission_classes = [IsOwnerOrAdmin]
 
-    def get(self, project_id):
+    def get(self, request, project_id):
         questions_for_the_project = models.Question.objects.filter(project=project_id)
-        print(questions_for_the_project)
+        # print(questions_for_the_project)
         if questions_for_the_project:
             return Response(True)
         else:

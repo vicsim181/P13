@@ -14,7 +14,7 @@ class AddressViewSet(viewsets.ModelViewSet):
     serializer_class = AddressSerializer
 
     def get_permissions(self):
-        if self.action == 'retrieve' or self.action == 'destroy':
+        if self.action == 'retrieve' or self.action == 'destroy' or self.action == 'update':
             permission_classes = [IsOwnerOrAdmin]
         elif self.action == 'create':
             permission_classes = [permissions.IsAuthenticated]
@@ -33,41 +33,11 @@ class UserViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'create':
             permission_classes = [permissions.AllowAny]
-        # elif self.action == 'retrieve':
-        #     permission_classes = [permissions.IsAdminUser]
-        elif self.action == 'destroy':
-            permission_classes = [permissions.IsAuthenticated]
+        elif self.action == 'update':
+            permission_classes = [IsOwnerOrAdmin]
         else:
             permission_classes = [permissions.IsAdminUser]
         return [permission() for permission in permission_classes]
-
-    def get_object(self):
-        return self.request.user
-
-    # def create(self, request):
-    #     queryset = CustomUser.objects.all()
-    #     serializer = UserRegisterSerializer(queryset)
-    #     return Response(serializer.data)
-
-
-# class CreateAddressView(generics.CreateAPIView):
-#     """
-#     """
-#     queryset = Address.objects.all()
-#     serializer_class = AddressSerializer
-#     permission_classes = [permissions.IsAuthenticated]
-
-#     def perform_create(self, serializer):
-#         serializer.save(owner=self.request.user)
-
-
-# class UserRegisterView(generics.CreateAPIView):
-#     """
-#     Class allowing a new user to register.
-#     """
-#     queryset = CustomUser.objects.all()
-#     serializer_class = UserRegisterSerializer
-#     permission_classes = [permissions.AllowAny]
 
 
 class UserDataView(generics.RetrieveAPIView):
@@ -80,12 +50,3 @@ class UserDataView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
-
-
-# class UserListView(generics.ListAPIView):
-#     """
-#     Class allowing the Admin to consult the list of users registered.
-#     """
-#     queryset = CustomUser.objects.all()
-#     serializer_class = UserSerializer
-#     permission_classes = [permissions.IsAdminUser]

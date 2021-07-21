@@ -35,5 +35,6 @@ urlpatterns = [
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),
     path('me/', authentication.views.UserDataView.as_view(), name='user-detail'),
-    path('like/<uuid:project_id>', project.views.LikeViews.as_view(), name='like-view')
+    path('like/<uuid:project_id>', project.views.LikeViews.as_view(), name='like-view'),
+    path('publication/<uuid:project_id>', project.views.ProjectPublication.as_view(), name='publish-view')
 ]
