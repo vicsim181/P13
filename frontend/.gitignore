@@ -91,3 +91,9 @@ sw.*
 
 # Prettier
 .prettierrc
+
+# eslint config file
+.eslintrc
+
+# jsconfig file
+jsconfig.json

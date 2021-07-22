@@ -15,7 +15,9 @@
   "devDependencies": {
     "eslint": "^7.31.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-config-xo": "^0.37.0",
     "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-vue": "^7.14.0",
     "prettier": "^2.3.2"
   }
 }
