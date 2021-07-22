@@ -14,7 +14,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     publication = serializers.DateTimeField(read_only=True)
     end_date = serializers.DateTimeField(read_only=True)
     is_over = serializers.ReadOnlyField()
-    # ready_for_publication = serializers.ReadOnlyField()
+    ready_for_publication = serializers.ReadOnlyField()
     owner = serializers.ReadOnlyField(source='owner.email')
     question = serializers.HyperlinkedRelatedField(view_name='question-detail', read_only=True, many=True)
     comment = serializers.HyperlinkedRelatedField(view_name='comment-detail', read_only=True, many=True)
@@ -23,7 +23,6 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Project
         fields = '__all__'
-        # exclude = ['ready_for_publication']
 
 
 class QuestionSerializer(serializers.ModelSerializer):

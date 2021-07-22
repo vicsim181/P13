@@ -1,7 +1,9 @@
-import uuid, datetime
+import uuid
+import datetime
 from django.db import models
 from django.db.utils import IntegrityError
-from django.shortcuts import get_object_or_404
+from django.http.response import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, get_list_or_404
 from ..authentication.models import CustomUser
 
 
@@ -39,9 +41,11 @@ class Project(models.Model):
         return project_type
 
     def publicate_project(project_id):
-        project_to_publicate = Project.objects.get(id=project_id)
-        project_to_publicate.publication = datetime.datetime.now(),
-        project_to_publicate.end_date = project_to_publicate.publication + datetime.timedelta(days=90)
+        questions = get_list_or_404(Question, project=project_id)
+        project_to_publicate = Project.objects.get(id_project=project_id)
+        project_to_publicate.publication = datetime.datetime.utcnow()
+        project_to_publicate.end_date = datetime.datetime.utcnow() + datetime.timedelta(days=90)
+        project_to_publicate.ready_for_publication = True
         project_to_publicate.save()
         return
 
@@ -51,16 +55,16 @@ class Project(models.Model):
             likers = project_to_like.liked_by.all()
             for liker in likers:
                 if liker_id == liker.id:
-                    return IntegrityError
+                    return
             project_to_like.liked_by.add(liker_id)
-            return "L'utilisateur a liké le projet."
+            return
         elif action == 'delete':
             likers = project_to_like.liked_by.all()
             for liker in likers:
                 if liker_id == liker.id:
                     project_to_like.liked_by.remove(liker_id)
                     return
-            return "Seul un like existant peut être supprimé."
+            return
 
 
 class Question(models.Model):

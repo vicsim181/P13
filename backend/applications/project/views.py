@@ -1,6 +1,5 @@
 import datetime
-from django.db.models.query import InstanceCheckMeta
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import Http404
 from django.db import IntegrityError
 from rest_framework import viewsets, permissions, generics
@@ -83,29 +82,32 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 
 class LikeViews(generics.CreateAPIView, generics.DestroyAPIView):
-    queryset = models.Project.objects.all()
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, project_id):
         liker_id = self.request.user.id
         action = 'add'
+        self.check_object_permissions(request, liker_id)
         response = models.Project.like_project(project_id, liker_id, action)
-        return Response(response)
+        serializer = serializers.ProjectSerializer(response)
+        return Response(serializer.data)
 
     def delete(self, request, project_id):
         liker_id = self.request.user.id
         action = 'delete'
+        self.check_object_permissions(request, liker_id)
         response = models.Project.like_project(project_id, liker_id, action)
-        return Response(response)
+        serializer = serializers.ProjectSerializer(response)
+        return Response(serializer.data)
 
 
 class ProjectPublication(APIView):
+    queryset = models.Project.objects.all()
     permission_classes = [IsOwnerOrAdmin]
 
-    def get(self, request, project_id):
-        questions_for_the_project = models.Question.objects.filter(project=project_id)
-        # print(questions_for_the_project)
-        if questions_for_the_project:
-            return Response(True)
-        else:
-            return Response(False)
+    def post(self, request, project_id):
+        project = get_object_or_404(models.Project, id_project=project_id)
+        self.check_object_permissions(request, project)
+        response = models.Project.publicate_project(project_id)
+        serializer = serializers.ProjectSerializer(response)
+        return Response(serializer.data)
