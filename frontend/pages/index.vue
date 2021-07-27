@@ -1,13 +1,34 @@
 <template>
   <!DOCTYPE html>
-  <div class="container">
-    <div class="item header">
-      <h1 class="title">participons</h1>
-    </div>
-    <div class="item body">
+  <div>
+    <header>
+      <b-navbar fixed="top" toggleable="lg" type="dark" variant="dark">
+        <b-navbar-brand href="#" class="title">participons</b-navbar-brand>
+        <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+        <b-collapse id="nav-collapse" is-nav>
+          <b-navbar-nav class="navbar_elements">
+            <b-nav-item href="#" class="item">CONSULTATIONS</b-nav-item>
+            <b-nav-item href="#" class="item">PETITIONS</b-nav-item>
+            <b-nav-item href="#" class="item">CONSEIL DE QUARTIER</b-nav-item>
+          </b-navbar-nav>
+          <!-- Right aligned nav items -->
+          <b-navbar-nav class="ml-auto">
+            <b-nav-item-dropdown right>
+              <!-- Using 'button-content' slot -->
+              <template #button-content>
+                <em>User</em>
+              </template>
+              <b-dropdown-item href="#">Profile</b-dropdown-item>
+              <b-dropdown-item href="#">Sign Out</b-dropdown-item>
+            </b-nav-item-dropdown>
+          </b-navbar-nav>
+        </b-collapse>
+      </b-navbar>
+    </header>
+    <div>
       <h1>Encore</h1>
     </div>
-    <div class="item footer">
+    <div class="bas">
       <h1>Toujours</h1>
     </div>
   </div>
@@ -18,37 +39,31 @@ export default {};
 </script>
 
 <style>
-.container {
-  display: flex;
-  flex-direction: column;
-  max-width: initial;
-}
-.title {
-  font-family: 'Verdana, sans-serif';
-  text-decoration-line: underline;
-  text-indent: 0.7em;
-}
-@media (min-width: 1200px) {
-  .header {
-    flex-grow: 1;
-    background-color: darkorchid;
-    padding: 0px;
-    margin-bottom: 0.5em;
-    flex-basis: auto;
+@media (min-width: 1400px) {
+  .navbar {
+    background-color: darkgoldenrod;
   }
-  .body {
-    flex-grow: 4;
-    background-color: darkorchid;
-    padding: 0px;
-    margin-bottom: 0.5em;
-    flex-basis: auto;
+  .title {
+    font-family: 'Verdana, sans-serif';
+    font-weight: 700;
+    font-size: 4.5em;
+    text-decoration-line: underline;
   }
-  .footer {
-    flex-grow: 1;
-    background-color: darkorchid;
-    padding: 0px;
-    margin-bottom: 0.5em;
-    flex-basis: auto;
+  .navbar_elements {
+    align-items: center;
+    margin-left: 2rem;
+  }
+  .item {
+    margin-left: 5rem;
+    margin-right: 5rem;
+    text-align: center;
+    font-size: 1.4rem;
+  }
+  .container {
+    margin: 0rem;
+  }
+  .bas {
+    margin-top: 60rem;
   }
 }
 </style>
