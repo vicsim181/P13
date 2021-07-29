@@ -29,14 +29,61 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/bootstrap
-    'bootstrap-vue/nuxt'
+    'bootstrap-vue/nuxt',
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
 
+  // Axios module configuration
+  axios: {
+    baseURL: 'http://127.0.0.1:8000/'
+  },
+
+  // Auth module configuration: https://auth.nuxtjs.org/guide/setup
+  auth: {
+    strategies: {
+      local: {
+        scheme: 'refresh',
+        localStorage: {
+          prefix: 'auth.'
+        },
+        token: {
+          prefix: 'access_token',
+          property: 'access_token',
+          maxAge: 1800,
+          // global: true
+          type: 'Bearer'
+        },
+        refreshToken: {
+          prefix: 'refresh_token',
+          property: 'refresh_token',
+          data: 'refresh_token',
+          maxAge: 60 * 60 * 24 * 30
+        },
+        user: {
+          property: 'user',
+          autoFetch: true
+        },
+        endpoints: {
+          login: { url: '/login', method: 'post' },
+          refresh: { url: '/api/auth/refresh', method: 'post' },
+          user: { url: '/me', method: 'get' },
+          logout: { url: '/logout', method: 'post' }
+        }
+        // autoLogout: false
+      }
+    }
+  },
   // Install the `IconsPlugin` plugin (in addition to `BootstrapVue` plugin)
   bootstrapVue: {
     icons: true
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {}
+  build: {},
+
+  // Nuxt/auth settings for middleware set globally
+  router: {
+    middleware: ['auth']
+  }
 };

@@ -1,10 +1,12 @@
-# from django.shortcuts import render
-# from django.contrib.auth.models import User
-from rest_framework import viewsets, generics, permissions
+import requests
+from django.contrib.auth import get_user_model
+from rest_framework import viewsets, generics, permissions, exceptions
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
 from ..permissions import IsOwnerOrAdmin
 from .models import Address, CustomUser
 from .serializers import AddressSerializer, UserSerializer
-from rest_framework.response import Response
 
 
 class AddressViewSet(viewsets.ModelViewSet):
@@ -50,3 +52,27 @@ class UserDataView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+@api_view(['POST'])
+def login(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    user = get_user_model().objects.filter(email=email).first()
+
+    if user is None:
+        raise exceptions.AuthenticationFailed('Utilisateur non existant')
+    if not user.check_password(password):
+        raise exceptions.AuthenticationFailed('Mot de passe incorrect')
+
+    response = Response()
+    token_endpoint = reverse(viewname='token_obtain_pair', request=request)
+    tokens = requests.post(token_endpoint, data=request.data).json()
+
+    response.data = {
+        'access_token': tokens.get('access'),
+        'refresh_token': tokens.get('refresh'),
+        'email': user.email
+    }
+
+    return response

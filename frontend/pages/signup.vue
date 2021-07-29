@@ -1,13 +1,15 @@
 <template>
   <div>
     <CustomNavbar />
-    <Login />
+    <Signup />
     <CustomFooter />
   </div>
 </template>
 
 <script>
-export default {};
+export default {
+  auth: false
+};
 </script>
 
 <style></style>
