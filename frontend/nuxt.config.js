@@ -66,9 +66,15 @@ export default {
         },
         endpoints: {
           login: { url: '/login', method: 'post' },
-          refresh: { url: '/api/auth/refresh', method: 'post' },
+          refresh: { url: '/token_refresh', method: 'post' },
           user: { url: '/me', method: 'get' },
           logout: { url: '/logout', method: 'post' }
+        },
+        redirect: {
+          login: '/login',
+          logout: '/login',
+          callback: '/login',
+          home: '/'
         }
         // autoLogout: false
       }

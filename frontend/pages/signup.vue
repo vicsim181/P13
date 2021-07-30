@@ -8,7 +8,8 @@
 
 <script>
 export default {
-  auth: false
+  auth: false,
+  middleware: 'guest'
 };
 </script>
 

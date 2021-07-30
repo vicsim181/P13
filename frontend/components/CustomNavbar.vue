@@ -5,27 +5,46 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="navbar_elements row">
-          <b-nav-item href="consultations/" class="col-md-3 item"
+          <b-nav-item href="/consultations" class="col-md-3 item"
             ><b>CONSULTATIONS</b></b-nav-item
           >
-          <b-nav-item href="petitions/" class="col-md-3 item"
+          <b-nav-item href="/petitions" class="col-md-3 item"
             ><b>PETITIONS</b></b-nav-item
           >
-          <b-nav-item href="conseils/" class="col-md-3 item"
+          <b-nav-item href="/conseils" class="col-md-3 item"
             ><b>CONSEIL DE QUARTIER</b></b-nav-item
           >
-          <b-nav-item-dropdown right>
+          <b-nav-item-dropdown right v-if="isAuthenticated">
             <template #button-content>
               <h4 class="col-md-3 item">Mon compte</h4>
             </template>
-            <b-dropdown-item href="profil/">Mon Profil</b-dropdown-item>
-            <b-dropdown-item href="#">Me déconnecter</b-dropdown-item>
+            <b-dropdown-item href="/me">Mon Profil</b-dropdown-item>
+            <b-dropdown-item href="#" @click="logout"
+              >Me déconnecter</b-dropdown-item
+            >
           </b-nav-item-dropdown>
+          <b-nav-item href="/login" class="col-md-3 item" v-else
+            ><b>Se connecter / S'inscrire</b></b-nav-item
+          >
         </b-navbar-nav>
       </b-collapse>
     </b-navbar>
   </header>
 </template>
+<script>
+import { mapGetters } from 'vuex';
+
+export default {
+  computed: {
+    ...mapGetters(['isAuthenticated', 'loggedInUser'])
+  },
+  methods: {
+    async logout() {
+      await this.$auth.logout();
+    }
+  }
+};
+</script>
 
 <style>
 .navbar {

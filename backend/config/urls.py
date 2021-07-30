@@ -30,12 +30,12 @@ router.registry.extend(projectrouter.registry)
 router.registry.extend(authenticationrouter.registry)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('token_obtain/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token_refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('admin', admin.site.urls),
+    path('token_obtain', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token_refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('', include(router.urls)),
-    path('login/', authentication.views.login, name="login"),
-    path('me/', authentication.views.UserDataView.as_view(), name='user-detail'),
+    path('login', authentication.views.login, name="login"),
+    path('me', authentication.views.UserDataView.as_view(), name='current_user'),
     path('like/<uuid:project_id>', project.views.LikeViews.as_view(), name='like-view'),
     path('publication/<uuid:project_id>', project.views.ProjectPublication.as_view(), name='publish-view')
 ]

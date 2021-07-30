@@ -10,7 +10,7 @@ class CustomUser(AbstractUser):
     """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # Si 'id_user', pose problème pour obtenir token avec Simple JWT
     username = models.CharField(default="", max_length=7)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, max_length=80)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)

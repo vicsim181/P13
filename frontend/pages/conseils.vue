@@ -12,6 +12,11 @@
     <CustomFooter />
   </div>
 </template>
+
+<script>
+export default { auth: false };
+</script>
+
 <style>
 body {
   min-width: 100%;

@@ -13,9 +13,7 @@
   </div>
 </template>
 <script>
-export default {
-  auth: false
-};
+export default { auth: false };
 </script>
 <style>
 body {
