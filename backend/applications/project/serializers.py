@@ -40,3 +40,9 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = '__all__'
+
+
+class ProjectTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProjectType
+        fields = '__all__'

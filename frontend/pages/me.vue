@@ -22,6 +22,10 @@
             <strong>Adresse postale:</strong>
             {{ loggedInUser.address[0] }}
           </p>
+          <p>
+            <strong>Membre du staff:</strong>
+            {{ loggedInUser.is_staff }}
+          </p>
           <strong>Projets:</strong>
           <li
             v-for="project in loggedInUser.project"

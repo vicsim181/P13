@@ -7,13 +7,22 @@
         <div class="row h-100 w-auto justify-content-center text-center">
           <h1>Page des pétitions</h1>
         </div>
+        <div class="row h-100 w-auto justify-content-center text-center" v-if="isAuthenticated">
+          <p>Créer une pétition</p>
+        </div>
       </div>
     </body>
     <CustomFooter />
   </div>
 </template>
 <script>
-export default { auth: false };
+import { mapGetters } from 'vuex';
+export default { auth: false,
+computed: {
+    ...mapGetters(['isAuthenticated'])
+  },
+  middleware: 'auth'
+};
 </script>
 <style>
 body {

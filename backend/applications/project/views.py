@@ -1,4 +1,5 @@
 import datetime
+from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404
 from django.db import IntegrityError
@@ -110,4 +111,16 @@ class ProjectPublication(APIView):
         self.check_object_permissions(request, project)
         response = models.Project.publicate_project(project_id)
         serializer = serializers.ProjectSerializer(response)
+        return Response(serializer.data)
+
+
+class ProjectTypeRetrieveView(generics.RetrieveAPIView):
+    queryset = models.ProjectType.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        type_name = request.GET['name']
+        project_type = get_object_or_404(models.ProjectType, name=type_name)
+        self.check_object_permissions(request, project_type)
+        serializer = serializers.ProjectTypeSerializer(project_type)
         return Response(serializer.data)

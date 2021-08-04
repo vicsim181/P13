@@ -74,14 +74,14 @@
 
 <script>
 export default {
-  name: 'Signup',
+  name: "Signup",
   data() {
     return {
       form: {
-        email: '',
-        password: '',
-        first_name: '',
-        last_name: ''
+        email: "",
+        password: "",
+        first_name: "",
+        last_name: ""
       },
       show: true
     };
@@ -92,8 +92,9 @@ export default {
       const data = this.form;
       console.log(data);
       try {
-        const response = await this.$axios.post('users/', data);
+        const response = await this.$axios.post("users/", data);
         console.log(response);
+        this.$router.push("/");
       } catch (error) {
         console.log(error.response.data);
         const keys = Object.keys(error.response.data);
@@ -104,10 +105,10 @@ export default {
     onReset(event) {
       event.preventDefault();
       // Reset our form values
-      this.form.first_name = '';
-      this.form.last_name = '';
-      this.form.email = '';
-      this.form.password = '';
+      this.form.first_name = "";
+      this.form.last_name = "";
+      this.form.email = "";
+      this.form.password = "";
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {

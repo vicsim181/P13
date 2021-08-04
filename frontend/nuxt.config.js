@@ -68,14 +68,8 @@ export default {
           login: { url: '/login', method: 'post' },
           refresh: { url: '/token_refresh', method: 'post' },
           user: { url: '/me', method: 'get' },
-          logout: { url: '/logout', method: 'post' }
+          logout: false // { url: '/logout', method: 'post' }
         },
-        redirect: {
-          login: '/login',
-          logout: '/login',
-          callback: '/login',
-          home: '/'
-        }
         // autoLogout: false
       }
     }

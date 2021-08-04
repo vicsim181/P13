@@ -41,6 +41,8 @@ export default {
   methods: {
     async logout() {
       await this.$auth.logout();
+      this.$router.push('/');
+      this.$nuxt.refresh();
     }
   }
 };
