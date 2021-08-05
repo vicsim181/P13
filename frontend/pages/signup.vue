@@ -1,5 +1,10 @@
 <template>
-  <div>
+  <div v-if="isAuthenticated">
+    <CustomNavbar />
+    <h3>Vous êtes déjà connecté avec un compte.</h3>
+    <CustomFooter />
+  </div>
+  <div v-else>
     <CustomNavbar />
     <Signup />
     <CustomFooter />
@@ -7,10 +12,19 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-  auth: false,
-  middleware: 'guest'
+  computed: {
+    ...mapGetters(["isAuthenticated"])
+  },
+  auth: false
 };
 </script>
 
-<style></style>
+<style>
+h3 {
+  margin-top: 8rem;
+  text-align: center;
+}
+</style>

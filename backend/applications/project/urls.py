@@ -7,6 +7,7 @@ router = DefaultRouter()
 router.register(r'project', views.ProjectViewSet)
 router.register(r'question', views.QuestionViewSet)
 router.register(r'comment', views.CommentViewSet)
+router.register(r'mcq_answer', views.MCQAnswerViewSet)
 
 urlpatterns = [
     path('', include(router.urls))

@@ -60,7 +60,7 @@ body h3 {
     padding-top: 5rem;
   }
 }
-@media (min-width: 1200px) and (max-width: 1434px) {
+@media (min-width: 1200px) and (max-width: 1565px) {
   body {
     padding-top: 8rem;
   }

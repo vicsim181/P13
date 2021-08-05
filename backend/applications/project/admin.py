@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Comment, Project
+from .models import Comment, Project, Question, MCQAnswer
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -22,3 +22,5 @@ class CommentAdmin(admin.ModelAdmin):
 # Register your models here.
 admin.site.register(Project, ProjectAdmin)
 admin.site.register(Comment, admin.ModelAdmin)
+admin.site.register(Question, admin.ModelAdmin)
+admin.site.register(MCQAnswer, admin.ModelAdmin)

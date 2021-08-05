@@ -10,6 +10,9 @@
         <div class="row h-100 w-auto justify-content-center text-center" v-if="isAuthenticated">
           <p v-if="loggedInUser.is_staff"><ConsultationForm /></p>
         </div>
+        <div class="row h-100 w-auto justify-content-center text-center">
+          <p><Consultations /></p>
+        </div>
       </div>
     </body>
     <CustomFooter />

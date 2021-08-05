@@ -90,7 +90,7 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       const data = this.form;
-      console.log(data);
+      console.log("THIS FORM  :", data);
       try {
         const response = await this.$axios.post("users/", data);
         console.log(response);

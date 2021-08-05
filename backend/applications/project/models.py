@@ -79,17 +79,17 @@ class Question(models.Model):
 
 
 class QuestionType(models.Model):
-    id_type = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id_question_type = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50)
 
     def __str__(self) -> str:
         return self.name
 
 
-class MultipleChoiceAnswer(models.Model):
+class MCQAnswer(models.Model):
     id_answer = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     wording = models.CharField(max_length=200)
-    question = models.ManyToManyField(Question)
+    question = models.ForeignKey(Question, related_name='mcqanswer', on_delete=models.CASCADE)
 
 
 class UserAnswer(models.Model):

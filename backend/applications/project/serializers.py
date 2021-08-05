@@ -15,7 +15,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     end_date = serializers.DateTimeField(read_only=True)
     is_over = serializers.ReadOnlyField()
     ready_for_publication = serializers.ReadOnlyField()
-    owner = serializers.ReadOnlyField(source='owner.email')
+    owner = serializers.ReadOnlyField(source='owner.id')
     question = serializers.HyperlinkedRelatedField(view_name='question-detail', read_only=True, many=True)
     comment = serializers.HyperlinkedRelatedField(view_name='comment-detail', read_only=True, many=True)
     liked_by = LikeSerializer(read_only=True, many=True)
@@ -26,7 +26,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.email')
+    owner = serializers.ReadOnlyField(source='owner.id')
 
     class Meta:
         model = models.Question
@@ -45,4 +45,16 @@ class CommentSerializer(serializers.ModelSerializer):
 class ProjectTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.ProjectType
+        fields = '__all__'
+
+
+class QuestionTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.QuestionType
+        fields = '__all__'
+
+
+class MCQAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MCQAnswer
         fields = '__all__'

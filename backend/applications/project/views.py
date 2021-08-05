@@ -56,9 +56,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
-        # project = models.Project.objects.get(name=serializer.project)
-        # project_owner = models.CustomUser.objects.get(id=project.owner.id)
-        # serializer.save(owner=project_owner)
         serializer.save(owner=self.request.user)
         return
 
@@ -124,3 +121,31 @@ class ProjectTypeRetrieveView(generics.RetrieveAPIView):
         self.check_object_permissions(request, project_type)
         serializer = serializers.ProjectTypeSerializer(project_type)
         return Response(serializer.data)
+
+
+class QuestionTypeRetrieveView(generics.RetrieveAPIView):
+    queryset = models.QuestionType.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        type_name = request.GET['name']
+        question_type = get_object_or_404(models.QuestionType, name=type_name)
+        self.check_object_permissions(request, question_type)
+        serializer = serializers.QuestionTypeSerializer(question_type)
+        return Response(serializer.data)
+
+
+class MCQAnswerViewSet(viewsets.ModelViewSet):
+    queryset = models.MCQAnswer.objects.all()
+    serializer_class = serializers.MCQAnswerSerializer
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            permission_classes = [permissions.IsAuthenticated]
+        elif self.action == 'list' or self.action == 'create':
+            permission_classes = [permissions.IsAuthenticated]
+        elif self.action == 'destroy' or self.action == 'update':
+            permission_classes = [IsOwnerOrAdmin]
+        else:
+            permission_classes = [permissions.IsAdminUser]
+        return [permission() for permission in permission_classes]
