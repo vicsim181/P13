@@ -16,9 +16,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProjectSerializer
 
     def get_permissions(self):
-        if self.action == 'retrieve' or self.action == 'destroy' or self.action == 'update':
+        if self.action == 'destroy' or self.action == 'update':
             permission_classes = [IsOwnerOrAdmin]
-        elif self.action == 'list' or self.action == 'create':
+        elif self.action == 'list' or self.action == 'retrieve':
+            permission_classes = [permissions.AllowAny]
+        elif self.action == 'create':
             permission_classes = [permissions.IsAuthenticated]
         else:
             permission_classes = [permissions.IsAdminUser]

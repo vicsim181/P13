@@ -5,13 +5,13 @@
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav class="navbar_elements row">
-          <b-nav-item href="/consultations" class="col-md-3 item"
+          <b-nav-item href="/consultationsliste" class="col-md-3 item"
             ><b>CONSULTATIONS</b></b-nav-item
           >
-          <b-nav-item href="/petitions" class="col-md-3 item"
+          <b-nav-item href="/petitionsliste" class="col-md-3 item"
             ><b>PETITIONS</b></b-nav-item
           >
-          <b-nav-item href="/conseils" class="col-md-3 item"
+          <b-nav-item href="/conseilsliste" class="col-md-3 item"
             ><b>CONSEIL DE QUARTIER</b></b-nav-item
           >
           <b-nav-item-dropdown right v-if="isAuthenticated">

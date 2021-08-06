@@ -11,7 +11,7 @@
           <p v-if="loggedInUser.is_staff"><ConsultationForm /></p>
         </div>
         <div class="row h-100 w-auto justify-content-center text-center">
-          <p><Consultations /></p>
+          <p><ListOfConsultations /></p>
         </div>
       </div>
     </body>
@@ -20,12 +20,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-export default { auth: false,
-computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser'])
+import { mapGetters } from "vuex";
+import ListOfConsultations from '../components/ListOfConsultations.vue';
+
+export default {
+  components: { ListOfConsultations },
+  auth: false,
+  computed: {
+    ...mapGetters(["isAuthenticated", "loggedInUser"])
   },
-  middleware: 'auth'
+  middleware: "auth"
 };
 </script>
 
