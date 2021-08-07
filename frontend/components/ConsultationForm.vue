@@ -63,7 +63,11 @@
         <div modal-footer="Quitter sans sauvegarder">
           <b>Ajouter des questions plus tard </b>
           <!-- Emulate built in modal footer ok and cancel button actions -->
-          <b-button size="lg" variant="primary" @click="handleOkProject_and_quit()">
+          <b-button
+            size="lg"
+            variant="primary"
+            @click="handleOkProject_and_quit()"
+          >
             Valider et quitter
           </b-button>
         </div>
@@ -98,37 +102,65 @@
           ></b-form-input>
         </b-form-group>
 
-        <b-form-group id="question_type" v-model="this.question_type_name" label="Type de question" v-slot="{ ariaDescribedby }" required>
-          <b-form-radio v-model="question_type_name" :aria-describedby="ariaDescribedby" name="some-radios" value="Réponse libre">Question à réponse libre</b-form-radio>
-          <b-form-radio v-model="question_type_name" :aria-describedby="ariaDescribedby" name="some-radios" value="QCM">Question à choix multiples</b-form-radio>
-        </b-form-group>
-          <!-- v-slot="{ ariaDescribedby }" -->
-        <b-form-spinbutton id="answers_number" v-model="question.number_of_choices" min="2" v-if="this.question_type_name === 'QCM'"></b-form-spinbutton>
-        <div v-if="this.question_type_name === 'QCM'">
         <b-form-group
-          label="Choix de réponse"
-          invalid-feedback="Choisissez un type de question"
-          :state="placeState"
-          v-for="number in question.number_of_choices" :key="question.number_of_choices"
+          id="question_type"
+          v-model="this.question_type_name"
+          label="Type de question"
+          v-slot="{ ariaDescribedby }"
+          required
         >
-          <b-form-input
-            id="question_choice-input"
-            v-model="question.choices[number]"
-            :state="descriptionState"
-            required
-          ></b-form-input>
+          <b-form-radio
+            v-model="question_type_name"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="Réponse libre"
+            >Question à réponse libre</b-form-radio
+          >
+          <b-form-radio
+            v-model="question_type_name"
+            :aria-describedby="ariaDescribedby"
+            name="some-radios"
+            value="QCM"
+            >Question à choix multiples</b-form-radio
+          >
         </b-form-group>
+        <!-- v-slot="{ ariaDescribedby }" -->
+        <b-form-spinbutton
+          id="answers_number"
+          v-model="question.number_of_choices"
+          min="2"
+          v-if="this.question_type_name === 'QCM'"
+        ></b-form-spinbutton>
+        <div v-if="this.question_type_name === 'QCM'">
+          <b-form-group
+            label="Choix de réponse"
+            invalid-feedback="Choisissez un type de question"
+            :state="placeState"
+            v-for="number in question.number_of_choices"
+            :key="number"
+          >
+            <b-form-input
+              id="question_choice-input"
+              v-model="question.choices[number]"
+              :state="descriptionState"
+              required
+            ></b-form-input>
+          </b-form-group>
         </div>
       </form>
       <div modal-footer="Valider la question">
         <b>Enregistrer la question et quitter </b>
         <!-- Emulate built in modal footer ok and cancel button actions -->
-        <b-button id="save_quit" size="lg" variant="primary" @click="handleOkQuestion_and_quit()">
+        <b-button
+          id="save_quit"
+          size="lg"
+          variant="primary"
+          @click="handleOkQuestion_and_quit()"
+        >
           Valider et quitter
         </b-button>
       </div>
-<!-- Gérer les boutons pour ajouter une question, et sauvegardée celle en cours, sauvegarder la question et quitter, ou annuler -->
-        
+      <!-- Gérer les boutons pour ajouter une question, et sauvegardée celle en cours, sauvegarder la question et quitter, ou annuler -->
     </b-modal>
   </div>
 </template>
@@ -139,20 +171,20 @@ export default {
     return {
       save_and_quit: false,
       consultation: {
-        name: "",
-        place: "",
-        description: "",
-        project_type: ""
+        name: '',
+        place: '',
+        description: '',
+        project_type: ''
       },
       question: {
-        type: "",
-        wording: "",
+        type: '',
+        wording: '',
         number_of_choices: 2,
         choices: []
       },
-      id_project: "",
-      id_owner: "",
-      question_type_name: "",
+      id_project: '',
+      id_owner: '',
+      question_type_name: '',
       nameState: null,
       placeState: null,
       descriptionState: null
@@ -167,16 +199,16 @@ export default {
       return valid;
     },
     resetModal() {
-      this.consultation.name = "";
-      this.consultation.place = "";
-      this.consultation.description = "";
+      this.consultation.name = '';
+      this.consultation.place = '';
+      this.consultation.description = '';
       this.nameState = null;
       this.placeState = null;
       this.descriptionState = null;
     },
     resetModal_2() {
-      this.question.wording = "";
-      this.question.type = "";
+      this.question.wording = '';
+      this.question.type = '';
       this.nameState = null;
       this.placeState = null;
       this.descriptionState = null;
@@ -200,8 +232,8 @@ export default {
 
       // Hide the modal manually
       this.$nextTick(() => {
-        this.$bvModal.hide("modal-prevent-closing-1");
-        this.$bvModal.show("modal-prevent-closing-2");
+        this.$bvModal.hide('modal-prevent-closing-1');
+        this.$bvModal.show('modal-prevent-closing-2');
       });
     },
     async postProjectData() {
@@ -212,10 +244,10 @@ export default {
         project_type: this.projectType
       };
       try {
-        const response = await this.$axios.post("project/", data);
+        const response = await this.$axios.post('project/', data);
         console.log(response.data);
-        this.id_project = response.data["id_project"];
-        this.id_owner = response.data["owner"];
+        this.id_project = response.data['id_project'];
+        this.id_owner = response.data['owner'];
       } catch (error) {
         console.log(error.response);
         const keys = Object.keys(error.response.data);
@@ -224,9 +256,10 @@ export default {
       }
     },
     async getConsultationType() {
-      const data = { name: "Consultation" };
-      const response = await this.$axios.get("project_type", { params: data });
-      const type_id = response.data["id_project_type"];
+      const data = { name: 'Consultation' };
+      const response = await this.$axios.get('project_type', { params: data });
+      console.log(response);
+      const type_id = response.data['id_project_type'];
       return type_id;
     },
     handleOkProject_and_quit() {
@@ -246,7 +279,7 @@ export default {
 
       // Hide the modal manually
       this.$nextTick(() => {
-        this.$bvModal.hide("modal-prevent-closing-1");
+        this.$bvModal.hide('modal-prevent-closing-1');
       });
     },
     handleOkQuestion_and_new_question(bvModalEvt) {
@@ -268,8 +301,8 @@ export default {
 
       // Hide the modal manually
       this.$nextTick(() => {
-        this.$bvModal.hide("modal-prevent-closing-2");
-        this.$bvModal.show("modal-prevent-closing-2");
+        this.$bvModal.hide('modal-prevent-closing-2');
+        this.$bvModal.show('modal-prevent-closing-2');
       });
     },
     async postQuestionData() {
@@ -279,17 +312,20 @@ export default {
         project: this.id_project
       };
       try {
-        const response_1 = await this.$axios.post("question/", question_data);
+        const response_1 = await this.$axios.post('question/', question_data);
         console.log(response_1.data);
-        const question_id = response_1.data["id_question"];
-        if (this.question_type_name === "QCM") {
+        const question_id = response_1.data['id_question'];
+        if (this.question_type_name === 'QCM') {
           for (const choice in this.question.choices) {
             const answer_data = {
               wording: this.question.choices[choice],
               question: question_id
             };
-            console.log("ANSWER DATA  :", answer_data);
-            const response_2 = await this.$axios.post("mcq_answer/", answer_data);
+            console.log('ANSWER DATA  :', answer_data);
+            const response_2 = await this.$axios.post(
+              'mcq_answer/',
+              answer_data
+            );
             console.log(response_2.data);
           }
         }
@@ -303,8 +339,8 @@ export default {
     async getQuestionType() {
       // console.log("QUESTION.TYPE ESSAI:  ", this.question_type_name);
       const data = { name: this.question_type_name };
-      const response = await this.$axios.get("question_type", { params: data });
-      const question_type_id = response.data["id_question_type"];
+      const response = await this.$axios.get('question_type', { params: data });
+      const question_type_id = response.data['id_question_type'];
       // console.log("QUESTION TYPE ID ESSAI ", question_type_id);
       return question_type_id;
     },
@@ -319,15 +355,15 @@ export default {
       }
       console.log(this.question.wording);
       console.log(this.question.number_of_choices);
-      console.log("QUESTION.CHOICES   :", this.question.choices);
+      console.log('QUESTION.CHOICES   :', this.question.choices);
       this.question.type = await this.getQuestionType();
       this.postQuestionData();
 
       // Hide the modal manually
       this.$nextTick(() => {
-        this.$bvModal.hide("modal-prevent-closing-2");
+        this.$bvModal.hide('modal-prevent-closing-2');
       });
-    },
+    }
   }
 };
 </script>

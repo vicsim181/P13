@@ -1,5 +1,5 @@
 <template>
-  <footer class="py-3 bg-white fixed-bottom">
+  <div class="py-3 bg-white fixed-bottom">
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3">
@@ -14,28 +14,28 @@
         <div class="col-md-3"><p>Copyright@ VictorSIMON 2021</p></div>
       </div>
     </div>
-  </footer>
+  </div>
 </template>
 
 <style>
-footer div div {
+.container-fluid div div {
   align-content: space-around;
   align-items: baseline;
   text-align: center;
 }
-footer div div a {
+.container-fluid div div a {
   font-size: 2rem;
   color: rgb(0, 14, 116);
 }
-footer div div p {
+.container-fluid div div p {
   font-size: 1.5rem;
   color: rgb(0, 14, 116);
 }
 @media (max-width: 1024px) {
-  footer div div p {
+  .container-fluid div div p {
     font-size: 1rem;
   }
-  footer div div a {
+  .container-fluid div div a {
     font-size: 1.5rem;
   }
 }

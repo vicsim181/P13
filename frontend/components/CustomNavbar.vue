@@ -1,35 +1,33 @@
 <template>
-  <header>
-    <b-navbar fixed="top" toggleable="xl" type="dark" variant="dark">
-      <b-navbar-brand href="/" class="title">participons</b-navbar-brand>
-      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-      <b-collapse id="nav-collapse" is-nav>
-        <b-navbar-nav class="navbar_elements row">
-          <b-nav-item href="/consultationsliste" class="col-md-3 item"
-            ><b>CONSULTATIONS</b></b-nav-item
+  <b-navbar fixed="top" toggleable="xl" type="dark" variant="dark">
+    <b-navbar-brand href="/" class="title">participons</b-navbar-brand>
+    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <b-collapse id="nav-collapse" is-nav>
+      <b-navbar-nav class="navbar_elements row">
+        <b-nav-item href="/consultationsliste" class="col-md-3 item"
+          ><b>CONSULTATIONS</b></b-nav-item
+        >
+        <b-nav-item href="/petitionsliste" class="col-md-3 item"
+          ><b>PETITIONS</b></b-nav-item
+        >
+        <b-nav-item href="/conseilsliste" class="col-md-3 item"
+          ><b>CONSEIL DE QUARTIER</b></b-nav-item
+        >
+        <b-nav-item-dropdown right v-if="isAuthenticated">
+          <template #button-content>
+            <h4 class="col-md-3 item">Mon compte</h4>
+          </template>
+          <b-dropdown-item href="/me">Mon Profil</b-dropdown-item>
+          <b-dropdown-item href="#" @click="logout"
+            >Me déconnecter</b-dropdown-item
           >
-          <b-nav-item href="/petitionsliste" class="col-md-3 item"
-            ><b>PETITIONS</b></b-nav-item
-          >
-          <b-nav-item href="/conseilsliste" class="col-md-3 item"
-            ><b>CONSEIL DE QUARTIER</b></b-nav-item
-          >
-          <b-nav-item-dropdown right v-if="isAuthenticated">
-            <template #button-content>
-              <h4 class="col-md-3 item">Mon compte</h4>
-            </template>
-            <b-dropdown-item href="/me">Mon Profil</b-dropdown-item>
-            <b-dropdown-item href="#" @click="logout"
-              >Me déconnecter</b-dropdown-item
-            >
-          </b-nav-item-dropdown>
-          <b-nav-item href="/login" class="col-md-3 item" v-else
-            ><b>Se connecter / S'inscrire</b></b-nav-item
-          >
-        </b-navbar-nav>
-      </b-collapse>
-    </b-navbar>
-  </header>
+        </b-nav-item-dropdown>
+        <b-nav-item href="/login" class="col-md-3 item" v-else
+          ><b>Se connecter / S'inscrire</b></b-nav-item
+        >
+      </b-navbar-nav>
+    </b-collapse>
+  </b-navbar>
 </template>
 <script>
 import { mapGetters } from 'vuex';

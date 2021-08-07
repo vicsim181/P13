@@ -69,7 +69,7 @@ export default {
           refresh: { url: '/token_refresh', method: 'post' },
           user: { url: '/me', method: 'get' },
           logout: false // { url: '/logout', method: 'post' }
-        },
+        }
         // autoLogout: false
       }
     }

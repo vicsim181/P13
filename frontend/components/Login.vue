@@ -46,9 +46,7 @@
       </div>
       <br />
       <div class="row h-100 w-auto justify-content-center text-center">
-        <nuxt-link to="signup/"
-          ><p>Pas encore inscrit ? Cliquez ici.</p></nuxt-link
-        >
+        <nuxt-link to="signup/">Pas encore inscrit ? Cliquez ici.</nuxt-link>
       </div>
     </div>
   </body>
