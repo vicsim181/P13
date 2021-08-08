@@ -3,7 +3,7 @@
     <CustomNavbar />
     <div class="container">
       <div class="row h-100 w-auto justify-content-center">
-        {{ user_id }}
+        {{ projects }}
       </div>
     </div>
     <CustomFooter />
@@ -16,9 +16,12 @@ export default {
     return { user_id: this.$route.params['owner_id'], projects: [] };
   },
   async fetch() {
-    const data = { ready_for_publication: 'false' };
-    const response = await this.$axios.get('project', { params: data });
-    console.log(response);
+    const data = { owner_id: this.user_id };
+    const response = await this.$axios.get('http://127.0.0.1:8000/project', {
+      params: data
+    });
+    this.projects = response.data;
+    console.log(this.projects);
   }
 };
 </script>

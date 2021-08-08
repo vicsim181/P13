@@ -31,7 +31,7 @@
             params: { owner_id: loggedInUser.id }
           }"
         >
-          <strong>Mes projets</strong>
+          <strong>Mes consultations</strong>
         </router-link>
       </div>
     </div>

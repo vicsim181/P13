@@ -1,4 +1,5 @@
 import datetime
+import django_filters.rest_framework
 from django.http.response import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.http import Http404
@@ -14,6 +15,8 @@ from ..permissions import IsOwnerOrAdmin
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectSerializer
+    # filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ['ready_for_publication', 'owner_id', 'project_type']
 
     def get_permissions(self):
         if self.action == 'destroy' or self.action == 'update':
@@ -33,13 +36,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer.save(owner=user, project_type=type)
         return
 
-    def list(self, request):
-        context = {'request': request}
-        queryset = models.Project.objects.filter(ready_for_publication=True)
-        if not queryset:
-            raise Http404("No MyModel matches the given query.")
-        serializer = serializers.ProjectSerializer(queryset, context=context, many=True)
-        return Response(serializer.data)
+    # def list(self, request):
+    #     context = {'request': request}
+    #     queryset = models.Project.objects.filter(ready_for_publication=True)
+    #     if not queryset:
+    #         raise Http404("No MyModel matches the given query.")
+    #     serializer = serializers.ProjectSerializer(queryset, context=context, many=True)
+    #     return Response(serializer.data)
 
 
 class QuestionViewSet(viewsets.ModelViewSet):

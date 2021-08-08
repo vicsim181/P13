@@ -31,13 +31,23 @@
 export default {
   data() {
     return {
-      projects: null
+      projects: null,
+      consultation_type: null
     };
   },
+  methods: {
+    async getConsultationType() {
+      const data = { name: 'Consultation' };
+      const response = await this.$axios.get('project_type', { params: data });
+      const type_id = response.data['id_project_type'];
+      return type_id;
+    }
+  },
   async fetch() {
-    this.projects = await fetch('http://127.0.0.1:8000/project').then(res =>
-      res.json()
-    );
+    this.consultation_type = await this.getConsultationType();
+    this.projects = await fetch(
+      'http://127.0.0.1:8000/project/?ready_for_publication=true'
+    ).then(res => res.json());
   }
 };
 </script>
