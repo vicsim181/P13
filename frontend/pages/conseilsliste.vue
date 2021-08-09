@@ -10,7 +10,7 @@
         class="row h-100 w-auto justify-content-center text-center"
         v-if="isAuthenticated"
       >
-        <p v-if="loggedInUser.is_staff">Créer un conseil de quartier</p>
+        <ConseilForm v-if="loggedInUser.is_staff" />
       </div>
     </div>
     <CustomFooter />

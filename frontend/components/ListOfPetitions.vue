@@ -9,7 +9,7 @@
       >
         <router-link
           :to="{
-            name: 'consultation',
+            name: 'petition',
             params: { id_project: project.id_project }
           }"
         >
@@ -21,7 +21,7 @@
     </div>
     <div v-else>
       <div class="row h-100 w-auto justify-content-center text-center">
-        <h3>Pas de consultation disponible pour le moment</h3>
+        <h3>Pas de pétition disponible pour le moment</h3>
       </div>
     </div>
   </div>
@@ -32,21 +32,21 @@ export default {
   data() {
     return {
       projects: null,
-      consultation_type: null
+      petition_type: null
     };
   },
   methods: {
-    async getConsultationType() {
-      const data = { name: 'Consultation' };
+    async getPetitionType() {
+      const data = { name: 'Pétition' };
       const response = await this.$axios.get('project_type', { params: data });
       const type_id = response.data['id_project_type'];
       return type_id;
     }
   },
   async fetch() {
-    this.consultation_type = await this.getConsultationType();
+    this.petition_type = await this.getPetitionType();
     this.projects = await fetch(
-      `http://127.0.0.1:8000/project/?project_type=${this.consultation_type}&ready_for_publication=true`
+      `http://127.0.0.1:8000/project/?project_type=${this.petition_type}&ready_for_publication=true`
     ).then(res => res.json());
   }
 };

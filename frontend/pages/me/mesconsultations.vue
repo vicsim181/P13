@@ -16,8 +16,13 @@ export default {
     return { user_id: this.$route.params['owner_id'], projects: [] };
   },
   async fetch() {
-    const data = { owner_id: this.user_id };
-    const response = await this.$axios.get('http://127.0.0.1:8000/project', {
+    const response_1 = await this.$axios.get('project_type', {
+      params: { name: 'Consultation' }
+    });
+    const consultation_type = response_1.data['id_project_type'];
+    console.log(consultation_type);
+    const data = { owner_id: this.user_id, project_type: consultation_type };
+    const response = await this.$axios.get('project', {
       params: data
     });
     this.projects = response.data;

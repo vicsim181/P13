@@ -37,7 +37,7 @@ urlpatterns = [
     path('login', authentication.views.login, name="login"),
     path('me', authentication.views.UserDataView.as_view(), name='current_user'),
     path('like/<uuid:project_id>', project.views.LikeViews.as_view(), name='like-view'),
-    path('publication/<uuid:project_id>', project.views.ProjectPublication.as_view(), name='publish-view'),
+    path('publication', project.views.ProjectPublication.as_view(), name='publish-view'),
     path('project_type', project.views.ProjectTypeRetrieveView.as_view(), name='retrieve_project_type'),
     path('question_type', project.views.QuestionTypeRetrieveView.as_view(), name='retrieve_question_type')
 ]

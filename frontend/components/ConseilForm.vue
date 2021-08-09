@@ -1,14 +1,14 @@
 <template>
   <div>
     <b-button v-b-modal.modal-prevent-closing-1 variant="dark">
-      Créer une consultation
+      Créer un conseil de quartier
     </b-button>
 
     <b-modal
       id="modal-prevent-closing-1"
       size="lg"
       ref="modal"
-      title="Création de consultation"
+      title="Création de conseil de quartier"
       ok-title="Valider et ajouter une question"
       ok-variant="success"
       cancel-title="Annuler"
@@ -18,60 +18,76 @@
       button-size="lg"
       @show="resetModal"
       @hidden="resetModal"
-      @ok="handleOkProject_and_create_question"
+      @ok="handleOkConseil_and_create_question"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit_1">
         <b-form-group
-          label="Nom de la consultation"
+          label="Nom du conseil"
           label-for="name-input"
-          invalid-feedback="Vous devez donner un nom à la consultation"
+          invalid-feedback="Vous devez donner un nom au conseil"
           :state="nameState"
         >
           <b-form-input
             id="name-input"
-            v-model="consultation.name"
+            v-model="conseil.name"
             :state="nameState"
             required
           ></b-form-input>
         </b-form-group>
         <b-form-group
-          label="Lieu concerné"
+          label="Quartier concerné"
           label-for="place-input"
-          invalid-feedback="Entrez un lieu concerné par la consultation"
+          invalid-feedback="Entrez un quartier concerné par le conseil"
           :state="placeState"
         >
           <b-form-input
             id="place-input"
-            v-model="consultation.place"
+            v-model="conseil.place"
             :state="placeState"
             required
           ></b-form-input>
         </b-form-group>
         <b-form-group
-          label="Description de la consultation"
+          label="Description du conseil"
           label-for="description-input"
-          invalid-feedback="Décrivez la consultation"
+          invalid-feedback="Décrivez le conseil"
           :state="descriptionState"
         >
           <b-form-textarea
             id="description-input"
-            v-model="consultation.description"
+            v-model="conseil.description"
             :state="descriptionState"
             required
           ></b-form-textarea>
         </b-form-group>
-        <div modal-footer="Quitter sans sauvegarder">
-          <b>Ajouter des questions plus tard </b>
-          <!-- Emulate built in modal footer ok and cancel button actions -->
-          <b-button
-            size="lg"
-            variant="primary"
-            @click="handleOkProject_and_quit()"
-          >
-            Valider et quitter
-          </b-button>
-        </div>
+        <b-form-group
+          label="Choisissez la date du conseil (minimum 24h après la date
+          actuelle)"
+          label-for="datepicker"
+          invalid-feedback="Choisissez une date"
+          :state:end_day
+        >
+          <b-form-datepicker
+            id="datepicker"
+            :state="end_day"
+            required
+            v-model="end_day"
+            class="mb-2"
+            min="min_date"
+            value="end_day"
+          ></b-form-datepicker>
+        </b-form-group>
       </form>
+      <div modal-footer="Quitter sans sauvegarder">
+        <b>Ajouter des questions plus tard </b>
+        <b-button
+          size="lg"
+          variant="primary"
+          @click="handleOkConseil_and_quit()"
+        >
+          Valider et quitter
+        </b-button>
+      </div>
     </b-modal>
 
     <b-modal
@@ -166,12 +182,17 @@
 <script>
 export default {
   data() {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const minDate = new Date(today);
+    minDate.setMonth(minDate.getDate() + 1);
     return {
       save_and_quit: false,
-      consultation: {
+      conseil: {
         name: '',
         place: '',
         description: '',
+        end_date: '',
         project_type: ''
       },
       question: {
@@ -180,6 +201,9 @@ export default {
         number_of_choices: 2,
         choices: []
       },
+      min_date: minDate,
+      end_day: '',
+      end_time: '',
       id_project: '',
       id_owner: '',
       question_type_name: '',
@@ -197,9 +221,11 @@ export default {
       return valid;
     },
     resetModal() {
-      this.consultation.name = '';
-      this.consultation.place = '';
-      this.consultation.description = '';
+      this.conseil.name = '';
+      this.conseil.place = '';
+      this.conseil.description = '';
+      this.end_day = '';
+      this.end_time = '';
       this.nameState = null;
       this.placeState = null;
       this.descriptionState = null;
@@ -211,7 +237,7 @@ export default {
       this.placeState = null;
       this.descriptionState = null;
     },
-    handleOkProject_and_create_question(bvModalEvt) {
+    handleOkConseil_and_create_question(bvModalEvt) {
       // Prevent modal from closing
       bvModalEvt.preventDefault();
       // Trigger submit handler
@@ -222,11 +248,8 @@ export default {
       if (!this.checkFormValidity()) {
         return;
       }
-      // console.log(this.consultation.name);
-      // console.log(this.consultation.place);
-      // console.log(this.consultation.description);
-      this.projectType = await this.getConsultationType();
-      this.postProjectData();
+      this.projectType = await this.getConseilType();
+      this.postConseilData();
 
       // Hide the modal manually
       this.$nextTick(() => {
@@ -234,11 +257,11 @@ export default {
         this.$bvModal.show('modal-prevent-closing-2');
       });
     },
-    async postProjectData() {
+    async postConseilData() {
       const data = {
-        name: this.consultation.name,
-        place: this.consultation.place,
-        description: this.consultation.description,
+        name: this.conseil.name,
+        place: this.conseil.place,
+        description: this.conseil.description,
         project_type: this.projectType
       };
       try {
@@ -253,14 +276,14 @@ export default {
         window.alert(errorMessage);
       }
     },
-    async getConsultationType() {
-      const data = { name: 'Consultation' };
+    async getConseilType() {
+      const data = { name: 'Conseil de quartier' };
       const response = await this.$axios.get('project_type', { params: data });
       console.log(response);
       const type_id = response.data['id_project_type'];
       return type_id;
     },
-    handleOkProject_and_quit() {
+    handleOkConseil_and_quit() {
       // Trigger submit handler
       this.handleSubmit_2();
     },
@@ -269,11 +292,8 @@ export default {
       if (!this.checkFormValidity()) {
         return;
       }
-      // console.log(this.consultation.name);
-      // console.log(this.consultation.place);
-      // console.log(this.consultation.description);
-      this.projectType = await this.getConsultationType();
-      this.postProjectData();
+      this.projectType = await this.getConseilType();
+      this.postConseilData();
 
       // Hide the modal manually
       this.$nextTick(() => {
@@ -335,11 +355,9 @@ export default {
       }
     },
     async getQuestionType() {
-      // console.log("QUESTION.TYPE ESSAI:  ", this.question_type_name);
       const data = { name: this.question_type_name };
       const response = await this.$axios.get('question_type', { params: data });
       const question_type_id = response.data['id_question_type'];
-      // console.log("QUESTION TYPE ID ESSAI ", question_type_id);
       return question_type_id;
     },
     handleOkQuestion_and_quit() {

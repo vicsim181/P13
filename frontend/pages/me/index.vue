@@ -30,8 +30,27 @@
             name: 'me-mesconsultations',
             params: { owner_id: loggedInUser.id }
           }"
+          class="row h-100 w-auto"
         >
           <strong>Mes consultations</strong>
+        </router-link>
+        <router-link
+          :to="{
+            name: 'me-mesconseils',
+            params: { owner_id: loggedInUser.id }
+          }"
+          class="row h-100 w-auto"
+        >
+          <strong>Mes conseils de quartier</strong>
+        </router-link>
+        <router-link
+          :to="{
+            name: 'me-mespetitions',
+            params: { owner_id: loggedInUser.id }
+          }"
+          class="row h-100 w-auto"
+        >
+          <strong>Mes pétitions</strong>
         </router-link>
       </div>
     </div>

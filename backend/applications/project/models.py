@@ -40,13 +40,16 @@ class Project(models.Model):
             project_type = ProjectType.objects.get(name='Pétition')
         return project_type
 
-    def publicate_project(project_id):
-        questions = get_list_or_404(Question, project=project_id)
-        project_to_publicate = Project.objects.get(id_project=project_id)
-        project_to_publicate.publication = datetime.datetime.utcnow()
-        project_to_publicate.end_date = datetime.datetime.utcnow() + datetime.timedelta(days=90)
-        project_to_publicate.ready_for_publication = True
-        project_to_publicate.save()
+    def publicate_project(project, project_type_id):
+        consultation_type = get_object_or_404(ProjectType, name='Consultation')
+        conseil_type = get_object_or_404(ProjectType, name='Conseil de quartier')
+        if consultation_type == project_type_id:
+            questions = get_list_or_404(Question, project=project.id_project)
+        project.publication = datetime.datetime.utcnow()
+        if project_type_id == conseil_type:
+            project.end_date = datetime.datetime.utcnow() + datetime.timedelta(days=90)
+        project.ready_for_publication = True
+        project.save()
         return
 
     def like_project(project_id, liker_id, action):

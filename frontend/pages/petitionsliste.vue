@@ -10,7 +10,10 @@
         class="row h-100 w-auto justify-content-center text-center"
         v-if="isAuthenticated"
       >
-        <p>Créer une pétition</p>
+        <PetitionForm />
+      </div>
+      <div class="row h-100 w-auto justify-content-center text-center">
+        <ListOfPetitions />
       </div>
     </div>
     <CustomFooter />

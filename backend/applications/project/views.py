@@ -15,7 +15,6 @@ from ..permissions import IsOwnerOrAdmin
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectSerializer
-    # filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
     filterset_fields = ['ready_for_publication', 'owner_id', 'project_type']
 
     def get_permissions(self):
@@ -108,10 +107,12 @@ class ProjectPublication(APIView):
     queryset = models.Project.objects.all()
     permission_classes = [IsOwnerOrAdmin]
 
-    def post(self, request, project_id):
+    def put(self, request):
+        project_id = request.data['project_id']
         project = get_object_or_404(models.Project, id_project=project_id)
         self.check_object_permissions(request, project)
-        response = models.Project.publicate_project(project_id)
+        project_type_id = project.project_type
+        response = models.Project.publicate_project(project, project_type_id)
         serializer = serializers.ProjectSerializer(response)
         return Response(serializer.data)
 
