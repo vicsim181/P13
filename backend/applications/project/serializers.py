@@ -11,8 +11,7 @@ class LikeSerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(serializers.ModelSerializer):
-    publication = serializers.DateTimeField(read_only=True)
-    end_date = serializers.DateTimeField(read_only=True)
+    # publication = serializers.DateTimeField(read_only=True)
     is_over = serializers.ReadOnlyField()
     ready_for_publication = serializers.ReadOnlyField()
     owner = serializers.ReadOnlyField(source='owner.id')

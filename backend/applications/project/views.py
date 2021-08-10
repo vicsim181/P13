@@ -30,18 +30,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
+        print('SERIALIZER VALIDATED DATA     :', serializer.validated_data)
         type = serializer.validated_data['project_type']
         type = models.Project.define_project_type(user.id, type)
         serializer.save(owner=user, project_type=type)
         return
-
-    # def list(self, request):
-    #     context = {'request': request}
-    #     queryset = models.Project.objects.filter(ready_for_publication=True)
-    #     if not queryset:
-    #         raise Http404("No MyModel matches the given query.")
-    #     serializer = serializers.ProjectSerializer(queryset, context=context, many=True)
-    #     return Response(serializer.data)
 
 
 class QuestionViewSet(viewsets.ModelViewSet):

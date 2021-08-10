@@ -65,17 +65,29 @@
           actuelle)"
           label-for="datepicker"
           invalid-feedback="Choisissez une date"
-          :state:end_day
+          :state="dateState"
         >
           <b-form-datepicker
             id="datepicker"
-            :state="end_day"
-            required
+            :state="dateState"
             v-model="end_day"
             class="mb-2"
-            min="min_date"
-            value="end_day"
+            :min="min_date"
           ></b-form-datepicker>
+        </b-form-group>
+        <b-form-group
+          label="Choisissez l'heure du conseil"
+          label-for="timepicker"
+          invalid-feedback="Choisissez une heure"
+          :state="timeState"
+        >
+          <b-form-timepicker
+            id="timepicker"
+            :state="timeState"
+            v-model="end_time"
+            class="mb-3"
+            locale="fr"
+          ></b-form-timepicker>
         </b-form-group>
       </form>
       <div modal-footer="Quitter sans sauvegarder">
@@ -90,6 +102,7 @@
       </div>
     </b-modal>
 
+    <!-- SECOND MODAL FOR THE QUESTIONS -->
     <b-modal
       id="modal-prevent-closing-2"
       size="lg"
@@ -108,19 +121,18 @@
           label="Titre de la question"
           label-for="question_wording-input"
           invalid-feedback="Vous devez donner un titre à la question"
-          :state="nameState"
+          :state="questionNameState"
         >
           <b-form-input
             id="question_wording-input"
             v-model="question.wording"
-            :state="nameState"
+            :state="questionNameState"
             required
           ></b-form-input>
         </b-form-group>
 
         <b-form-group
           id="question_type"
-          v-model="this.question_type_name"
           label="Type de question"
           v-slot="{ ariaDescribedby }"
           required
@@ -140,7 +152,6 @@
             >Question à choix multiples</b-form-radio
           >
         </b-form-group>
-        <!-- v-slot="{ ariaDescribedby }" -->
         <b-form-spinbutton
           id="answers_number"
           v-model="question.number_of_choices"
@@ -181,11 +192,31 @@
 
 <script>
 export default {
+  computed: {
+    dateState() {
+      return this.end_day.length > 0 ? true : false;
+    },
+    timeState() {
+      return this.end_time.length > 0 ? true : false;
+    },
+    nameState() {
+      return this.conseil.name.length > 0 ? true : false;
+    },
+    placeState() {
+      return this.conseil.place.length > 0 ? true : false;
+    },
+    descriptionState() {
+      return this.conseil.description.length > 0 ? true : false;
+    },
+    questionNameState() {
+      return this.question.wording.length > 0 ? true : false;
+    }
+  },
   data() {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const minDate = new Date(today);
-    minDate.setMonth(minDate.getDate() + 1);
+    minDate.setDate(minDate.getDate() + 1);
     return {
       save_and_quit: false,
       conseil: {
@@ -204,21 +235,21 @@ export default {
       min_date: minDate,
       end_day: '',
       end_time: '',
+      end_date: '',
       id_project: '',
       id_owner: '',
-      question_type_name: '',
-      nameState: null,
-      placeState: null,
-      descriptionState: null
+      question_type_name: ''
     };
   },
   methods: {
     checkFormValidity() {
       const valid = this.$refs.form.checkValidity();
-      this.nameState = valid;
-      this.placeState = valid;
-      this.descriptionState = valid;
-      return valid;
+      if (this.dateState && this.timeState) {
+        this.end_date = this.end_day + ' ' + this.end_time;
+        return valid;
+      } else {
+        return false;
+      }
     },
     resetModal() {
       this.conseil.name = '';
@@ -226,16 +257,10 @@ export default {
       this.conseil.description = '';
       this.end_day = '';
       this.end_time = '';
-      this.nameState = null;
-      this.placeState = null;
-      this.descriptionState = null;
     },
     resetModal_2() {
       this.question.wording = '';
       this.question.type = '';
-      this.nameState = null;
-      this.placeState = null;
-      this.descriptionState = null;
     },
     handleOkConseil_and_create_question(bvModalEvt) {
       // Prevent modal from closing
@@ -258,11 +283,13 @@ export default {
       });
     },
     async postConseilData() {
+      console.log('DATE TOTAL   :', this.end_date);
       const data = {
         name: this.conseil.name,
         place: this.conseil.place,
         description: this.conseil.description,
-        project_type: this.projectType
+        project_type: this.projectType,
+        end_date: this.end_date
       };
       try {
         const response = await this.$axios.post('project/', data);
