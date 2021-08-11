@@ -74,6 +74,7 @@
       </form>
     </b-modal>
 
+    <!-- SECOND MODAL FOR THE QUESTIONS -->
     <b-modal
       id="modal-prevent-closing-2"
       size="lg"
@@ -124,7 +125,6 @@
             >Question à choix multiples</b-form-radio
           >
         </b-form-group>
-        <!-- v-slot="{ ariaDescribedby }" -->
         <b-form-spinbutton
           id="answers_number"
           v-model="question.number_of_choices"
@@ -134,7 +134,7 @@
         <div v-if="this.question_type_name === 'QCM'">
           <b-form-group
             label="Choix de réponse"
-            invalid-feedback="Choisissez un type de question"
+            invalid-feedback="Entrez une réponse"
             :state="placeState"
             v-for="number in question.number_of_choices"
             :key="number"
@@ -261,7 +261,6 @@ export default {
       return type_id;
     },
     handleOkProject_and_quit() {
-      // Trigger submit handler
       this.handleSubmit_2();
     },
     async handleSubmit_2() {

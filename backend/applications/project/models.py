@@ -20,12 +20,12 @@ class Project(models.Model):
     id_project = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=80)
     place = models.CharField(max_length=100)
-    publication = models.CharField(max_length=20, null=True)
+    publication = models.DateTimeField(null=True)
     description = models.TextField()
     project_type = models.ForeignKey(ProjectType, related_name='project', on_delete=models.CASCADE)
     owner = models.ForeignKey(CustomUser, related_name='project', on_delete=models.CASCADE)
     is_over = models.BooleanField(default=False)
-    end_date = models.CharField(max_length=20, null=True)
+    end_date = models.DateTimeField(null=True)
     ready_for_publication = models.BooleanField(default=False)
     liked_by = models.ManyToManyField(CustomUser, related_name='project_liked')
 
@@ -45,9 +45,9 @@ class Project(models.Model):
         conseil_type = get_object_or_404(ProjectType, name='Conseil de quartier')
         if consultation_type == project_type_id:
             questions = get_list_or_404(Question, project=project.id_project)
-        project.publication = str(datetime.datetime.utcnow())
+        project.publication = str(datetime.datetime.now())
         if project_type_id != conseil_type:
-            project.end_date = str(datetime.datetime.utcnow() + datetime.timedelta(days=90))
+            project.end_date = str(datetime.datetime.now() + datetime.timedelta(days=90))
         project.ready_for_publication = True
         project.save()
         return
