@@ -42,11 +42,11 @@ class Project(models.Model):
 
     def publicate_project(project, project_type_id):
         consultation_type = get_object_or_404(ProjectType, name='Consultation')
-        conseil_type = get_object_or_404(ProjectType, name='Conseil de quartier')
+        petition_type = get_object_or_404(ProjectType, name='Pétition')
         if consultation_type == project_type_id:
             questions = get_list_or_404(Question, project=project.id_project)
         project.publication = str(datetime.datetime.now())
-        if project_type_id != conseil_type:
+        if project_type_id == petition_type:
             project.end_date = str(datetime.datetime.now() + datetime.timedelta(days=90))
         project.ready_for_publication = True
         project.save()

@@ -9,7 +9,7 @@
       >
         <router-link
           :to="{
-            name: 'petition',
+            name: 'project',
             params: { id_project: project.id_project }
           }"
         >

@@ -10,8 +10,9 @@
       ref="modal"
       title="Création de pétition"
       ok-title="Valider et publier la pétition"
-      ok-variant="success"
+      ok-variant="primary"
       cancel-title="Annuler"
+      cancel-variant="danger"
       no-close-on-backdrop
       header-bg-variant="dark"
       header-text-variant="light"
@@ -60,27 +61,43 @@
             required
           ></b-form-textarea>
         </b-form-group>
-      </form>
-      <div modal-footer="Valider la pétition">
-        <b>Enregistrer la pétition et quitter </b>
-        <b-button
-          id="save_quit"
-          size="lg"
-          variant="primary"
-          @click="handleOkPetition_and_quit()"
+        <b-form-group
+          label="Une pétition a une durée de vie de 90 jours à partir de sa publication"
         >
-          Sauvegarder et quitter
-        </b-button>
-      </div>
+        </b-form-group>
+        <b-form-group label="Enregistrer la pétition et quitter">
+          <div modal-footer="Valider la pétition">
+            <b-button
+              id="save_quit"
+              size="lg"
+              variant="primary"
+              @click="handleQuitPetition()"
+            >
+              Publier plus tard
+            </b-button>
+          </div>
+        </b-form-group>
+      </form>
     </b-modal>
   </div>
 </template>
 
 <script>
 export default {
+  computed: {
+    nameState() {
+      return this.petition.name.length > 0 ? true : false;
+    },
+    placeState() {
+      return this.petition.place.length > 0 ? true : false;
+    },
+    descriptionState() {
+      return this.petition.description.length > 0 ? true : false;
+    }
+  },
   data() {
     return {
-      save_and_quit: false,
+      publish: false,
       petition: {
         name: '',
         place: '',
@@ -88,28 +105,33 @@ export default {
         project_type: ''
       },
       id_project: '',
-      id_owner: '',
-      nameState: null,
-      placeState: null,
-      descriptionState: null
+      id_owner: ''
     };
   },
   methods: {
+    // We check the form with the infos of the Petition is valid
     checkFormValidity() {
       const valid = this.$refs.form.checkValidity();
-      this.nameState = valid;
-      this.placeState = valid;
-      this.descriptionState = valid;
       return valid;
     },
+
+    // We reset the data of the first form, the Petition basic infos
     resetModal() {
       this.petition.name = '';
       this.petition.place = '';
       this.petition.description = '';
-      this.nameState = null;
-      this.placeState = null;
-      this.descriptionState = null;
+      this.publish = false;
     },
+
+    // We send a POST request to the API with the data about the Petition
+    async getPetitionType() {
+      const data = { name: 'Pétition' };
+      const response = await this.$axios.get('project_type', { params: data });
+      const type_id = response.data['id_project_type'];
+      return type_id;
+    },
+
+    // We send a POST request to the API with the data about the Conseil
     async postPetitionData() {
       const data = {
         name: this.petition.name,
@@ -129,48 +151,46 @@ export default {
         window.alert(errorMessage);
       }
     },
+
+    // We send a PUT request to the API with the id of the Conseil project to publish it
     publishPetition() {
-      console.log('PROJECT ID    :', this.id_project);
       this.$axios.put('publication', { project_id: this.id_project });
     },
-    async getPetitionType() {
-      const data = { name: 'Pétition' };
-      const response = await this.$axios.get('project_type', { params: data });
-      console.log(response);
-      const type_id = response.data['id_project_type'];
-      return type_id;
+
+    // FUNCTIONS CALLED BY THE BUTTONS
+
+    // We call this function when clicking on one of the 3 buttons (Save and quit, Publish and quit, add a question)
+    handleOkPetition(bvModalEvt) {
+      bvModalEvt.preventDefault();
+      if (!this.checkFormValidity()) {
+        console.log('HANDLE QUIT CHECK FORM INVALID');
+        return;
+      } else {
+        console.log('HANDLE QUIT CHECK FORM VALID');
+        this.publish = true;
+        this.handleSubmit();
+      }
     },
-    handleOkPetition() {
-      // Trigger submit handler
-      this.handleSubmit();
+    // Alternative to handleOkPetition() in the case we want to quit (only saving) instead of publishing
+    handleQuitPetition() {
+      if (!this.checkFormValidity()) {
+        console.log('HANDLE QUIT CHECK FORM INVALID');
+        return;
+      } else {
+        console.log('HANDLE QUIT CHECK FORM VALID');
+        this.handleSubmit();
+      }
     },
+    // Function called by the previous ones, taking care of the different steps
     async handleSubmit() {
-      // Exit when the form isn't valid
       if (!this.checkFormValidity()) {
         return;
       }
       this.projectType = await this.getPetitionType();
       await this.postPetitionData();
-      this.publishPetition();
-
-      // Hide the modal manually
-      this.$nextTick(() => {
-        this.$bvModal.hide('modal-prevent-closing-1');
-      });
-    },
-    handleOkPetition_and_quit() {
-      // Trigger submit handler
-      this.handleSubmit_2();
-    },
-    async handleSubmit_2() {
-      // Exit when the form isn't valid
-      if (!this.checkFormValidity()) {
-        return;
+      if (this.publish == true) {
+        this.publishPetition();
       }
-      this.projectType = await this.getPetitionType();
-      this.postPetitionData();
-
-      // Hide the modal manually
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing-1');
       });

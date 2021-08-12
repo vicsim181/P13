@@ -1,5 +1,4 @@
 <template>
-  <!DOCTYPE html>
   <div>
     <CustomNavbar />
     <div class="container">
@@ -11,6 +10,9 @@
         v-if="isAuthenticated"
       >
         <ConseilForm v-if="loggedInUser.is_staff" />
+      </div>
+      <div class="row h-100 w-auto justify-content-center text-center">
+        <ListOfConseils />
       </div>
     </div>
     <CustomFooter />
