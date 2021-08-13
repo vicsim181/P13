@@ -21,7 +21,7 @@ class Project(models.Model):
     name = models.CharField(max_length=80)
     place = models.CharField(max_length=100)
     publication = models.DateTimeField(null=True)
-    description = models.TextField()
+    description = models.TextField(max_length=1000)
     project_type = models.ForeignKey(ProjectType, related_name='project', on_delete=models.CASCADE)
     owner = models.ForeignKey(CustomUser, related_name='project', on_delete=models.CASCADE)
     is_over = models.BooleanField(default=False)

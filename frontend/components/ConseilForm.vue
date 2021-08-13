@@ -233,22 +233,22 @@
 export default {
   computed: {
     dateState() {
-      return this.end_day.length > 0 ? true : false;
+      return this.end_day.length > 0;
     },
     timeState() {
-      return this.end_time.length > 0 ? true : false;
+      return this.end_time.length > 0;
     },
     nameState() {
-      return this.conseil.name.length > 0 ? true : false;
+      return this.conseil.name.length > 0;
     },
     placeState() {
-      return this.conseil.place.length > 0 ? true : false;
+      return this.conseil.place.length > 0;
     },
     descriptionState() {
-      return this.conseil.description.length > 0 ? true : false;
+      return this.conseil.description.length > 0;
     },
     questionNameState() {
-      return this.question.wording.length > 0 ? true : false;
+      return this.question.wording.length > 0;
     },
     answerState() {
       if (
@@ -268,7 +268,7 @@ export default {
       }
     },
     questionTypeState() {
-      return this.question_type_name.length > 0 ? true : false;
+      return this.question_type_name.length > 0;
     }
   },
   data() {

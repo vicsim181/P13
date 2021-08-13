@@ -340,20 +340,6 @@ export default {
       }
     },
 
-    // Function updating the value of a question.choices field when modified
-    // updateChoice() {
-    // this.computed.answerState();
-    // for (const choice in this.question.choices) {
-    //   console.log(this.question.choices[choice]);
-    //   console.log(this.question.choices[choice].length);
-    //   if (this.question.choices[choice].length === 0) {
-    //     this.question.choices.splice(choice, 1);
-    //   } else if (this.question.choices[choice] === ' ') {
-    //     this.question.choices.splice(choice, 1);
-    //   }
-    // }
-    // },
-
     // We send a POST request to the API with the data about the Consultation
     async getConsultationType() {
       const data = { name: 'Consultation' };

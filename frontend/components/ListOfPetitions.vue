@@ -7,16 +7,15 @@
         v-for="project in projects"
         :key="project.id_project"
       >
-        <router-link
-          :to="{
-            name: 'project',
-            params: { id_project: project.id_project }
-          }"
-        >
-          <p>{{ project.name }}</p>
-        </router-link>
+        <nuxt-link :to="`projet/${project.id_project}`">
+          {{ project.name }}
+        </nuxt-link>
         <p>{{ project.place }}</p>
         <p>{{ project.description }}</p>
+        <p>
+          Cette pétition est supportée par :
+          {{ project.liked_by.length }} personne(s).
+        </p>
       </div>
     </div>
     <div v-else>

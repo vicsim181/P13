@@ -79,17 +79,10 @@ class CommentViewSet(viewsets.ModelViewSet):
 class LikeViews(generics.CreateAPIView, generics.DestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, project_id):
+    def put(self, request):
+        project_id = request.data['project_id']
+        action = request.data['action']
         liker_id = self.request.user.id
-        action = 'add'
-        self.check_object_permissions(request, liker_id)
-        response = models.Project.like_project(project_id, liker_id, action)
-        serializer = serializers.ProjectSerializer(response)
-        return Response(serializer.data)
-
-    def delete(self, request, project_id):
-        liker_id = self.request.user.id
-        action = 'delete'
         self.check_object_permissions(request, liker_id)
         response = models.Project.like_project(project_id, liker_id, action)
         serializer = serializers.ProjectSerializer(response)
