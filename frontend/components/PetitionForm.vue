@@ -9,17 +9,12 @@
       size="lg"
       ref="modal"
       title="Création de pétition"
-      ok-title="Valider et publier la pétition"
-      ok-variant="primary"
-      cancel-title="Annuler"
-      cancel-variant="danger"
       no-close-on-backdrop
       header-bg-variant="dark"
       header-text-variant="light"
       button-size="lg"
       @show="resetModal"
       @hidden="resetModal"
-      @ok="handleOkPetition"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -65,19 +60,18 @@
           label="Une pétition a une durée de vie de 90 jours à partir de sa publication"
         >
         </b-form-group>
-        <b-form-group label="Enregistrer la pétition et quitter">
-          <div modal-footer="Valider la pétition">
-            <b-button
-              id="save_quit"
-              size="lg"
-              variant="primary"
-              @click="handleQuitPetition()"
-            >
-              Publier plus tard
-            </b-button>
-          </div>
-        </b-form-group>
       </form>
+      <template #modal-footer="{cancel}">
+        <b-button size="lg" variant="primary" @click="handleQuitPetition()">
+          Sauvegarder et quitter
+        </b-button>
+        <b-button size="lg" variant="success" @click="handleOkPetition()">
+          Publier la pétition
+        </b-button>
+        <b-button size="lg" variant="danger" @click="cancel()">
+          Annuler
+        </b-button>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -160,8 +154,8 @@ export default {
     // FUNCTIONS CALLED BY THE BUTTONS
 
     // We call this function when clicking on one of the 3 buttons (Save and quit, Publish and quit, add a question)
-    handleOkPetition(bvModalEvt) {
-      bvModalEvt.preventDefault();
+    handleOkPetition() {
+      // bvModalEvt.preventDefault();
       if (!this.checkFormValidity()) {
         console.log('HANDLE QUIT CHECK FORM INVALID');
         return;

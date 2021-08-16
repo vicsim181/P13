@@ -10,8 +10,11 @@
       </div>
       <div v-if="this.project.project_type !== petition_type_id">
         <div class="row" v-if="this.project.question.length != 0">
-          <p>Questions:</p>
-          <p>{{ this.project.question }}</p>
+          <Questions
+            :project="project"
+            :user="loggedInUser.id"
+            :questions="questions"
+          />
         </div>
       </div>
       <div
@@ -35,6 +38,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+
 export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser']),
@@ -46,13 +50,13 @@ export default {
   },
   data() {
     return {
+      transit: '',
       id_project: this.$route.params.id_project,
       project: null,
       questions: [],
       conseil_type_id: '',
       consultation_type_id: '',
       petition_type_id: ''
-      // user_likes_project: this.userLikesProject
     };
   },
   async fetch() {
@@ -71,6 +75,15 @@ export default {
     response = await this.$axios.get('project_type', { params: data });
     type_id = response.data['id_project_type'];
     this.consultation_type_id = type_id;
+    if (this.project.question.length > 0) {
+      console.log('QUESTIONS ', this.project.question);
+      for (let question in this.project.question) {
+        console.log(this.project.question[question]);
+        response = await this.$axios.get(this.project.question[question]);
+        this.questions.push(response.data);
+      }
+      console.log('QUESTIONS ', this.questions);
+    }
   },
   methods: {
     async likePetition() {

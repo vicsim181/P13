@@ -9,17 +9,10 @@
       size="lg"
       ref="modal"
       title="Création de consultation"
-      ok-title="Valider et ajouter une question"
-      ok-variant="primary"
-      cancel-title="Annuler"
-      cancel-variant="danger"
       no-close-on-backdrop
       header-bg-variant="dark"
       header-text-variant="light"
-      button-size="lg"
       @show="resetModal"
-      @hidden="resetModal"
-      @ok="handleOkConsultation"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -76,21 +69,18 @@
             placeholder="Choisissez une date"
           ></b-form-datepicker>
         </b-form-group>
-        <b-form-group
-          label="Sauvegarder et quitter (ajouter des questions plus tard)"
-        >
-          <div modal-footer="Sauvegarder et quitter ">
-            <!-- <b>Sauvegarder et quitter (ajouter des questions plus tard) </b> -->
-            <b-button
-              size="lg"
-              variant="primary"
-              @click="handleQuitConsultation()"
-            >
-              Sauvegarder
-            </b-button>
-          </div>
-        </b-form-group>
       </form>
+      <template #modal-footer="{cancel}">
+        <b-button size="lg" variant="primary" @click="handleQuitConsultation()">
+          Sauvegarder et quitter
+        </b-button>
+        <b-button size="lg" variant="primary" @click="handleOkConsultation()">
+          Valider et ajouter une question
+        </b-button>
+        <b-button size="lg" variant="danger" @click="cancel()">
+          Annuler
+        </b-button>
+      </template>
     </b-modal>
 
     <!-- SECOND MODAL FOR THE QUESTIONS -->
@@ -99,14 +89,9 @@
       size="lg"
       ref="modal"
       title="Création d'une question"
-      ok-title="Valider et ajouter une question"
-      ok-variant="primary"
-      cancel-title="Annuler"
-      cancel-variant="danger"
       no-close-on-backdrop
       @show="resetModal_2"
       @hidden="resetModal_2"
-      @ok="handleOkQuestion"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit_2">
         <b-form-group
@@ -176,31 +161,21 @@
             ></b-form-input>
           </b-form-group>
         </div>
-        <b-form-group label="Enregistrer la question et sauvegarder le projet">
-          <div modal-footer="Valider la question">
-            <b-button
-              id="save_quit"
-              size="lg"
-              variant="primary"
-              @click="handleQuitQuestion()"
-            >
-              Sauvegarder le projet et quitter
-            </b-button>
-          </div>
-        </b-form-group>
-        <b-form-group label="Enregistrer et publier le projet">
-          <div modal-footer="Valider la question">
-            <b-button
-              id="save_quit"
-              size="lg"
-              variant="primary"
-              @click="handlePublishQuestion()"
-            >
-              Publier le projet
-            </b-button>
-          </div>
-        </b-form-group>
       </form>
+      <template #modal-footer="{cancel}">
+        <b-button size="md" variant="primary" @click="handleQuitQuestion()">
+          Sauvegarder et quitter
+        </b-button>
+        <b-button size="md" variant="primary" @click="handleOkQuestion()">
+          Valider et ajouter une question
+        </b-button>
+        <b-button size="md" variant="success" @click="handlePublishQuestion()">
+          Publier la consultation
+        </b-button>
+        <b-button size="md" variant="danger" @click="cancel()">
+          Annuler
+        </b-button>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -420,8 +395,8 @@ export default {
     // FUNCTIONS CALLED BY THE BUTTONS
 
     // We call this function when clicking on one of the 3 buttons (Save and quit, Publish and quit, add a question)
-    handleOkConsultation(bvModalEvt) {
-      bvModalEvt.preventDefault();
+    handleOkConsultation() {
+      // bvModalEvt.preventDefault();
       this.handleSubmit();
     },
     // Alternative to handleOkConsultation() in the case we want to quit (publish or only saving) and not add any question
@@ -458,8 +433,8 @@ export default {
     },
 
     // We call this function when validating a question and adding a new one
-    handleOkQuestion(bvModalEvt) {
-      bvModalEvt.preventDefault();
+    handleOkQuestion() {
+      // bvModalEvt.preventDefault();
       this.handleSubmit_2();
     },
     // Alternative to handleOkQuestion() in case we want to quit (publish or just save) without adding new question

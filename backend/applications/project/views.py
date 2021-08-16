@@ -42,9 +42,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuestionSerializer
 
     def get_permissions(self):
-        if self.action == 'retrieve':
-            permission_classes = [permissions.IsAuthenticated]
-        elif self.action == 'list' or self.action == 'create':
+        if self.action == 'retrieve' or self.action == 'list' or self.action == 'create':
             permission_classes = [permissions.IsAuthenticated]
         elif self.action == 'destroy' or self.action == 'update':
             permission_classes = [IsOwnerOrAdmin]

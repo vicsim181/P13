@@ -9,17 +9,12 @@
       size="lg"
       ref="modal"
       title="Création de conseil de quartier"
-      ok-title="Valider et ajouter une question"
-      ok-variant="primary"
-      cancel-title="Annuler"
-      cancel-variant="danger"
       no-close-on-backdrop
       header-bg-variant="dark"
       header-text-variant="light"
       button-size="lg"
       @show="resetModal"
       @hidden="resetModal"
-      @ok="handleOkConseil"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -62,7 +57,7 @@
           ></b-form-textarea>
         </b-form-group>
         <b-form-group
-          label="Choisissez la date du conseil (minimum le lendemain)"
+          label="Choisissez la date du conseil (minimum 7 jours à partir d'aujourd'hui)"
           label-for="datepicker"
           invalid-feedback="Choisissez une date"
           :state="dateState"
@@ -90,31 +85,21 @@
             locale="fr"
           ></b-form-timepicker>
         </b-form-group>
-        <b-form-group label="Sauvegarder et quitter (sans publier)">
-          <div modal-footer="Sauvegarder et quitter ">
-            <b-button
-              class="float-left"
-              size="lg"
-              variant="primary"
-              @click="handleQuitConseil()"
-            >
-              Sauvegarder
-            </b-button>
-          </div>
-        </b-form-group>
-        <b-form-group label="Publier sans question">
-          <div modal-footer="Publier et quitter">
-            <b-button
-              class="float-left"
-              size="lg"
-              variant="primary"
-              @click="handlePublishConseil()"
-            >
-              Publier
-            </b-button>
-          </div>
-        </b-form-group>
       </form>
+      <template #modal-footer="{cancel}">
+        <b-button size="md" variant="primary" @click="handleQuitConseil()">
+          Sauvegarder et quitter
+        </b-button>
+        <b-button size="md" variant="primary" @click="handleOkConseil()">
+          Valider et ajouter une question
+        </b-button>
+        <b-button size="md" variant="success" @click="handlePublishConseil()">
+          Publier le conseil
+        </b-button>
+        <b-button size="md" variant="danger" @click="cancel()">
+          Annuler
+        </b-button>
+      </template>
     </b-modal>
 
     <!-- SECOND MODAL FOR THE QUESTIONS -->
@@ -123,14 +108,9 @@
       size="lg"
       ref="modal"
       title="Création d'une question"
-      ok-title="Valider et ajouter une question"
-      ok-variant="primary"
-      cancel-title="Annuler"
-      cancel-variant="danger"
       no-close-on-backdrop
       @show="resetModal_2"
       @hidden="resetModal_2"
-      @ok="handleOkQuestion"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit_2">
         <b-form-group
@@ -200,31 +180,21 @@
             ></b-form-input>
           </b-form-group>
         </div>
-        <b-form-group label="Enregistrer la question et sauvegarder le projet">
-          <div modal-footer="Valider la question">
-            <b-button
-              id="save_quit"
-              size="lg"
-              variant="primary"
-              @click="handleQuitQuestion()"
-            >
-              Sauvegarder le projet et quitter
-            </b-button>
-          </div>
-        </b-form-group>
-        <b-form-group label="Enregistrer et publier le projet">
-          <div modal-footer="Valider la question">
-            <b-button
-              id="save_quit"
-              size="lg"
-              variant="primary"
-              @click="handlePublishQuestion()"
-            >
-              Publier le projet
-            </b-button>
-          </div>
-        </b-form-group>
       </form>
+      <template #modal-footer="{cancel}">
+        <b-button size="md" variant="primary" @click="handleQuitQuestion()">
+          Sauvegarder et quitter
+        </b-button>
+        <b-button size="md" variant="primary" @click="handleOkQuestion()">
+          Valider et ajouter une question
+        </b-button>
+        <b-button size="md" variant="success" @click="handlePublishQuestion()">
+          Publier le conseil
+        </b-button>
+        <b-button size="md" variant="danger" @click="cancel()">
+          Annuler
+        </b-button>
+      </template>
     </b-modal>
   </div>
 </template>
@@ -275,7 +245,7 @@ export default {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const minDate = new Date(today);
-    minDate.setDate(minDate.getDate() + 1);
+    minDate.setDate(minDate.getDate() + 7);
     return {
       publish: false,
       quit: false,
@@ -448,8 +418,8 @@ export default {
     // FUNCTIONS CALLED BY THE BUTTONS
 
     // We call this function when clicking on one of the 3 buttons (Save and quit, Publish and quit, add a question)
-    handleOkConseil(bvModalEvt) {
-      bvModalEvt.preventDefault();
+    handleOkConseil() {
+      // bvModalEvt.preventDefault();
       this.handleSubmit();
     },
     // Alternative to handleOkConseil() in the case we want to quit (publish or only saving) and not add any question
@@ -498,8 +468,8 @@ export default {
     },
 
     // We call this function when validating a question and adding a new one
-    handleOkQuestion(bvModalEvt) {
-      bvModalEvt.preventDefault();
+    handleOkQuestion() {
+      // bvModalEvt.preventDefault();
       this.handleSubmit_2();
     },
     // Alternative to handleOkQuestion() in case we want to quit (publish or just save) without adding new question
