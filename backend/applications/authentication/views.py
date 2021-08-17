@@ -51,17 +51,9 @@ class UserDataView(generics.RetrieveAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        # user_profile = self.queryset.get(email=request.user.email)
         user_profile = self.request.user
         serializer = UserSerializer(user_profile, context={'request': request})
         return Response({'user': serializer.data})
-
-    # def get_object(self):
-    #     user_profile = self.queryset.get(email=self.request.user.email)
-    #     # user_profile = self.request.user
-    #     serializer = UserSerializer(user_profile)
-    #     print(serializer.data)
-    #     return Response(serializer.data)
 
 
 @api_view(['POST'])

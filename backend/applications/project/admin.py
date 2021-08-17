@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Comment, Project, Question, MCQAnswer
+from .models import Comment, Project, Question, MCQAnswer, UserAnswer
 from django.contrib.auth.admin import UserAdmin
 
 
@@ -24,3 +24,4 @@ admin.site.register(Project, ProjectAdmin)
 admin.site.register(Comment, admin.ModelAdmin)
 admin.site.register(Question, admin.ModelAdmin)
 admin.site.register(MCQAnswer, admin.ModelAdmin)
+admin.site.register(UserAnswer, admin.ModelAdmin)

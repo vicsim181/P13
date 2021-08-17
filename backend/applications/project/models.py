@@ -98,7 +98,7 @@ class MCQAnswer(models.Model):
 class UserAnswer(models.Model):
     user = models.ForeignKey(CustomUser, related_name='useranswer', on_delete=models.CASCADE)
     question = models.ForeignKey(Question, related_name='useranswer', on_delete=models.CASCADE)
-    answer = models.TextField()
+    answer = models.TextField(max_length=1000)
 
     class Meta:
         unique_together = ['user', 'question']

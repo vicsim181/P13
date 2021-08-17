@@ -30,7 +30,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         user = self.request.user
-        print('SERIALIZER VALIDATED DATA     :', serializer.validated_data)
         type = serializer.validated_data['project_type']
         type = models.Project.define_project_type(user.id, type)
         serializer.save(owner=user, project_type=type)
@@ -130,10 +129,23 @@ class MCQAnswerViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.MCQAnswerSerializer
 
     def get_permissions(self):
-        if self.action == 'retrieve':
+        if self.action == 'retrieve' or self.action == 'list' or self.action == 'create':
             permission_classes = [permissions.IsAuthenticated]
-        elif self.action == 'list' or self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated]
+        elif self.action == 'destroy' or self.action == 'update':
+            permission_classes = [IsOwnerOrAdmin]
+        else:
+            permission_classes = [permissions.IsAdminUser]
+        return [permission() for permission in permission_classes]
+
+
+class UserAnswerViewSet(viewsets.ModelViewSet):
+    queryset = models.UserAnswer.objects.all()
+    serializer_class = serializers.UserAnswerSerializer
+    filterset_fields = ['question', 'user']
+
+    def get_permissions(self):
+        if self.action == 'retrieve' or self.action == 'list' or self.action == 'create':
+            permission_classes = [IsOwnerOrAdmin]
         elif self.action == 'destroy' or self.action == 'update':
             permission_classes = [IsOwnerOrAdmin]
         else:

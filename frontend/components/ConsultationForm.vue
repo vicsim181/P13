@@ -264,21 +264,16 @@ export default {
     // We check the form with the question infos is valid
     checkForm2Validity() {
       const valid = this.$refs.form.checkValidity();
-      console.log('CHECK VALIDITY FORM 2  valid:', valid);
       if (this.questionNameState && this.questionTypeState) {
-        console.log('questionNameState && questionTypeState OK');
         if (this.question_type_name === 'QCM') {
-          console.log('ASNWERSTATE  :', this.answerState);
           if (this.answerState) {
             return valid;
           } else {
             return false;
           }
         }
-        console.log('QUESTION NOT QCM return valid');
         return valid;
       } else {
-        console.log('questionNameState && questionTypeState NOT OK');
         return false;
       }
     },
@@ -402,13 +397,9 @@ export default {
     // Alternative to handleOkConsultation() in the case we want to quit (publish or only saving) and not add any question
     handleQuitConsultation() {
       if (!this.checkFormValidity()) {
-        console.log('HANDLE QUIT CHECK FORM INVALID');
-        console.log('QUIT    :', this.quit);
         return;
       } else {
-        console.log('HANDLE QUIT CHECK FORM VALID');
         this.quit = true;
-        console.log('QUIT    :', this.quit);
         this.handleSubmit();
       }
     },
@@ -422,11 +413,7 @@ export default {
       await this.postConsultationData();
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing-1');
-        console.log('this PUBLISH  ', this.publish);
-        console.log('this QUIT  ', this.quit);
-        console.log('CLOSING MODAL 1  ');
         if (this.quit == false) {
-          console.log('OPENING MODAL 2  ');
           this.$bvModal.show('modal-prevent-closing-2');
         }
       });
@@ -440,22 +427,16 @@ export default {
     // Alternative to handleOkQuestion() in case we want to quit (publish or just save) without adding new question
     handleQuitQuestion() {
       if (!this.checkForm2Validity()) {
-        console.log('HANDLE QUIT CHECK FORM INVALID');
-        console.log('QUIT    :', this.quit);
         return;
       } else {
-        console.log('HANDLE QUIT CHECK FORM VALID');
         this.quit = true;
         this.handleSubmit_2();
       }
     },
     handlePublishQuestion() {
       if (!this.checkForm2Validity()) {
-        console.log('HANDLE PUBLISH CHECK FORM INVALID');
-        console.log('PUBLISH    :', this.publish);
         return;
       } else {
-        console.log('HANDLE PUBLISH CHECK FORM VALID');
         this.publish = true;
         this.handleSubmit_2();
       }
@@ -467,16 +448,12 @@ export default {
       }
       this.question.type = await this.getQuestionType();
       this.postQuestionData();
-      console.log('this PUBLISH  ', this.publish);
-      console.log('this QUIT  ', this.quit);
       if (this.publish == true) {
         this.publishConsultation();
       }
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing-2');
-        console.log('MODAL 2 CLOSED');
         if (this.quit == false && this.publish == false) {
-          console.log('SHOW MODAL 2');
           this.$bvModal.show('modal-prevent-closing-2');
         }
       });

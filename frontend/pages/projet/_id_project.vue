@@ -10,11 +10,17 @@
       </div>
       <div v-if="this.project.project_type !== petition_type_id">
         <div class="row" v-if="this.project.question.length != 0">
-          <Questions
-            :project="project"
-            :user="loggedInUser.id"
-            :questions="questions"
-          />
+          <div v-if="userHasParticipated">
+            <p>Vous avez déjà participé à ce sondage.</p>
+          </div>
+          <div v-else>
+            <Questions
+              :project="project"
+              :user="loggedInUser.id"
+              :questions="questions"
+              @hidden="refresh()"
+            />
+          </div>
         </div>
       </div>
       <div
@@ -46,6 +52,16 @@ export default {
       return this.project.liked_by.some(
         liker => liker.id === this.loggedInUser.id
       );
+    },
+    userHasParticipated() {
+      console.log('QUESTIONS ANSWERED  ', this.questions_answered);
+      for (const element in this.questions_answered) {
+        console.log('QUESTION  ', this.questions_answered[element]);
+        if (this.questions_answered[element].length === 0) {
+          return false;
+        }
+      }
+      return true;
     }
   },
   data() {
@@ -56,7 +72,8 @@ export default {
       questions: [],
       conseil_type_id: '',
       consultation_type_id: '',
-      petition_type_id: ''
+      petition_type_id: '',
+      questions_answered: []
     };
   },
   async fetch() {
@@ -76,14 +93,19 @@ export default {
     type_id = response.data['id_project_type'];
     this.consultation_type_id = type_id;
     if (this.project.question.length > 0) {
-      console.log('QUESTIONS ', this.project.question);
       for (let question in this.project.question) {
         console.log(this.project.question[question]);
         response = await this.$axios.get(this.project.question[question]);
         this.questions.push(response.data);
       }
-      console.log('QUESTIONS ', this.questions);
     }
+    for (const question in this.questions) {
+      response = await fetch(
+        `http://127.0.0.1:8000/user_answer/?question=${this.questions[question].id_question}&user=${this.loggedInUser.id}`
+      ).then(res => res.json());
+      this.questions_answered.push(response);
+    }
+    console.log('QUESTIONS ANSWERED  ', this.questions_answered);
   },
   methods: {
     async likePetition() {
@@ -110,6 +132,11 @@ export default {
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
       }
+      this.$nuxt.refresh();
+    },
+
+    // Function refreshing the element
+    refresh() {
       this.$nuxt.refresh();
     }
   }

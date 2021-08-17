@@ -25,6 +25,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class QuestionSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.id')
+    mcqanswer = serializers.HyperlinkedRelatedField(view_name='mcqanswer-detail', read_only=True, many=True)
 
     class Meta:
         model = models.Question
@@ -55,4 +56,10 @@ class QuestionTypeSerializer(serializers.ModelSerializer):
 class MCQAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MCQAnswer
+        fields = '__all__'
+
+
+class UserAnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UserAnswer
         fields = '__all__'
