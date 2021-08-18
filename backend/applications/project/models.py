@@ -96,6 +96,7 @@ class MCQAnswer(models.Model):
 
 
 class UserAnswer(models.Model):
+    id_user_answer = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(CustomUser, related_name='useranswer', on_delete=models.CASCADE)
     question = models.ForeignKey(Question, related_name='useranswer', on_delete=models.CASCADE)
     answer = models.TextField(max_length=1000)
@@ -107,6 +108,9 @@ class UserAnswer(models.Model):
 class Comment(models.Model):
     id_comment = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     owner = models.ForeignKey(CustomUser, related_name='comment', on_delete=models.CASCADE)
-    text = models.TextField(max_length=300)
+    text = models.TextField(max_length=500)
     project = models.ForeignKey(Project, related_name='comment', on_delete=models.CASCADE)
     publication = models.DateTimeField()
+
+    class Meta:
+        unique_together = ['owner', 'project']

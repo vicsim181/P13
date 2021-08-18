@@ -8,33 +8,55 @@
       <div class="row">
         <p>{{ this.project.place }}</p>
       </div>
-      <div v-if="this.project.project_type !== petition_type_id">
-        <div class="row" v-if="this.project.question.length != 0">
-          <div v-if="userHasParticipated">
-            <p>Vous avez déjà participé à ce sondage.</p>
+      <div v-if="loaded">
+        <div v-if="this.project.project_type !== petition_type_id">
+          <div class="row" v-if="this.project.question.length != 0">
+            <div v-if="userHasParticipated">
+              <p>Vous avez déjà participé à ce sondage.</p>
+            </div>
+            <div v-else>
+              <Questions
+                :project="project"
+                :user="loggedInUser.id"
+                :questions="questions"
+                v-on:hasparticipated="refresh()"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="column"
+          v-bind="this.project"
+          v-if="this.project.project_type === petition_type_id"
+        >
+          <div v-if="userLikesProject">
+            <b-button variant="primary" @click="cancelLikePetition()"
+              >Ne plus supporter la pétition</b-button
+            >
           </div>
           <div v-else>
-            <Questions
-              :project="project"
-              :user="loggedInUser.id"
-              :questions="questions"
-              @hidden="refresh()"
-            />
+            <b-button variant="primary" @click="likePetition()"
+              >Soutenir la pétition</b-button
+            >
           </div>
-        </div>
-      </div>
-      <div
-        class="row"
-        v-bind="this.project"
-        v-if="this.project.project_type === petition_type_id"
-      >
-        <div v-if="userLikesProject">
-          <b-button @click="cancelLikePetition()"
-            >Ne plus supporter la pétition</b-button
-          >
-        </div>
-        <div v-else>
-          <b-button @click="likePetition()">Soutenir la pétition</b-button>
+          <div v-if="userHasCommented">
+            <p>Commentaire déjà posté</p>
+          </div>
+          <div v-else>
+            <b-form-group label="Commenter la pétition" :state="commentState">
+              <b-form-textarea
+                id="user_comment"
+                v-model="user_comment_input"
+                :state="commentState"
+              ></b-form-textarea>
+              <b-button
+                size="md"
+                variant="primary"
+                @click="handleSubmitComment()"
+                >Poster mon commentaire</b-button
+              >
+            </b-form-group>
+          </div>
         </div>
       </div>
     </div>
@@ -54,26 +76,40 @@ export default {
       );
     },
     userHasParticipated() {
-      console.log('QUESTIONS ANSWERED  ', this.questions_answered);
-      for (const element in this.questions_answered) {
-        console.log('QUESTION  ', this.questions_answered[element]);
-        if (this.questions_answered[element].length === 0) {
-          return false;
-        }
+      if (this.questions_answered.length > 0) {
+        return true;
+      } else {
+        return false;
       }
-      return true;
+    },
+    userHasCommented() {
+      if (this.comment_saved) {
+        return true;
+      }
+      return false;
+    },
+    commentState() {
+      if (this.user_comment_input.length === 0) {
+        return false;
+      } else if (this.user_comment_input === ' ') {
+        return false;
+      } else {
+        return true;
+      }
     }
   },
   data() {
     return {
-      transit: '',
       id_project: this.$route.params.id_project,
       project: null,
       questions: [],
       conseil_type_id: '',
       consultation_type_id: '',
       petition_type_id: '',
-      questions_answered: []
+      questions_answered: [],
+      loaded: false,
+      comment_saved: null,
+      user_comment_input: ''
     };
   },
   async fetch() {
@@ -94,7 +130,6 @@ export default {
     this.consultation_type_id = type_id;
     if (this.project.question.length > 0) {
       for (let question in this.project.question) {
-        console.log(this.project.question[question]);
         response = await this.$axios.get(this.project.question[question]);
         this.questions.push(response.data);
       }
@@ -103,11 +138,20 @@ export default {
       response = await fetch(
         `http://127.0.0.1:8000/user_answer/?question=${this.questions[question].id_question}&user=${this.loggedInUser.id}`
       ).then(res => res.json());
-      this.questions_answered.push(response);
+      if (typeof response[0] !== 'undefined') {
+        this.questions_answered.push(response[0]);
+      }
     }
-    console.log('QUESTIONS ANSWERED  ', this.questions_answered);
+    data = { owner: this.loggedInUser.id, project: this.id_project };
+    response = await this.$axios.get('comment', { params: data });
+    if (typeof response.data[0] !== 'undefined') {
+      this.comment_saved = response.data[0]['id_comment'];
+    }
+    this.loaded = true;
   },
+
   methods: {
+    // Function used to add a like from the user to this petition
     async likePetition() {
       const data = { project_id: this.id_project, action: 'add' };
       try {
@@ -121,6 +165,8 @@ export default {
       }
       this.$nuxt.refresh();
     },
+
+    // Function used to delete a like from the user to this petition
     async cancelLikePetition() {
       const data = { project_id: this.id_project, action: 'delete' };
       try {
@@ -138,7 +184,37 @@ export default {
     // Function refreshing the element
     refresh() {
       this.$nuxt.refresh();
+    },
+
+    // Function sending a post request to the API to create a comment
+    async postComment() {
+      const data = { project: this.id_project, text: this.user_comment_input };
+      try {
+        const response = await this.$axios.post('comment/', data);
+        console.log(response.data);
+      } catch (error) {
+        console.log(error.data);
+        const keys = Object.keys(error.response.data);
+        const errorMessage = error.response.data[keys];
+        window.alert(errorMessage);
+      }
+    },
+
+    async handleSubmitComment() {
+      console.log('COMMENT STATE ', this.commentState);
+      if (!this.commentState) {
+        return;
+      } else {
+        await this.postComment();
+      }
+      this.$nuxt.refresh();
     }
+
+    // // Function setting a delay of 2 seconds
+    // async refresh2secondes() {
+    //   const delay = ms => new Promise(res => setTimeout(res, ms));
+    //   await delay(2000);
+    // }
   }
 };
 </script>

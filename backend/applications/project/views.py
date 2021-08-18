@@ -57,6 +57,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = models.Comment.objects.all()
     serializer_class = serializers.CommentSerializer
+    filterset_fields = ['owner', 'project']
 
     def get_permissions(self):
         if self.action == 'retrieve' or self.action == 'destroy' or self.action == 'update':

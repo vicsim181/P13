@@ -82,6 +82,7 @@ export default {
 
   // Function getting the ids of the two different kinds of question
   async fetch() {
+    // console.log('QUESTIONS  ', this.questions);
     let data = { name: 'QCM' };
     let response = await this.$axios.get('question_type', { params: data });
     let type_id = response.data['id_question_type'];
@@ -125,7 +126,7 @@ export default {
           question: id,
           answer: answer
         };
-        console.log('DATA ANSWER  :', data);
+        // console.log('DATA ANSWER  :', data);
         try {
           const response = await this.$axios.post('user_answer/', data);
           console.log(response.data);
@@ -143,10 +144,10 @@ export default {
       if (!this.checkFormValidity()) {
         return;
       } else {
-        console.log('USER ANSWERS  ', this.user_answers);
         await this.postUserAnswer();
         this.$nextTick(() => {
           this.$bvModal.hide('modal-questions');
+          this.$emit('hasparticipated');
         });
       }
     }
