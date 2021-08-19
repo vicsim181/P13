@@ -8,6 +8,9 @@
       <div class="row">
         <p>{{ this.project.place }}</p>
       </div>
+      <div class="row">
+        <p>{{ this.project.description }}</p>
+      </div>
       <div v-if="loaded">
         <div v-if="this.project.project_type !== petition_type_id">
           <div class="row" v-if="this.project.question.length != 0">
@@ -56,6 +59,17 @@
                 >Poster mon commentaire</b-button
               >
             </b-form-group>
+          </div>
+          <div class="column">
+            <h3>Commentaires</h3>
+            <div
+              v-for="comment in this.comments_published"
+              :key="comment.id_comment"
+            >
+              {{ comment.owner }}
+              {{ comment.text }}
+              {{ comment.publication }}
+            </div>
           </div>
         </div>
       </div>
@@ -109,7 +123,8 @@ export default {
       questions_answered: [],
       loaded: false,
       comment_saved: null,
-      user_comment_input: ''
+      user_comment_input: '',
+      comments_published: []
     };
   },
   async fetch() {
@@ -146,6 +161,14 @@ export default {
     response = await this.$axios.get('comment', { params: data });
     if (typeof response.data[0] !== 'undefined') {
       this.comment_saved = response.data[0]['id_comment'];
+    }
+    this.comments_published = [];
+    data = { project: this.id_project };
+    response = await this.$axios.get('comment', { params: data });
+    if (typeof response.data[0] !== 'undefined') {
+      for (const element in response.data) {
+        this.comments_published.push(response.data[element]);
+      }
     }
     this.loaded = true;
   },

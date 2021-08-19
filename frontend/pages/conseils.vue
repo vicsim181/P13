@@ -2,17 +2,20 @@
   <div>
     <CustomNavbar />
     <div class="container">
-      <div class="row h-100 w-auto justify-content-center text-center">
+      <div class="h-100 w-auto justify-content-center text-center">
         <h1>Page des conseils</h1>
       </div>
-      <div
-        class="row h-100 w-auto justify-content-center text-center"
-        v-if="isAuthenticated"
-      >
+      <div class="h-100 w-auto justify-content-center" v-if="isAuthenticated">
         <ConseilForm v-if="loggedInUser.is_staff" />
       </div>
-      <div class="row h-100 w-auto justify-content-center text-center">
-        <ListOfConseils />
+      <br />
+      <div>
+        <ListOfProjects
+          project_type="Conseil de quartier"
+          my_projects="false"
+          published="true"
+          participated="false"
+        />
       </div>
     </div>
     <CustomFooter />

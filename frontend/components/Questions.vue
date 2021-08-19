@@ -126,7 +126,6 @@ export default {
           question: id,
           answer: answer
         };
-        // console.log('DATA ANSWER  :', data);
         try {
           const response = await this.$axios.post('user_answer/', data);
           console.log(response.data);

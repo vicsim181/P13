@@ -3,17 +3,19 @@
   <div class="main">
     <CustomNavbar />
     <div class="container">
-      <div class="row h-100 w-auto justify-content-center text-center">
+      <div class="h-100 w-auto justify-content-center text-center">
         <h1>Page des pétitions</h1>
       </div>
-      <div
-        class="row h-100 w-auto justify-content-center text-center"
-        v-if="isAuthenticated"
-      >
+      <div class="h-100 w-auto justify-content-center" v-if="isAuthenticated">
         <PetitionForm />
       </div>
-      <div class="row h-100 w-auto justify-content-center text-center">
-        <ListOfPetitions />
+      <div>
+        <ListOfProjects
+          project_type="Pétition"
+          my_projects="false"
+          published="true"
+          participated="false"
+        />
       </div>
     </div>
     <CustomFooter />

@@ -329,11 +329,9 @@ export default {
       };
       try {
         const response = await this.$axios.post('project/', data);
-        console.log(response.data);
         this.id_project = response.data['id_project'];
         this.id_owner = response.data['owner'];
       } catch (error) {
-        console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -354,7 +352,6 @@ export default {
       };
       try {
         const response_1 = await this.$axios.post('question/', question_data);
-        console.log(response_1.data);
         const question_id = response_1.data['id_question'];
         if (this.question_type_name === 'QCM') {
           for (const choice in this.question.choices) {
@@ -362,16 +359,11 @@ export default {
               wording: this.question.choices[choice],
               question: question_id
             };
-            const response_2 = await this.$axios.post(
-              'mcq_answer/',
-              answer_data
-            );
-            console.log(response_2.data);
+            await this.$axios.post('mcq_answer/', answer_data);
           }
         }
         this.question.choices = [];
       } catch (error) {
-        console.log(error.response);
         // const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data;
         window.alert(errorMessage);
@@ -391,7 +383,6 @@ export default {
 
     // We call this function when clicking on one of the 3 buttons (Save and quit, Publish and quit, add a question)
     handleOkConsultation() {
-      // bvModalEvt.preventDefault();
       this.handleSubmit();
     },
     // Alternative to handleOkConsultation() in the case we want to quit (publish or only saving) and not add any question
@@ -421,7 +412,6 @@ export default {
 
     // We call this function when validating a question and adding a new one
     handleOkQuestion() {
-      // bvModalEvt.preventDefault();
       this.handleSubmit_2();
     },
     // Alternative to handleOkQuestion() in case we want to quit (publish or just save) without adding new question

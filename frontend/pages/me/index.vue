@@ -27,28 +27,33 @@
         </p>
         <router-link
           :to="{
-            name: 'me-mesconsultations',
-            params: { owner_id: loggedInUser.id }
+            name: 'me-mesconsultations'
           }"
-          class="row h-100 w-auto"
+          class="row h-100 w-auto ml-auto"
         >
           <strong>Mes consultations</strong>
         </router-link>
         <router-link
           :to="{
             name: 'me-mesconseils',
-            params: { owner_id: loggedInUser.id }
+            params: {
+              owner_id: loggedInUser.id,
+              is_staff: loggedInUser.is_staff
+            }
           }"
-          class="row h-100 w-auto"
+          class="row h-100 w-auto ml-auto"
         >
           <strong>Mes conseils de quartier</strong>
         </router-link>
         <router-link
           :to="{
             name: 'me-mespetitions',
-            params: { owner_id: loggedInUser.id }
+            params: {
+              owner_id: loggedInUser.id,
+              is_staff: loggedInUser.is_staff
+            }
           }"
-          class="row h-100 w-auto"
+          class="row h-100 w-auto ml-auto"
         >
           <strong>Mes pétitions</strong>
         </router-link>
