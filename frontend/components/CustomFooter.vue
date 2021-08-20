@@ -36,7 +36,7 @@
     font-size: 1rem;
   }
   .container-fluid div div a {
-    font-size: 1.5rem;
+    font-size: 1.15rem;
   }
 }
 </style>

@@ -1,6 +1,8 @@
 <template>
   <b-navbar fixed="top" toggleable="xl" type="dark" variant="dark">
-    <b-navbar-brand href="/" class="title">participons</b-navbar-brand>
+    <b-navbar-brand href="/"
+      ><img class="responsive_img" src="../static/logo.png"
+    /></b-navbar-brand>
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
     <b-collapse id="nav-collapse" is-nav>
       <b-navbar-nav class="navbar_elements row">
@@ -13,9 +15,21 @@
         <b-nav-item href="/conseils" class="col-md-3 item"
           ><b>CONSEIL DE QUARTIER</b></b-nav-item
         >
-        <b-nav-item-dropdown right v-if="isAuthenticated">
+        <b-nav-item-dropdown right v-if="isAuthenticated" no-caret>
           <template #button-content>
-            <h4 class="col-md-3 item">Mon compte</h4>
+            <h4 class="col-md-1 item compte">Mon compte</h4>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="whitesmoke"
+              class="bi bi-caret-down-square-fill"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm4 4a.5.5 0 0 0-.374.832l4 4.5a.5.5 0 0 0 .748 0l4-4.5A.5.5 0 0 0 12 6H4z"
+              />
+            </svg>
           </template>
           <b-dropdown-item href="/me">Mon Profil</b-dropdown-item>
           <b-dropdown-item href="#" @click="logout"
@@ -64,18 +78,7 @@ export default {
   flex-direction: column;
   align-items: baseline;
   text-align: center;
-  align-content: space-around;
-}
-.title {
-  font-family: 'Verdana, sans-serif';
-  font-weight: 700;
-  font-size: 4.5rem;
-  text-decoration-line: underline;
-}
-@media (max-width: 479px) {
-  .title {
-    font-size: 3rem;
-  }
+  align-content: space-between;
 }
 .navbar_elements {
   align-items: center;
@@ -83,8 +86,29 @@ export default {
   align-self: center;
 }
 .item {
-  font-size: 1.8rem;
+  font-size: 2rem;
   text-shadow: 1px 1px 1px rgb(255, 255, 255), 0 0 10rem rgb(255, 255, 255),
     3rem 1rem 4rem rgb(255, 255, 255);
+}
+.responsive_img {
+  max-width: 100%;
+  height: auto;
+}
+@media (max-width: 1200px) {
+  .item {
+    font-size: 1rem;
+  }
+  .toggeable {
+    size: 2px;
+  }
+  .responsive_img {
+    max-width: 70%;
+    height: auto;
+  }
+}
+@media (min-width: 1200px) and (max-width: 1565px) {
+  .item {
+    font-size: 1.5rem;
+  }
 }
 </style>

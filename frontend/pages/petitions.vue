@@ -1,15 +1,18 @@
 <template>
-  <!DOCTYPE html>
-  <div class="main">
+  <div>
     <CustomNavbar />
     <div class="container">
-      <div class="h-100 w-auto justify-content-center text-center">
+      <div class="h-100 justify-content-center text-center">
         <h1>Page des pétitions</h1>
       </div>
-      <div class="h-100 w-auto justify-content-center" v-if="isAuthenticated">
+      <div
+        id="petitionForm"
+        class="h-100 justify-content-center text-center"
+        v-if="isAuthenticated"
+      >
         <PetitionForm />
       </div>
-      <div>
+      <div class="row justify-content-center">
         <ListOfProjects
           project_type="Pétition"
           my_projects="false"
@@ -21,8 +24,10 @@
     <CustomFooter />
   </div>
 </template>
+
 <script>
 import { mapGetters } from 'vuex';
+
 export default {
   auth: false,
   computed: {
@@ -31,11 +36,29 @@ export default {
   middleware: 'auth'
 };
 </script>
-<style>
+<style scoped>
 .container {
   min-width: 100%;
-  padding-top: 15rem;
+  padding-top: 12rem;
   padding-bottom: 10rem;
   color: rgb(0, 14, 116);
+}
+.container h1 {
+  padding-bottom: 3rem;
+}
+@media (max-width: 1200px) {
+  .container h1 {
+    font-size: 2rem;
+    padding-bottom: 1rem;
+  }
+  .container #petitionForm {
+    padding-bottom: 2rem;
+  }
+  .container {
+    max-width: 50%;
+    padding-top: 9rem;
+    padding-bottom: 13rem;
+    color: rgb(0, 14, 116);
+  }
 }
 </style>

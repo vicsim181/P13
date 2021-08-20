@@ -1,9 +1,9 @@
 <template>
   <ListOfProjects
     :project_type="project_type_name"
-    my_projects="false"
-    published="true"
-    participated="true"
+    my_projects="true"
+    published="false"
+    participated="false"
     v-on:spinner="spinner()"
     v-on:loaded="loaded()"
   />

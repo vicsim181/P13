@@ -21,10 +21,6 @@
           <strong>Adresse postale:</strong>
           {{ loggedInUser.address[0] }}
         </p>
-        <p>
-          <strong>Membre du staff:</strong>
-          {{ loggedInUser.is_staff }}
-        </p>
         <router-link
           :to="{
             name: 'me-mesconsultations'
@@ -79,5 +75,21 @@ export default {
   padding-top: 15rem;
   padding-bottom: 10rem;
   color: rgb(0, 14, 116);
+}
+@media (max-width: 1200px) {
+  .container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+  }
+  .container {
+    padding-top: 13rem;
+    padding-bottom: 13rem;
+  }
+}
+@media (min-width: 1200px) and (max-width: 1565px) {
+  .container {
+    padding-top: 18rem;
+    padding-bottom: 13rem;
+  }
 }
 </style>

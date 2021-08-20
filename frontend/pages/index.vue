@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div>
     <CustomNavbar />
     <div class="container">
       <div class="row h-100 w-auto justify-content-center text-center">
@@ -49,16 +49,19 @@ export default {
 }
 @media (max-width: 1200px) {
   .container h1 {
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .container h3 {
+    font-size: 1.5rem;
   }
   .container {
-    padding-top: 13rem;
+    padding-top: 10rem;
   }
 }
 @media (min-width: 1200px) and (max-width: 1565px) {
   .container {
-    padding-top: 18rem;
+    padding-top: 11rem;
   }
 }
 </style>

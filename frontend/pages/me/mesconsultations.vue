@@ -6,39 +6,59 @@
         <h1>Mes consultations</h1>
       </div>
       <br />
-      <b-button @click="participated()"
-        >Les consultations auxquelles j'ai participé</b-button
-      >
-      <b-button @click="published()" v-if="loggedInUser.is_staff"
-        >Mes consultations publiées</b-button
-      >
-      <b-button @click="not_published()" v-if="loggedInUser.is_staff"
-        >Mes consultations non publiées</b-button
-      >
-      <br />
-      <div v-if="consultations_participated">
-        <ListOfProjects
-          project_type="Consultation"
-          my_projects="false"
-          published="true"
-          participated="true"
-        />
+      <div class="text-center">
+        <b-button
+          @click="
+            (activeTab = 'MyProjectsParticipated'),
+              (welcome = false),
+              (participatedState = true),
+              (publishedState = false),
+              (notPublishedState = false)
+          "
+          :pressed="participatedState"
+          >Les consultations auxquelles j'ai participé</b-button
+        >
+        <b-button
+          @click="
+            (activeTab = 'MyProjectsPublished'),
+              (welcome = false),
+              (participatedState = false),
+              (publishedState = true),
+              (notPublishedState = false)
+          "
+          v-if="loggedInUser.is_staff"
+          :pressed="publishedState"
+          >Mes consultations publiées</b-button
+        >
+        <b-button
+          @click="
+            (activeTab = 'MyProjectsNotPublished'),
+              (welcome = false),
+              (participatedState = false),
+              (publishedState = false),
+              (notPublishedState = true)
+          "
+          v-if="loggedInUser.is_staff"
+          :pressed="notPublishedState"
+          >Mes consultations non publiées</b-button
+        >
       </div>
-      <div v-if="consultations_published">
-        <ListOfProjects
+      <div class="text-center">
+        <b-spinner
+          id="spinner"
+          style="width: 6rem; height: 6rem;"
+          label="Large Spinner"
+          v-if="showspinner"
+        ></b-spinner>
+        <Component
+          :is="activeTab"
           project_type="Consultation"
-          my_projects="true"
-          published="true"
-          participated="false"
+          v-on:spinner="spinner()"
+          v-on:loaded="loading()"
         />
-      </div>
-      <div v-if="consultations_not_published">
-        <ListOfProjects
-          project_type="Consultation"
-          my_projects="true"
-          published="false"
-          participated="false"
-        />
+        <h3 v-if="welcome" id="welcome">
+          Choisissez les consultations que vous souhaitez consulter
+        </h3>
       </div>
     </div>
     <CustomFooter />
@@ -47,57 +67,39 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import MyProjectsParticipated from '../../components/MyProjectsParticipated.vue';
+import MyProjectsPublished from '../../components/MyProjectsPublished.vue';
+import MyProjectsNotPublished from '../../components/MyProjectsNotPublished.vue';
 
 export default {
   auth: false,
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser'])
   },
+  components: {
+    MyProjectsParticipated,
+    MyProjectsPublished,
+    MyProjectsNotPublished
+  },
   data() {
     return {
-      consultations_participated: true,
-      consultations_published: false,
-      consultations_not_published: false
+      welcome: true,
+      showspinner: false,
+      activeTab: '',
+      participatedState: false,
+      publishedState: false,
+      notPublishedState: false
     };
   },
   methods: {
-    participated() {
-      this.consultations_participated = true;
-      this.consultations_published = false;
-      this.consultations_not_published = false;
-      console.log('participated ', this.consultations_participated);
-      console.log('published ', this.consultations_published);
-      console.log('not published ', this.consultations_not_published);
-      console.log('REFRESH');
-      this.$nuxt.refresh();
+    async loading() {
+      const delay = ms => new Promise(res => setTimeout(res, ms));
+      await delay(2000);
+      this.showspinner = false;
     },
-    published() {
-      this.consultations_participated = false;
-      this.consultations_published = true;
-      this.consultations_not_published = false;
-      console.log('participated ', this.consultations_participated);
-      console.log('published ', this.consultations_published);
-      console.log('not published ', this.consultations_not_published);
-      console.log('REFRESH');
-      this.$nuxt.refresh();
-    },
-    not_published() {
-      this.consultations_participated = false;
-      this.consultations_published = false;
-      this.consultations_not_published = true;
-      console.log('participated ', this.consultations_participated);
-      console.log('published ', this.consultations_published);
-      console.log('not published ', this.consultations_not_published);
-      console.log('REFRESH');
-      this.$nuxt.refresh();
+    spinner() {
+      this.showspinner = true;
     }
-    // refresh() {
-    //   console.log('participated ', this.consultations_participated);
-    //   console.log('published ', this.consultations_published);
-    //   console.log('not published ', this.consultations_not_published);
-    //   console.log('REFRESH');
-    //   this.$nuxt.refresh();
-    // }
   },
   middleware: 'auth'
 };
@@ -109,5 +111,30 @@ export default {
   padding-top: 15rem;
   padding-bottom: 10rem;
   color: rgb(0, 14, 116);
+}
+#spinner {
+  margin-top: 10rem;
+}
+#welcome {
+  padding-top: 6rem;
+}
+.active {
+  background: rgb(0, 14, 116) !important;
+}
+@media (max-width: 1200px) {
+  .container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .container {
+    padding-top: 13rem;
+    padding-bottom: 13rem;
+  }
+}
+@media (min-width: 1200px) and (max-width: 1565px) {
+  .container {
+    padding-top: 18rem;
+    padding-bottom: 13rem;
+  }
 }
 </style>
