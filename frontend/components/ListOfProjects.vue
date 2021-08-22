@@ -59,8 +59,58 @@
         </b-card>
       </b-card-group>
     </div>
-    <div v-else id="noresult">
-      <p>Aucun projet trouvé</p>
+    <div v-if="projects_participated.length > 0" class="noresult">
+      <p>Vous avez répondu au sondage du/des projet(s) suivant(s):</p>
+      <ul
+        v-for="project in projects_participated"
+        :key="project.id_project"
+        style="list-style-type:none;"
+      >
+        <li>
+          <nuxt-link :to="`/projet/${project.id_project}`">{{
+            project.name
+          }}</nuxt-link>
+        </li>
+      </ul>
+    </div>
+    <div v-if="projects_liked.length > 0" class="noresult">
+      <p>Vous avez liké le(s) projet(s) suivant(s):</p>
+      <ul
+        v-for="project in projects_liked"
+        :key="project.id_project"
+        style="list-style-type:none;"
+      >
+        <li>
+          <nuxt-link :to="`/projet/${project.id_project}`">{{
+            project.name
+          }}</nuxt-link>
+        </li>
+      </ul>
+    </div>
+    <div v-if="projects_commented.length > 0" class="noresult">
+      <p>Vous avez commenté le(s) projet(s) suivant(s):</p>
+      <ul
+        v-for="project in projects_commented"
+        :key="project.id_project"
+        style="list-style-type:none;"
+      >
+        <li>
+          <nuxt-link :to="`/projet/${project.id_project}`">{{
+            project.name
+          }}</nuxt-link>
+        </li>
+      </ul>
+    </div>
+    <div
+      v-else-if="
+        projects.length === 0 &&
+          projects_commented.length === 0 &&
+          projects_participated.length === 0 &&
+          projects_liked.length === 0
+      "
+      class="noresult"
+    >
+      <p>Aucun projet de ce type.</p>
     </div>
   </div>
 </template>
@@ -77,8 +127,13 @@ export default {
     return {
       loaded: false,
       project_type_id: null,
+      petition_type_id: '',
+      conseil_type_id: '',
+      consultation_type_id: '',
       projects: [],
-      projects_participated: []
+      projects_participated: [],
+      projects_liked: [],
+      projects_commented: []
     };
   },
   methods: {
@@ -90,52 +145,124 @@ export default {
     },
     onlyUnique(value, index, self) {
       return self.indexOf(value) === index;
+    },
+
+    // Function sending a request to the API to get the projects created by the user (published or not, depending on this.published)
+    async getMyProjects() {
+      return await fetch(
+        `http://127.0.0.1:8000/project/?project_type=${this.project_type_id}&ready_for_publication=${this.published}&owner_id=${this.loggedInUser.id}`
+      ).then(res => res.json());
+    },
+
+    // Function sending a request to the API to get the projects for which the user has participated (answering the question(s) of the form)
+    async getProjects() {
+      return await fetch(
+        `http://127.0.0.1:8000/project/?project_type=${this.project_type_id}&ready_for_publication=${this.published}`
+      ).then(res => res.json());
+    },
+
+    // Function sending a request to the API to get the projects liked by the user
+    async getProjectsLiked() {
+      return await fetch(
+        `http://127.0.0.1:8000/project/?liked_by=${this.loggedInUser.id}`
+      ).then(res => res.json());
+    },
+
+    // Function sending a request to the API to get the projects commented by the user
+    async getProjectsCommented() {
+      const data = { owner: this.loggedInUser.id };
+      const response = await this.$axios.get('comment/', { params: data });
+      return response.data;
+    },
+
+    // Function sending a request to the API to get the answers of the user to the different forms
+    async getUserAnswers() {
+      return await fetch(
+        `http://127.0.0.1:8000/user_answer/?user=${this.loggedInUser.id}`
+      ).then(res => res.json());
+    },
+
+    // Function sending a request to the API to get the questions to which the user answered
+    async getQuestionsAnswered(response, element) {
+      return await this.$axios.get(`question/${response[element].question}`);
+    },
+
+    // Function sending a request to the API to get the project to which the user answered
+    async getProject(id_project) {
+      return await this.$axios.get(`project/${id_project}`);
+    },
+
+    // Function sorting out the comments obtained through a request to the API
+    async sortComments(comments) {
+      if (comments.length !== 0) {
+        for (const comment in comments) {
+          if (
+            !this.projects_commented.some(
+              element => element.project == comments[comment].project
+            )
+          ) {
+            const project = await this.getProject(comments[comment].project);
+            this.projects_commented.push(project.data);
+          }
+        }
+      }
+    },
+
+    // Function sorting the answers of the user and iterating throug the attached questions to find the concerned project
+    async sortUserAnswers(response) {
+      if (response.length !== 0) {
+        for (const element in response) {
+          const question = await this.getQuestionsAnswered(response, element);
+          const project = await this.getProject(question.data.project);
+          if (
+            project.data.project_type === this.project_type_id &&
+            !this.projects_participated.some(
+              element => element.id_project == project.data.id_project
+            )
+          ) {
+            this.projects_participated.push(project.data);
+          }
+        }
+      }
     }
   },
+
+  // Function fetching the data through requests to the API via other functions, depending on the projects requested by the user
   async fetch() {
-    console.log('START FETCHING');
     this.$emit('spinner');
     this.loaded = false;
     this.projects = [];
     this.projects_participated = [];
+    this.projects_liked = [];
+    this.projects_commented = [];
     this.project_type_id = await this.getProjectType();
+    let data = { name: 'Pétition' };
+    let response = await this.$axios.get('project_type', { params: data });
+    this.petition_type_id = response.data['id_project_type'];
+    data = { name: 'Consultation' };
+    response = await this.$axios.get('project_type', { params: data });
+    this.consultation_type_id = response.data['id_project_type'];
+    data = { name: 'Conseil de quartier' };
+    response = await this.$axios.get('project_type', { params: data });
+    this.conseil_type_id = response.data['id_project_type'];
     if (this.my_projects === 'true') {
-      this.projects = await fetch(
-        `http://127.0.0.1:8000/project/?project_type=${this.project_type_id}&ready_for_publication=${this.published}&owner_id=${this.loggedInUser.id}`
-      ).then(res => res.json());
+      this.projects = await this.getMyProjects();
     } else if (this.participated === 'false') {
-      this.projects = await fetch(
-        `http://127.0.0.1:8000/project/?project_type=${this.project_type_id}&ready_for_publication=${this.published}`
-      ).then(res => res.json());
+      this.projects = await this.getProjects();
     } else {
-      const response = await fetch(
-        `http://127.0.0.1:8000/user_answer/?user=${this.loggedInUser.id}`
-      ).then(res => res.json());
-      if (response.length !== 0) {
-        for (const element in response) {
-          const question = await this.$axios.get(
-            `question/${response[element].question}`
-          );
-          const project = await this.$axios.get(
-            `project/${question.data.project}`
-          );
-          if (
-            project.data.project_type === this.project_type_id &&
-            !this.projects.some(
-              element => element.id_project == project.data.id_project
-            )
-          ) {
-            this.projects.push(project.data);
-          }
-        }
+      if (this.project_type_id === this.petition_type_id) {
+        this.projects_liked = await this.getProjectsLiked();
+        const comments = await this.getProjectsCommented();
+        await this.sortComments(comments);
+      } else {
+        const response = await this.getUserAnswers();
+        await this.sortUserAnswers(response);
       }
     }
     const delay = ms => new Promise(res => setTimeout(res, ms));
     this.$emit('loaded');
     await delay(2000);
     this.loaded = true;
-    console.log('LOADED');
-    console.log('PROJECTS ', this.projects);
     this.$nuxt.refresh;
   }
 };
@@ -165,7 +292,7 @@ export default {
   overflow: hidden;
   mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
 }
-#noresult {
+.noresult {
   text-align: center;
   margin-top: 5rem;
 }

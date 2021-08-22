@@ -30,7 +30,10 @@
         <div
           class="column"
           v-bind="this.project"
-          v-if="this.project.project_type === petition_type_id"
+          v-if="
+            this.project.project_type === petition_type_id &&
+              this.project.ready_for_publication
+          "
         >
           <div v-if="userLikesProject">
             <b-button variant="primary" @click="cancelLikePetition()"

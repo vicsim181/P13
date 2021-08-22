@@ -15,7 +15,7 @@ from ..permissions import IsOwnerOrAdmin
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectSerializer
-    filterset_fields = ['ready_for_publication', 'owner_id', 'project_type']
+    filterset_fields = ['ready_for_publication', 'owner_id', 'project_type', 'liked_by']
 
     def get_permissions(self):
         if self.action == 'destroy' or self.action == 'update':

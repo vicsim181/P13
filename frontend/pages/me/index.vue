@@ -21,15 +21,15 @@
           <strong>Adresse postale:</strong>
           {{ loggedInUser.address[0] }}
         </p>
-        <router-link
+        <nuxt-link
           :to="{
             name: 'me-mesconsultations'
           }"
           class="row h-100 w-auto ml-auto"
         >
           <strong>Mes consultations</strong>
-        </router-link>
-        <router-link
+        </nuxt-link>
+        <nuxt-link
           :to="{
             name: 'me-mesconseils',
             params: {
@@ -40,8 +40,8 @@
           class="row h-100 w-auto ml-auto"
         >
           <strong>Mes conseils de quartier</strong>
-        </router-link>
-        <router-link
+        </nuxt-link>
+        <nuxt-link
           :to="{
             name: 'me-mespetitions',
             params: {
@@ -52,7 +52,7 @@
           class="row h-100 w-auto ml-auto"
         >
           <strong>Mes pétitions</strong>
-        </router-link>
+        </nuxt-link>
       </div>
     </div>
     <CustomFooter />
