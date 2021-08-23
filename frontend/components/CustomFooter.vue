@@ -5,13 +5,7 @@
         <div class="col-md-3">
           <a href="#"><b>Mentions Légales</b></a>
         </div>
-        <div class="col-md-3">
-          <a href="#"><b>Gestion des cookies</b></a>
-        </div>
-        <div class="col-md-3">
-          <a href="#"><b>Contact</b></a>
-        </div>
-        <div class="col-md-3"><p>@ Copyright - Victor SIMON</p></div>
+        <div class="col-md-3 text-right"><p>@ Copyright - Victor SIMON</p></div>
       </div>
     </div>
   </div>

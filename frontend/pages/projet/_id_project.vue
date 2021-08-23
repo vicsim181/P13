@@ -2,18 +2,22 @@
   <div>
     <CustomNavbar />
     <div v-if="this.project" v-bind="this.project" class="container">
-      <div class="row">
-        <p>{{ this.project.name }}</p>
+      <div class="column" id="top">
+        <strong
+          ><h1>{{ this.project.name }}</h1></strong
+        >
       </div>
-      <div class="row">
-        <p>{{ this.project.place }}</p>
-      </div>
-      <div class="row">
-        <p>{{ this.project.description }}</p>
+      <div id="data">
+        <div class="column">
+          <h3 class="text-center">{{ this.project.place }}</h3>
+        </div>
+        <div class="column">
+          <p>{{ this.project.description }}</p>
+        </div>
       </div>
       <div v-if="loaded">
         <div v-if="this.project.project_type !== petition_type_id">
-          <div class="row" v-if="this.project.question.length != 0">
+          <div id="form" v-if="this.project.question.length != 0">
             <div v-if="userHasParticipated">
               <p>Vous avez déjà participé à ce sondage.</p>
             </div>
@@ -35,44 +39,56 @@
               this.project.ready_for_publication
           "
         >
-          <div v-if="userLikesProject">
-            <b-button variant="primary" @click="cancelLikePetition()"
-              >Ne plus supporter la pétition</b-button
-            >
-          </div>
-          <div v-else>
-            <b-button variant="primary" @click="likePetition()"
-              >Soutenir la pétition</b-button
-            >
-          </div>
-          <div v-if="userHasCommented">
-            <p>Commentaire déjà posté</p>
-          </div>
-          <div v-else>
-            <b-form-group label="Commenter la pétition" :state="commentState">
-              <b-form-textarea
-                id="user_comment"
-                v-model="user_comment_input"
-                :state="commentState"
-              ></b-form-textarea>
-              <b-button
-                size="md"
-                variant="primary"
-                @click="handleSubmitComment()"
-                >Poster mon commentaire</b-button
+          <div id="like">
+            <div v-if="userLikesProject">
+              <b-button class="button" @click="cancelLikePetition()"
+                >Ne plus supporter la pétition</b-button
               >
-            </b-form-group>
+            </div>
+            <div v-else>
+              <b-button class="button" variant="primary" @click="likePetition()"
+                >Soutenir la pétition</b-button
+              >
+            </div>
           </div>
-          <div class="column">
-            <h3>Commentaires</h3>
-            <div
+          <div id="comment">
+            <div v-if="userHasCommented">
+              <p>Vous avez déjà commenté la pétition</p>
+            </div>
+            <div v-else>
+              <b-form-group label="Commenter la pétition" :state="commentState">
+                <b-form-textarea
+                  id="user_comment"
+                  v-model="user_comment_input"
+                  :state="commentState"
+                ></b-form-textarea>
+                <b-button
+                  class="button"
+                  size="md"
+                  @click="handleSubmitComment()"
+                  >Poster mon commentaire</b-button
+                >
+              </b-form-group>
+            </div>
+          </div>
+          <div class="column" id="comments">
+            <b-button class="button" v-b-toggle.my-collapse
+              >Voir les commentaires</b-button
+            >
+            <b-collapse
+              title="Commentaires"
+              id="my-collapse"
               v-for="comment in this.comments_published"
               :key="comment.id_comment"
             >
-              {{ comment.owner }}
-              {{ comment.text }}
-              {{ comment.publication }}
-            </div>
+              <b-card class="comments">
+                <b-card-text class="column">
+                  <b-icon icon="person-fill"></b-icon>{{ comment.publication }}
+                  <br />
+                  {{ comment.text }}</b-card-text
+                >
+              </b-card>
+            </b-collapse>
           </div>
         </div>
       </div>
@@ -227,7 +243,6 @@ export default {
     },
 
     async handleSubmitComment() {
-      console.log('COMMENT STATE ', this.commentState);
       if (!this.commentState) {
         return;
       } else {
@@ -235,19 +250,64 @@ export default {
       }
       this.$nuxt.refresh();
     }
-
-    // // Function setting a delay of 2 seconds
-    // async refresh2secondes() {
-    //   const delay = ms => new Promise(res => setTimeout(res, ms));
-    //   await delay(2000);
-    // }
   }
 };
 </script>
 
 <style>
 .container {
-  padding-top: 13rem;
+  padding-top: 8.9rem;
+  padding-bottom: 4rem;
+  min-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  color: rgb(0, 14, 116);
+}
+#top {
+  background-color: rgb(0, 14, 116);
+  color: whitesmoke;
+  height: 12rem;
+  text-align: center;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+#data {
+  padding-top: 4rem;
+  padding-bottom: 3.5rem;
+  padding-left: 15rem;
+  padding-right: 15rem;
+  text-align: justify;
+}
+#data h3 {
+  padding-bottom: 4rem;
+}
+#form {
+  padding-left: 15rem;
+}
+#like {
+  padding-left: 15rem;
+  padding-bottom: 2rem;
+}
+.button {
+  color: rgb(247, 247, 247);
+  background-color: rgb(0, 14, 116);
+}
+.button:hover {
+  background-color: rgb(247, 247, 247);
+  color: rgb(0, 14, 116);
+}
+.button:active {
+  background-color: rgb(247, 247, 247);
+  color: rgb(0, 14, 116);
+}
+#comment {
+  padding-left: 15rem;
+  padding-bottom: 2rem;
+}
+#comments {
+  padding-left: 15rem;
+  padding-bottom: 4rem;
+  padding-right: 15rem;
 }
 @media (min-width: 1200px) and (max-width: 1565px) {
   .container {

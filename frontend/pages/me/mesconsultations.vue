@@ -5,60 +5,71 @@
       <div class="h-100 justify-content-center text-center">
         <h1>Mes consultations</h1>
       </div>
-      <br />
-      <div class="text-center">
-        <b-button
-          @click="
-            (activeTab = 'MyProjectsParticipated'),
-              (welcome = false),
-              (participatedState = true),
-              (publishedState = false),
-              (notPublishedState = false)
-          "
-          :pressed="participatedState"
-          >Les consultations auxquelles j'ai participé</b-button
-        >
-        <b-button
-          @click="
-            (activeTab = 'MyProjectsPublished'),
-              (welcome = false),
-              (participatedState = false),
-              (publishedState = true),
-              (notPublishedState = false)
-          "
-          v-if="loggedInUser.is_staff"
-          :pressed="publishedState"
-          >Mes consultations publiées</b-button
-        >
-        <b-button
-          @click="
-            (activeTab = 'MyProjectsNotPublished'),
-              (welcome = false),
-              (participatedState = false),
-              (publishedState = false),
-              (notPublishedState = true)
-          "
-          v-if="loggedInUser.is_staff"
-          :pressed="notPublishedState"
-          >Mes consultations non publiées</b-button
-        >
+      <div
+        class="h-100 justify-content-center text-center"
+        v-if="!loggedInUser.is_staff"
+      >
+        <h3>Les consultations auxquelles j'ai participé</h3>
       </div>
-      <div class="text-center">
-        <b-spinner
-          id="spinner"
-          style="width: 6rem; height: 6rem;"
-          label="Large Spinner"
-          v-if="showspinner"
-        ></b-spinner>
-        <Component
-          :is="activeTab"
-          project_type="Consultation"
-          v-on:spinner="spinner()"
-          v-on:loaded="loading()"
-        />
-        <h3 v-if="welcome" id="welcome">
-          Choisissez les consultations que vous souhaitez consulter
-        </h3>
+      <br />
+      <div v-if="loggedInUser.is_staff">
+        <div class="text-center">
+          <b-button
+            @click="
+              (activeTab = 'MyProjectsParticipated'),
+                (welcome = false),
+                (participatedState = true),
+                (publishedState = false),
+                (notPublishedState = false)
+            "
+            :pressed="participatedState"
+            >Les consultations auxquelles j'ai participé</b-button
+          >
+          <b-button
+            @click="
+              (activeTab = 'MyProjectsPublished'),
+                (welcome = false),
+                (participatedState = false),
+                (publishedState = true),
+                (notPublishedState = false)
+            "
+            v-if="loggedInUser.is_staff"
+            :pressed="publishedState"
+            >Mes consultations publiées</b-button
+          >
+          <b-button
+            @click="
+              (activeTab = 'MyProjectsNotPublished'),
+                (welcome = false),
+                (participatedState = false),
+                (publishedState = false),
+                (notPublishedState = true)
+            "
+            v-if="loggedInUser.is_staff"
+            :pressed="notPublishedState"
+            >Mes consultations non publiées</b-button
+          >
+        </div>
+        <div class="text-center">
+          <b-spinner
+            id="spinner"
+            style="width: 6rem; height: 6rem;"
+            label="Large Spinner"
+            v-if="showspinner"
+          ></b-spinner>
+          <Component
+            :is="activeTab"
+            project_type="Consultation"
+            v-on:spinner="spinner()"
+            v-on:loaded="loading()"
+          />
+          <h3 v-if="welcome" id="welcome">
+            Choisissez les consultations que vous souhaitez consulter
+          </h3>
+        </div>
+      </div>
+      <div v-else>
+        <MyProjectsParticipated project_type="Consultation" />
       </div>
     </div>
     <CustomFooter />
@@ -83,7 +94,7 @@ export default {
   },
   data() {
     return {
-      welcome: true,
+      welcome: null,
       showspinner: false,
       activeTab: '',
       participatedState: false,
@@ -108,7 +119,7 @@ export default {
 <style>
 .container {
   min-width: 100%;
-  padding-top: 15rem;
+  padding-top: 12rem;
   padding-bottom: 10rem;
   color: rgb(0, 14, 116);
 }
@@ -121,20 +132,22 @@ export default {
 .active {
   background: rgb(0, 14, 116) !important;
 }
+.container h1 {
+  padding-bottom: 3rem;
+}
 @media (max-width: 1200px) {
   .container h1 {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
+    font-size: 2rem;
+    padding-bottom: 1rem;
+  }
+  .container #consultationForm {
+    padding-bottom: 2rem;
   }
   .container {
-    padding-top: 13rem;
+    max-width: 50%;
+    padding-top: 9rem;
     padding-bottom: 13rem;
-  }
-}
-@media (min-width: 1200px) and (max-width: 1565px) {
-  .container {
-    padding-top: 18rem;
-    padding-bottom: 13rem;
+    color: rgb(0, 14, 116);
   }
 }
 </style>

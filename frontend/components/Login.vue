@@ -75,7 +75,8 @@ export default {
           response.data.refresh_token
         );
       } catch (error) {
-        console.log('error', error);
+        window.alert("L'adresse email ou le mot de passe est incorrect.");
+        // console.log('error', error);
       }
     },
     onReset(event) {

@@ -3,33 +3,33 @@
   <div>
     <CustomNavbar />
     <div class="container" v-if="isAuthenticated">
-      <h1 class="row h-100 w-auto justify-content-center">Mon profil</h1>
-      <div>
+      <h1 class="row h-100 w-auto justify-content-center text-center">
+        Mon profil
+      </h1>
+      <div id="data" class="text-center">
+        <strong>Prénom:</strong>
+        <p>{{ loggedInUser.first_name }}</p>
+        <strong>Nom de famille:</strong>
         <p>
-          <strong>Prénom:</strong>
-          {{ loggedInUser.first_name }}
-        </p>
-        <p>
-          <strong>Nom de famille:</strong>
           {{ loggedInUser.last_name }}
         </p>
+        <strong>Adresse email:</strong>
         <p>
-          <strong>Adresse email:</strong>
           {{ loggedInUser.email }}
         </p>
-        <p>
-          <strong>Adresse postale:</strong>
-          {{ loggedInUser.address[0] }}
-        </p>
-        <nuxt-link
+        <strong>Adresse postale:</strong>
+        <p>{{ loggedInUser.address[0] }}</p>
+        <br />
+        <b-button
           :to="{
             name: 'me-mesconsultations'
           }"
-          class="row h-100 w-auto ml-auto"
+          class="button"
         >
-          <strong>Mes consultations</strong>
-        </nuxt-link>
-        <nuxt-link
+          Mes consultations
+        </b-button>
+        <br />
+        <b-button
           :to="{
             name: 'me-mesconseils',
             params: {
@@ -37,11 +37,12 @@
               is_staff: loggedInUser.is_staff
             }
           }"
-          class="row h-100 w-auto ml-auto"
+          class="button"
         >
-          <strong>Mes conseils de quartier</strong>
-        </nuxt-link>
-        <nuxt-link
+          Mes conseils de quartier
+        </b-button>
+        <br />
+        <b-button
           :to="{
             name: 'me-mespetitions',
             params: {
@@ -49,10 +50,10 @@
               is_staff: loggedInUser.is_staff
             }
           }"
-          class="row h-100 w-auto ml-auto"
+          class="button"
         >
-          <strong>Mes pétitions</strong>
-        </nuxt-link>
+          Mes pétitions
+        </b-button>
       </div>
     </div>
     <CustomFooter />
@@ -75,6 +76,14 @@ export default {
   padding-top: 15rem;
   padding-bottom: 10rem;
   color: rgb(0, 14, 116);
+}
+.button {
+  color: rgb(247, 247, 247);
+  background-color: rgb(0, 14, 116);
+}
+.button:hover {
+  color: rgb(0, 14, 116);
+  background-color: rgb(247, 247, 247);
 }
 @media (max-width: 1200px) {
   .container h1 {

@@ -103,7 +103,7 @@ class ProjectPublication(APIView):
 
 class ProjectTypeRetrieveView(generics.RetrieveAPIView):
     queryset = models.ProjectType.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     def get(self, request):
         type_name = request.GET['name']

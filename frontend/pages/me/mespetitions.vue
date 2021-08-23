@@ -106,7 +106,7 @@ export default {
 <style>
 .container {
   min-width: 100%;
-  padding-top: 15rem;
+  padding-top: 12rem;
   padding-bottom: 10rem;
   color: rgb(0, 14, 116);
 }
@@ -119,20 +119,22 @@ export default {
 .active {
   background: rgb(0, 14, 116) !important;
 }
+.container h1 {
+  padding-bottom: 3rem;
+}
 @media (max-width: 1200px) {
   .container h1 {
-    font-size: 2.5rem;
-    margin-bottom: 3rem;
+    font-size: 2rem;
+    padding-bottom: 1rem;
+  }
+  .container #consultationForm {
+    padding-bottom: 2rem;
   }
   .container {
-    padding-top: 13rem;
+    max-width: 50%;
+    padding-top: 9rem;
     padding-bottom: 13rem;
-  }
-}
-@media (min-width: 1200px) and (max-width: 1565px) {
-  .container {
-    padding-top: 18rem;
-    padding-bottom: 13rem;
+    color: rgb(0, 14, 116);
   }
 }
 </style>

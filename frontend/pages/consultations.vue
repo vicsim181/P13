@@ -19,6 +19,7 @@
           my_projects="false"
           published="true"
           participated="false"
+          img="../static/consultation.jpg"
         />
       </div>
     </div>

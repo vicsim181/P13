@@ -7,7 +7,7 @@
         class="group"
       >
         <b-card
-          img-src="https://picsum.photos/600/300/?image=25"
+          :img-src="image"
           img-alt="Image"
           img-top
           tag="article"
@@ -42,8 +42,8 @@
               </div>
               <div v-if="project_type === 'Pétition'">
                 <li>
-                  Pétition soutenue par:
-                  {{ project.liked_by.length }} personne(s).
+                  <b-icon icon="hand-thumbs-up"></b-icon>
+                  {{ project.liked_by.length }}
                 </li>
               </div>
             </ul>
@@ -125,6 +125,7 @@ export default {
   },
   data() {
     return {
+      image: null,
       loaded: false,
       project_type_id: null,
       petition_type_id: '',
@@ -224,6 +225,15 @@ export default {
           }
         }
       }
+    },
+    async setImage() {
+      if (this.project_type_id === this.consultation_type_id) {
+        this.image = require('../static/consultation.jpg');
+      } else if (this.project_type_id === this.petition_type_id) {
+        this.image = require('../static/petition.jpeg');
+      } else if (this.project_type_id === this.conseil_type_id) {
+        this.image = require('../static/conseil.jpg');
+      }
     }
   },
 
@@ -245,6 +255,8 @@ export default {
     data = { name: 'Conseil de quartier' };
     response = await this.$axios.get('project_type', { params: data });
     this.conseil_type_id = response.data['id_project_type'];
+    await this.setImage();
+    console.log('IMAGE ', this.image);
     if (this.my_projects === 'true') {
       this.projects = await this.getMyProjects();
     } else if (this.participated === 'false') {
