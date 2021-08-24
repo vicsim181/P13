@@ -1,29 +1,31 @@
 import datetime
 import django_filters.rest_framework
 from django.http.response import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.db import IntegrityError
 from rest_framework import viewsets, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from . import models, serializers
-from ..permissions import IsOwnerOrAdmin
+from ..permissions import IsOwnerOrAdmin, IsPublishedOrNot
 
 
 # Create your views here.
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectSerializer
-    filterset_fields = ['ready_for_publication', 'owner_id', 'project_type', 'liked_by']
+    filterset_fields = ['id_project', 'ready_for_publication', 'owner_id', 'project_type', 'liked_by']
 
     def get_permissions(self):
         if self.action == 'destroy' or self.action == 'update':
             permission_classes = [IsOwnerOrAdmin]
-        elif self.action == 'list' or self.action == 'retrieve':
-            permission_classes = [permissions.AllowAny]
+        elif self.action == 'list':
+            permission_classes = [IsPublishedOrNot]
         elif self.action == 'create':
             permission_classes = [permissions.IsAuthenticated]
+        elif self.action == 'retrieve':
+            permission_classes = [IsPublishedOrNot]
         else:
             permission_classes = [permissions.IsAdminUser]
         return [permission() for permission in permission_classes]
@@ -34,6 +36,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         type = models.Project.define_project_type(user.id, type)
         serializer.save(owner=user, project_type=type)
         return
+
+    def retrieve(self, request, pk):
+        print('RETRIEVE REQUEST')
 
 
 class QuestionViewSet(viewsets.ModelViewSet):

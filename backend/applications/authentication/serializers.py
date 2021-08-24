@@ -5,40 +5,24 @@ from rest_framework import serializers
 from .models import Address, CustomUser
 
 
+def validate_num(value):
+    if value < 1 or value > 10000:
+        raise serializers.ValidationError("Le numéro doit être compris entre 0 et 10 001 non inclus")
+
+
+def validate_postal(value):
+    if value < 1000 or value > 99999:
+        raise serializers.ValidationError("Le code postal doit être compris entre 999 et 100 000 non inclus")
+
+
 class AddressSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.email')
+    num = serializers.IntegerField(validators=[validate_num])
+    postal_code = serializers.IntegerField(validators=[validate_postal])
 
     class Meta:
         model = Address
         fields = ['id_address', 'owner', 'num', 'street', 'postal_code', 'city']
-
-
-# class UserRegisterSerializer(serializers.ModelSerializer):
-#     """
-#     Serializer used to create a new user.
-#     """
-#     first_name = serializers.CharField(max_length=50)
-#     last_name = serializers.CharField(max_length=50)
-#     email = serializers.EmailField(required=True, validators=[UniqueValidator(message='This email already exists',
-#                                                                               queryset=CustomUser.objects.all())])
-#     password = serializers.CharField(required=True, write_only=True, min_length=8, max_length=89,
-#                                      style={'input_type': 'password'}, validators=[validate_password])
-#     date_joined = serializers.DateTimeField(read_only=True)
-
-#     class Meta:
-#         model = CustomUser
-#         fields = ['id', 'email', 'password', 'first_name', 'last_name', 'date_joined']
-
-#     def create(self, validated_data):
-#         user = CustomUser(
-#             first_name=validated_data['first_name'],
-#             last_name=validated_data['last_name'],
-#             username="Anonyme",
-#             email=validated_data['email'],
-#         )
-#         user.set_password(validated_data['password'])
-#         user.save()
-#         return user
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

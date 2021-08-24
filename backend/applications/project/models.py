@@ -29,6 +29,9 @@ class Project(models.Model):
     ready_for_publication = models.BooleanField(default=False)
     liked_by = models.ManyToManyField(CustomUser, related_name='project_liked')
 
+    class Meta:
+        ordering = ['publication']
+
     def __str__(self) -> str:
         return self.name
 

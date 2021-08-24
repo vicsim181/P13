@@ -2,7 +2,7 @@
   <div class="py-3 bg-white fixed-bottom">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-9 text-left">
           <a href="#"><b>Mentions Légales</b></a>
         </div>
         <div class="col-md-3 text-right"><p>@ Copyright - Victor SIMON</p></div>

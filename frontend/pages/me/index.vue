@@ -18,7 +18,8 @@
           {{ loggedInUser.email }}
         </p>
         <strong>Adresse postale:</strong>
-        <p>{{ loggedInUser.address[0] }}</p>
+        <p v-if="loggedInUser.address[0]">{{ user_adress }}</p>
+        <AddressForm v-else />
         <br />
         <b-button
           :to="{
@@ -66,6 +67,25 @@ import { mapGetters } from 'vuex';
 export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser'])
+  },
+  data() {
+    return {
+      user_adress: ''
+    };
+  },
+  async fetch() {
+    if (this.loggedInUser.address[0]) {
+      const response = await this.$axios.get(this.loggedInUser.address[0]);
+      const address =
+        response.data['num'] +
+        ', ' +
+        response.data['street'] +
+        ' - ' +
+        response.data['postal_code'] +
+        ' ' +
+        response.data['city'];
+      this.user_adress = address;
+    }
   }
 };
 </script>

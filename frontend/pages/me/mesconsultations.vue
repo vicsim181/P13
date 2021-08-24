@@ -116,10 +116,10 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   min-width: 100%;
-  padding-top: 12rem;
+  padding-top: 15rem;
   padding-bottom: 10rem;
   color: rgb(0, 14, 116);
 }

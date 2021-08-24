@@ -49,10 +49,9 @@
             </ul>
             <b-button
               squared
-              class="align-self-end btn btn-lg btn-block btn-outline-primary"
+              class="align-self-end btn btn-lg btn-block button"
               style="margin-top: auto;"
               :to="`/projet/${project.id_project}`"
-              variant="outline"
               >Consulter</b-button
             >
           </div>
@@ -256,7 +255,6 @@ export default {
     response = await this.$axios.get('project_type', { params: data });
     this.conseil_type_id = response.data['id_project_type'];
     await this.setImage();
-    console.log('IMAGE ', this.image);
     if (this.my_projects === 'true') {
       this.projects = await this.getMyProjects();
     } else if (this.participated === 'false') {
@@ -307,6 +305,14 @@ export default {
 .noresult {
   text-align: center;
   margin-top: 5rem;
+}
+.button {
+  color: rgb(247, 247, 247);
+  background-color: rgb(0, 14, 116);
+}
+.button:hover {
+  color: rgb(0, 14, 116);
+  background-color: rgb(247, 247, 247);
 }
 @media (max-width: 1200px) {
   .project {

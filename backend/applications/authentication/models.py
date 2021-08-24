@@ -28,7 +28,7 @@ class Address(models.Model):
     Model defined to host the address of the users.
     """
     id_address = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    num = models.CharField(max_length=5)
+    num = models.IntegerField()
     street = models.CharField(max_length=50)
     postal_code = models.IntegerField()
     city = models.CharField(max_length=100)

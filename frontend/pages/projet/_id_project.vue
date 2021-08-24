@@ -16,7 +16,12 @@
         </div>
       </div>
       <div v-if="loaded">
-        <div v-if="this.project.project_type !== petition_type_id">
+        <div
+          v-if="
+            this.project.project_type !== petition_type_id &&
+              this.project.ready_for_publication
+          "
+        >
           <div id="form" v-if="this.project.question.length != 0">
             <div v-if="userHasParticipated">
               <p>Vous avez déjà participé à ce sondage.</p>
@@ -147,11 +152,10 @@ export default {
     };
   },
   async fetch() {
-    this.project = await fetch(
-      `http://127.0.0.1:8000/project/${this.id_project}`
-    ).then(res => res.json());
+    let response = await this.$axios.get(`project/${this.id_project}`);
+    this.project = response.data;
     let data = { name: 'Conseil de quartier' };
-    let response = await this.$axios.get('project_type', { params: data });
+    response = await this.$axios.get('project_type', { params: data });
     let type_id = response.data['id_project_type'];
     this.conseil_type_id = type_id;
     data = { name: 'Pétition' };
@@ -303,6 +307,7 @@ export default {
 #comment {
   padding-left: 15rem;
   padding-bottom: 2rem;
+  padding-right: 15rem;
 }
 #comments {
   padding-left: 15rem;
