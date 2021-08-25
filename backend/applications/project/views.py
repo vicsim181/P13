@@ -15,19 +15,15 @@ from ..permissions import IsOwnerOrAdmin, IsPublishedOrNot
 class ProjectViewSet(viewsets.ModelViewSet):
     queryset = models.Project.objects.all()
     serializer_class = serializers.ProjectSerializer
-    filterset_fields = ['id_project', 'ready_for_publication', 'owner_id', 'project_type', 'liked_by']
+    filterset_fields = ['owner_id', 'project_type', 'liked_by']
 
     def get_permissions(self):
-        if self.action == 'destroy' or self.action == 'update':
-            permission_classes = [IsOwnerOrAdmin]
-        elif self.action == 'list':
+        if self.action == 'list' or self.action == 'retrieve':
             permission_classes = [IsPublishedOrNot]
         elif self.action == 'create':
             permission_classes = [permissions.IsAuthenticated]
-        elif self.action == 'retrieve':
-            permission_classes = [IsPublishedOrNot]
         else:
-            permission_classes = [permissions.IsAdminUser]
+            permission_classes = [IsOwnerOrAdmin]
         return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
@@ -37,8 +33,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer.save(owner=user, project_type=type)
         return
 
-    def retrieve(self, request, pk):
-        print('RETRIEVE REQUEST')
+    # def list(self, request):
+    #     print('LIST REQUIRED ', self.request.GET)
+
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -151,8 +148,6 @@ class UserAnswerViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'retrieve' or self.action == 'list' or self.action == 'create':
-            permission_classes = [IsOwnerOrAdmin]
-        elif self.action == 'destroy' or self.action == 'update':
             permission_classes = [IsOwnerOrAdmin]
         else:
             permission_classes = [permissions.IsAdminUser]

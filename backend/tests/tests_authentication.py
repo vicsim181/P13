@@ -34,44 +34,6 @@ class UnitaryUserViewSetTests(APITestCase):
         self.assertEqual(str(user_test), 'test@email.fr')
         print("ASSERT DONE")
 
-    def test_update_user_non_owner_then_owner(self):
-        print("\nTEST - UnitaryViewSetTests --> test_update_user_non_owner_then_owner()\n")
-        user_test = models.CustomUser.objects.get(email='test@email.fr')
-        test_view = views.UserViewSet.as_view({'put': 'update'})
-        infos_update = {'first_name': 'Modifié', 'last_name': 'Modifié aussi', 'email': 'test@email.fr', 'password': 'sup€rp@ssW0rd'}
-        request = self.factory.put('users/', infos_update)
-        force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, pk=user_test.id)
-        print("self.assertEqual(response.status_code, 403)")
-        self.assertEqual(response.status_code, 403)
-        print("ASSERT 1 DONE")
-        force_authenticate(request, user=user_test)
-        response = test_view(request, pk=user_test.id)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 2 DONE")
-
-    def test_delete_user_non_admin_then_admin(self):
-        print("\nTEST - UnitaryViewSetTests --> test_delete_user_non_admin_then_admin()\n")
-        user_test = models.CustomUser.objects.get(email='test@email.fr')
-        test_view = views.UserViewSet.as_view({'delete': 'destroy'})
-        request = self.factory.delete('users/')
-        force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, pk=user_test.id)
-        print("self.assertEqual(response.status_code, 403)")
-        self.assertEqual(response.status_code, 403)
-        print("ASSERT 1 DONE")
-        request_2 = self.factory.delete('users/')
-        response = test_view(request_2, pk=user_test.id)
-        print("self.assertEqual(response.status_code, 401)")
-        self.assertEqual(response.status_code, 401)
-        print("ASSERT 2 DONE")
-        force_authenticate(request, user=self.admin_test)
-        response = test_view(request, pk=user_test.id)
-        print("self.assertEqual(response.status_code, 204)")
-        self.assertEqual(response.status_code, 204)
-        print("ASSERT 3 DONE")
-
 
 class UnitaryUserDataTests(APITestCase):
     """
@@ -98,41 +60,6 @@ class UnitaryUserDataTests(APITestCase):
         print("self.assertEqual(data['address'], [])")
         self.assertEqual(data['address'], [])
         print("ASSERT 2 DONE")
-
-
-class UnitaryAddressRegistrationTests(APITestCase):
-    """
-    Test class for the registration of an address.
-    We check it's possible to create an address through post request on CreateAddressView.
-    Then that it's not possible through post request on AddressViewSet if not AdminUser.
-    """
-
-    def setUp(self):
-        self.factory = APIRequestFactory()
-        self.user_test = models.CustomUser(email='donald@duck.us', password=None, first_name="Donald", last_name="Duck")
-        self.user_test.set_password("sup€Rp@sswoRd")
-        self.user_test.save()
-
-    def test_address_register_through_defined_url(self):
-        print("\nTEST - AddressRegistrationTests --> test_address_register_through_defined_url()\n")
-        test_view = views.AddressViewSet.as_view({'post': 'create'})
-        test_address_infos = {'num': 120, 'street': 'Avenue Mickey', 'postal_code': 99999, 'city': 'Mickeyville'}
-        request = self.factory.post('address/', test_address_infos)
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request)
-        print("self.assertEqual(response.status_code, 201)")
-        self.assertEqual(response.status_code, 201)
-        print("ASSERT 1 DONE")
-
-    def test_address_viewset_non_authenticated(self):
-        print("\nTEST - AddressRegistrationTests --> test_address_viewset_nonadminuser()\n")
-        test_view = views.AddressViewSet.as_view({'post': 'create'})
-        test_address_infos = {'num': 120, 'street': 'Avenue Mickey', 'postal_code': 99999, 'city': 'Mickeyville'}
-        request = self.factory.post('address/', test_address_infos)
-        response = test_view(request)
-        print("self.assertEqual(response.status_code, 401)")
-        self.assertEqual(response.status_code, 401)
-        print("ASSERT DONE")
 
 
 class UnitaryAddressViewSetTests(APITestCase):

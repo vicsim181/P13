@@ -173,12 +173,15 @@ export default {
       }
     }
     for (const question in this.questions) {
-      response = await fetch(
-        `http://127.0.0.1:8000/user_answer/?question=${this.questions[question].id_question}&user=${this.loggedInUser.id}`
-      ).then(res => res.json());
-      if (typeof response[0] !== 'undefined') {
-        this.questions_answered.push(response[0]);
-      }
+      const data = {
+        question: this.questions[question].id_question,
+        user: this.loggedInUser.id
+      };
+      response = await this.$axios.get('user_answer/', { params: data });
+      console.log('RESPONSE ', response.data);
+      // if (typeof response[0] !== 'undefined') {
+      //   this.questions_answered.push(response[0]);
+      // }
     }
     data = { owner: this.loggedInUser.id, project: this.id_project };
     response = await this.$axios.get('comment', { params: data });
