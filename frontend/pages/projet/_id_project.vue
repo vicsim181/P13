@@ -263,7 +263,7 @@ export default {
 
 <style>
 .container {
-  padding-top: 8.9rem;
+  padding-top: 8.4rem;
   padding-bottom: 4rem;
   min-width: 100%;
   padding-left: 0;

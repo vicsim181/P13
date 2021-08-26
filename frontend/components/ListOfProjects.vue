@@ -29,17 +29,9 @@
                   Publié le : {{ project.publication }}
                 </b-card-text>
               </li>
-              <div v-if="project.is_over">
-                <li>
-                  <b-card-text> Terminé </b-card-text>
-                </li>
-              </div>
-              <div v-else>
-                <li>
-                  <b-card-text> En cours </b-card-text>
-                  <b-card-text> Fin le {{ project.end_date }} </b-card-text>
-                </li>
-              </div>
+              <li>
+                <b-card-text> Fin le {{ project.end_date }} </b-card-text>
+              </li>
               <div v-if="project_type === 'Pétition'">
                 <li>
                   <b-icon icon="hand-thumbs-up"></b-icon>
@@ -147,25 +139,61 @@ export default {
       return self.indexOf(value) === index;
     },
 
-    // Function sending a request to the API to get the projects created by the user (published or not, depending on this.published)
-    async getMyProjects() {
-      return await fetch(
-        `http://127.0.0.1:8000/project/?project_type=${this.project_type_id}&ready_for_publication=${this.published}&owner_id=${this.loggedInUser.id}`
-      ).then(res => res.json());
+    //  ADD FUNCTION TO CALL NEW VIEW FOR NON PUBLISHED PROJECTS
+
+    // Function sending a request to the API to get the published projects created by the user
+    async getMyPublishedProjects() {
+      const data = {
+        project_type: this.project_type_id,
+        owner_id: this.loggedInUser.id
+      };
+      try {
+        const res = await this.$axios.get('project', { params: data });
+        return res.data;
+      } catch (error) {
+        return [];
+      }
+    },
+
+    // Function sending a request to the API to get the not published projects created by the user
+    async getMyNOTPublishedProjects() {
+      const data = {
+        project_type: this.project_type_id
+      };
+      try {
+        const res = await this.$axios.get('not_published', {
+          params: data
+        });
+        return res.data;
+      } catch (error) {
+        return [];
+      }
     },
 
     // Function sending a request to the API to get the projects for which the user has participated (answering the question(s) of the form)
     async getProjects() {
-      return await fetch(
-        `http://127.0.0.1:8000/project/?project_type=${this.project_type_id}&ready_for_publication=${this.published}`
-      ).then(res => res.json());
+      const data = {
+        project_type: this.project_type_id
+      };
+      try {
+        const res = await this.$axios.get('project', { params: data });
+        return res.data;
+      } catch (error) {
+        return [];
+      }
     },
 
     // Function sending a request to the API to get the projects liked by the user
     async getProjectsLiked() {
-      return await fetch(
-        `http://127.0.0.1:8000/project/?liked_by=${this.loggedInUser.id}`
-      ).then(res => res.json());
+      const data = {
+        liked_by: this.loggedInUser.id
+      };
+      try {
+        const res = await this.$axios.get('project', { params: data });
+        return res.data;
+      } catch (error) {
+        return [];
+      }
     },
 
     // Function sending a request to the API to get the projects commented by the user
@@ -256,7 +284,11 @@ export default {
     this.conseil_type_id = response.data['id_project_type'];
     await this.setImage();
     if (this.my_projects === 'true') {
-      this.projects = await this.getMyProjects();
+      if (this.published === 'true') {
+        this.projects = await this.getMyPublishedProjects();
+      } else {
+        this.projects = await this.getMyNOTPublishedProjects();
+      }
     } else if (this.participated === 'false') {
       this.projects = await this.getProjects();
     } else {
@@ -269,6 +301,7 @@ export default {
         await this.sortUserAnswers(response);
       }
     }
+    console.log('PROJECTS  ', this.projects);
     const delay = ms => new Promise(res => setTimeout(res, ms));
     this.$emit('loaded');
     await delay(2000);

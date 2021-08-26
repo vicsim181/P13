@@ -14,6 +14,7 @@
       </div>
       <div class="row justify-content-center">
         <ListOfProjects
+          class="text-center"
           project_type="Conseil de quartier"
           my_projects="false"
           published="true"

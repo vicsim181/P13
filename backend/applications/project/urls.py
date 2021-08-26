@@ -2,6 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
 
+# app_name = 'project'
 
 router = DefaultRouter()
 router.register(r'project', views.ProjectViewSet)
@@ -11,5 +12,5 @@ router.register(r'mcq_answer', views.MCQAnswerViewSet)
 router.register(r'user_answer', views.UserAnswerViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
 ]

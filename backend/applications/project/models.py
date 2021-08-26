@@ -24,7 +24,6 @@ class Project(models.Model):
     description = models.TextField(max_length=1000)
     project_type = models.ForeignKey(ProjectType, related_name='project', on_delete=models.CASCADE)
     owner = models.ForeignKey(CustomUser, related_name='project', on_delete=models.CASCADE)
-    is_over = models.BooleanField(default=False)
     end_date = models.DateTimeField(null=True)
     ready_for_publication = models.BooleanField(default=False)
     liked_by = models.ManyToManyField(CustomUser, related_name='project_liked')

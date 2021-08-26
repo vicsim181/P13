@@ -14,6 +14,7 @@
       </div>
       <div class="row justify-content-center">
         <ListOfProjects
+          class="text-center"
           project_type="Pétition"
           my_projects="false"
           published="true"

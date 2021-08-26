@@ -94,7 +94,7 @@ export default {
   },
   data() {
     return {
-      welcome: null,
+      welcome: true,
       showspinner: false,
       activeTab: '',
       participatedState: false,

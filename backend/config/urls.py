@@ -39,5 +39,6 @@ urlpatterns = [
     path('like', project.views.LikeViews.as_view(), name='like-view'),
     path('publication', project.views.ProjectPublication.as_view(), name='publish-view'),
     path('project_type', project.views.ProjectTypeRetrieveView.as_view(), name='retrieve_project_type'),
-    path('question_type', project.views.QuestionTypeRetrieveView.as_view(), name='retrieve_question_type')
+    path('question_type', project.views.QuestionTypeRetrieveView.as_view(), name='retrieve_question_type'),
+    path('not_published', project.views.NonPublishedProjectsView.as_view(), name='not_published'),
 ]

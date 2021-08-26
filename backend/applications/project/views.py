@@ -1,7 +1,7 @@
 import datetime
 import django_filters.rest_framework
 from django.http.response import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from django.http import Http404
 from django.db import IntegrityError
 from rest_framework import viewsets, permissions, generics
@@ -18,10 +18,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
     filterset_fields = ['owner_id', 'project_type', 'liked_by']
 
     def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve':
+        if self.action == 'retrieve':
             permission_classes = [IsPublishedOrNot]
         elif self.action == 'create':
             permission_classes = [permissions.IsAuthenticated]
+        elif self.action == 'list':
+            permission_classes = [permissions.AllowAny]
         else:
             permission_classes = [IsOwnerOrAdmin]
         return [permission() for permission in permission_classes]
@@ -33,9 +35,33 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer.save(owner=user, project_type=type)
         return
 
-    # def list(self, request):
-    #     print('LIST REQUIRED ', self.request.GET)
+    def list(self, request):
+        filters = {}
+        for filter in request.GET:
+            filters[filter] = request.GET[filter]
+        context = {'request': request}
+        queryset = get_list_or_404(models.Project,
+                                   ready_for_publication=True,
+                                   **filters)
+        self.check_object_permissions(self.request, queryset)
+        serializer = serializers.ProjectSerializer(queryset, context=context, many=True)
+        return Response(serializer.data)
 
+
+class NonPublishedProjectsView(generics.ListAPIView):
+    queryset = models.Project.objects.all()
+    permission_classes = [IsOwnerOrAdmin]
+
+    def get(self, request):
+        context = {'request': request}
+        project_type_id = request.GET['project_type']
+        queryset = get_list_or_404(models.Project,
+                                   ready_for_publication=False,
+                                   owner=request.user.id,
+                                   project_type=project_type_id)
+        self.check_object_permissions(self.request, queryset)
+        serializer = serializers.ProjectSerializer(queryset, context=context, many=True)
+        return Response(serializer.data)
 
 
 class QuestionViewSet(viewsets.ModelViewSet):

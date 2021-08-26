@@ -9,6 +9,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         """
         Check if the owner of the object and the user in the request are the same user.
         """
+        print('OBJ ', obj)
         permission_1, permission_2, permission_3 = None, None, None
         print('REQUEST USER ', request.user)
         if hasattr(obj, 'owner'):
@@ -26,7 +27,26 @@ class IsPublishedOrNot(permissions.BasePermission):
     """
     def has_object_permission(self, request, view, obj):
         print('REQUEST USER ', request.user)
-        print('OBJ  ', obj.ready_for_publication)
+        if obj.ready_for_publication:
+            return True
+        else:
+            if obj.owner == request.user:
+                print('obj owner and request user TRUE')
+                return True
+            elif request.user.is_staff:
+                print('obj owner and request user FALSE and user is staff')
+                return True
+            else:
+                print('obj owner and request user FALSE and user is NOT staff')
+                return False
+
+
+class IsOwnerOrAdminListIncluded(permissions.BasePermission):
+    """
+    Custom permission to only retrieve a project that is published if the user looking for it is not an admin or the owner of it.
+    """
+    def has_object_permission(self, request, view, obj):
+        print('REQUEST USER ', request.user)
         if obj.ready_for_publication:
             return True
         else:

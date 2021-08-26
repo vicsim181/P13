@@ -81,6 +81,7 @@ export default {
   align-content: space-between;
 }
 .navbar_elements {
+  justify-content: space-evenly;
   align-items: center;
   text-align: center;
   align-self: center;
@@ -93,6 +94,10 @@ export default {
 .responsive_img {
   max-width: 100%;
   height: auto;
+}
+/* Doesn't influence the 8px padding on a.nav-link element of the navbar in the browser */
+.nav-link {
+  padding: 0rem;
 }
 @media (max-width: 1200px) {
   .item {

@@ -61,7 +61,6 @@ def login(request):
     email = request.data.get('email')
     password = request.data.get('password')
     user = get_user_model().objects.filter(email=email).first()
-
     if user is None:
         raise exceptions.AuthenticationFailed('Utilisateur non existant')
     if not user.check_password(password):
