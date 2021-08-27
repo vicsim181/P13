@@ -10,7 +10,10 @@
         class="h-100 justify-content-center text-center"
         v-if="isAuthenticated"
       >
-        <ConseilForm v-if="loggedInUser.is_staff" />
+        <ConseilForm
+          v-if="loggedInUser.is_staff"
+          button="Créer un conseil de quartier"
+        />
       </div>
       <div class="row justify-content-center">
         <ListOfProjects

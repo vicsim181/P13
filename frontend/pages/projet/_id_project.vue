@@ -96,6 +96,44 @@
             </b-collapse>
           </div>
         </div>
+        <div v-if="!project.ready_for_publication">
+          <div class="column">
+            <ul v-for="question in questions" :key="question.id_question">
+              <li>{{ question.wording }}</li>
+              <!--RAJOUTER FORMULAIRE POUR MODIFIER LA QUESTION OU LA SUPPRIMER -->
+              <div v-if="question.mcqanswer">
+                <div
+                  v-for="mcqanswer in question.mcqanswer"
+                  :key="mcqanswer.id_answer"
+                >
+                  <ul>
+                    <li>
+                      {{ mcqanswer }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </ul>
+          </div>
+          <div class="column">
+            <MyNotPublishedConseil
+              v-if="project.project_type === conseil_type_id"
+              :project_data="project"
+            />
+          </div>
+          <div class="column">
+            <MyNotPublishedConsultation
+              v-if="project.project_type === consultation_type_id"
+              :project_data="project"
+            />
+          </div>
+          <div class="column">
+            <MyNotPublishedPetition
+              v-if="project.project_type === petition_type_id"
+              :project_data="project"
+            />
+          </div>
+        </div>
       </div>
     </div>
     <CustomFooter />
@@ -178,10 +216,9 @@ export default {
         user: this.loggedInUser.id
       };
       response = await this.$axios.get('user_answer/', { params: data });
-      console.log('RESPONSE ', response.data);
-      // if (typeof response[0] !== 'undefined') {
-      //   this.questions_answered.push(response[0]);
-      // }
+      if (typeof response.data[0] !== 'undefined') {
+        this.questions_answered.push(response.data[0]);
+      }
     }
     data = { owner: this.loggedInUser.id, project: this.id_project };
     response = await this.$axios.get('comment', { params: data });
@@ -317,9 +354,9 @@ export default {
   padding-bottom: 4rem;
   padding-right: 15rem;
 }
-@media (min-width: 1200px) and (max-width: 1565px) {
+@media (max-width: 1200px) {
   .container {
-    padding-top: 18rem;
+    padding-top: 10rem;
   }
 }
 </style>

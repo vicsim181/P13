@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-button v-b-modal.modal-prevent-closing-1 variant="dark">
-      Créer un conseil de quartier
+      {{ button_label }}
     </b-button>
 
     <b-modal
@@ -201,6 +201,7 @@
 
 <script>
 export default {
+  props: ['button'],
   computed: {
     dateState() {
       return this.end_day.length > 0;
@@ -247,6 +248,7 @@ export default {
     const minDate = new Date(today);
     minDate.setDate(minDate.getDate() + 7);
     return {
+      button_label: this.button,
       publish: false,
       quit: false,
       conseil: {

@@ -158,7 +158,8 @@ export default {
     // Function sending a request to the API to get the not published projects created by the user
     async getMyNOTPublishedProjects() {
       const data = {
-        project_type: this.project_type_id
+        project_type: this.project_type_id,
+        owner_id: this.loggedInUser.id
       };
       try {
         const res = await this.$axios.get('not_published', {

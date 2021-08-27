@@ -10,7 +10,10 @@
         class="row h-100 w-auto justify-content-center text-center"
         v-if="isAuthenticated"
       >
-        <ConsultationForm v-if="loggedInUser.is_staff" />
+        <ConsultationForm
+          v-if="loggedInUser.is_staff"
+          button="Créer une consultation"
+        />
       </div>
       <div class="row justify-content-center">
         <ListOfProjects

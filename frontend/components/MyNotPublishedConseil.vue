@@ -1,61 +1,67 @@
 <template>
   <div>
-    <b-button v-b-modal.modal-prevent-closing-1 variant="dark">
-      {{ button_label }}
+    <b-button v-b-modal.modal-modify-project variant="dark">
+      Projet
+    </b-button>
+    <br />
+    <b-button v-b-modal.modal-modify-questions variant="dark">
+      Questions
     </b-button>
 
     <b-modal
-      id="modal-prevent-closing-1"
+      id="modal-modify-project"
       size="lg"
       ref="modal"
-      title="Création de consultation"
+      title="Création de conseil de quartier"
       no-close-on-backdrop
       header-bg-variant="dark"
       header-text-variant="light"
+      button-size="lg"
       @show="resetModal"
+      @hidden="resetModal"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
-          label="Nom de la consultation"
+          label="Nom du conseil"
           label-for="name-input"
-          invalid-feedback="Vous devez donner un nom à la consultation"
+          invalid-feedback="Vous devez donner un nom au conseil"
           :state="nameState"
         >
           <b-form-input
             id="name-input"
-            v-model="consultation.name"
+            v-model="conseil.name"
             :state="nameState"
             required
           ></b-form-input>
         </b-form-group>
         <b-form-group
-          label="Lieu concerné"
+          label="Quartier concerné"
           label-for="place-input"
-          invalid-feedback="Entrez un lieu concerné par la consultation"
+          invalid-feedback="Entrez un quartier concerné par le conseil"
           :state="placeState"
         >
           <b-form-input
             id="place-input"
-            v-model="consultation.place"
+            v-model="conseil.place"
             :state="placeState"
             required
           ></b-form-input>
         </b-form-group>
         <b-form-group
-          label="Description de la consultation"
+          label="Description du conseil"
           label-for="description-input"
-          invalid-feedback="Décrivez la consultation"
+          invalid-feedback="Décrivez le conseil"
           :state="descriptionState"
         >
           <b-form-textarea
             id="description-input"
-            v-model="consultation.description"
+            v-model="conseil.description"
             :state="descriptionState"
             required
           ></b-form-textarea>
         </b-form-group>
         <b-form-group
-          label="Choisissez la date de fin de la consultation (minimum dans 30 jours à partir d'aujourd'hui)"
+          label="Choisissez la date du conseil (minimum 7 jours à partir d'aujourd'hui)"
           label-for="datepicker"
           invalid-feedback="Choisissez une date"
           :state="dateState"
@@ -69,15 +75,32 @@
             placeholder="Choisissez une date"
           ></b-form-datepicker>
         </b-form-group>
+        <b-form-group
+          label="Choisissez l'heure du conseil"
+          label-for="timepicker"
+          invalid-feedback="Choisissez une heure"
+          :state="timeState"
+        >
+          <b-form-timepicker
+            id="timepicker"
+            :state="timeState"
+            v-model="end_time"
+            class="mb-3"
+            locale="fr"
+          ></b-form-timepicker>
+        </b-form-group>
       </form>
       <template #modal-footer="{cancel}">
-        <b-button size="lg" variant="primary" @click="handleQuitConsultation()">
+        <b-button size="md" variant="primary" @click="handleQuitConseil()">
           Sauvegarder et quitter
         </b-button>
-        <b-button size="lg" variant="primary" @click="handleOkConsultation()">
+        <b-button size="md" variant="primary" @click="handleOkConseil()">
           Valider et ajouter une question
         </b-button>
-        <b-button size="lg" variant="danger" @click="cancel()">
+        <b-button size="md" variant="success" @click="handlePublishConseil()">
+          Publier le conseil
+        </b-button>
+        <b-button size="md" variant="danger" @click="cancel()">
           Annuler
         </b-button>
       </template>
@@ -85,7 +108,7 @@
 
     <!-- SECOND MODAL FOR THE QUESTIONS -->
     <b-modal
-      id="modal-prevent-closing-2"
+      id="modal-modify-questions"
       size="lg"
       ref="modal"
       title="Création d'une question"
@@ -170,7 +193,7 @@
           Valider et ajouter une question
         </b-button>
         <b-button size="md" variant="success" @click="handlePublishQuestion()">
-          Publier la consultation
+          Publier le conseil
         </b-button>
         <b-button size="md" variant="danger" @click="cancel()">
           Annuler
@@ -182,22 +205,25 @@
 
 <script>
 export default {
-  props: ['button'],
+  props: ['button', 'project_data'],
   computed: {
     dateState() {
-      return this.end_day.length > 0 ? true : false;
+      return this.end_day.length > 0;
+    },
+    timeState() {
+      return this.end_time.length > 0;
     },
     nameState() {
-      return this.consultation.name.length > 0 ? true : false;
+      return this.conseil.name.length > 0;
     },
     placeState() {
-      return this.consultation.place.length > 0 ? true : false;
+      return this.conseil.place.length > 0;
     },
     descriptionState() {
-      return this.consultation.description.length > 0 ? true : false;
+      return this.conseil.description.length > 0;
     },
     questionNameState() {
-      return this.question.wording.length > 0 ? true : false;
+      return this.question.wording.length > 0;
     },
     answerState() {
       if (
@@ -217,24 +243,25 @@ export default {
       }
     },
     questionTypeState() {
-      return this.question_type_name.length > 0 ? true : false;
+      return this.question_type_name.length > 0;
     }
   },
   data() {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const minDate = new Date(today);
-    minDate.setDate(minDate.getDate() + 30);
+    minDate.setDate(minDate.getDate() + 7);
     return {
       button_label: this.button,
       publish: false,
       quit: false,
-      consultation: {
-        name: '',
-        place: '',
-        description: '',
-        end_date: '',
-        project_type: ''
+      conseil: {
+        name: this.project_data.name,
+        place: this.project_data.place,
+        description: this.project_data.description,
+        end_date: this.project_data.end_date,
+        project_type: this.project_data.project_type,
+        questions: [this.project_data.question]
       },
       question: {
         type: '',
@@ -244,7 +271,7 @@ export default {
       },
       min_date: minDate,
       end_day: '',
-      end_time: '0:00:00',
+      end_time: '',
       end_date: '',
       id_project: '',
       id_owner: '',
@@ -252,10 +279,10 @@ export default {
     };
   },
   methods: {
-    // We check the form with the infos of the Consultation is valid
+    // We check the form with the infos of the Conseil is valid
     checkFormValidity() {
       const valid = this.$refs.form.checkValidity();
-      if (this.dateState) {
+      if (this.dateState && this.timeState) {
         this.end_date = this.end_day + ' ' + this.end_time;
         return valid;
       } else {
@@ -280,23 +307,24 @@ export default {
       }
     },
 
-    // We reset the data of the first form, the consultation basic infos
+    // We reset the data of the first form, the conseil basic infos
     resetModal() {
-      this.consultation.name = '';
-      this.consultation.place = '';
-      this.consultation.description = '';
-      this.end_day = '';
-      this.quit = false;
-      this.publish = false;
+      // this.conseil.name = '';
+      // this.conseil.place = '';
+      // this.conseil.description = '';
+      // this.end_day = '';
+      // this.end_time = '';
+      // this.quit = false;
+      // this.publish = false;
     },
 
     // We reset the data of the second form, question infos
     resetModal_2() {
-      this.question.wording = '';
-      this.question.type = '';
-      this.question.number_of_choices = 2;
-      this.quit = false;
-      this.publish = false;
+      // this.question.wording = '';
+      // this.question.type = '';
+      // this.question.number_of_choices = 2;
+      // this.quit = false;
+      // this.publish = false;
       // this.question.choices = [];
     },
 
@@ -312,36 +340,38 @@ export default {
       }
     },
 
-    // We send a POST request to the API with the data about the Consultation
-    async getConsultationType() {
-      const data = { name: 'Consultation' };
+    // We send a GET request to the API to get the id of the project type Conseil
+    async getConseilType() {
+      const data = { name: 'Conseil de quartier' };
       const response = await this.$axios.get('project_type', { params: data });
       const type_id = response.data['id_project_type'];
       return type_id;
     },
 
-    // We send a POST request to the API with the data about the Consultation
-    async postConsultationData() {
+    // We send a POST request to the API with the data about the Conseil
+    async postConseilData() {
       const data = {
-        name: this.consultation.name,
-        place: this.consultation.place,
-        description: this.consultation.description,
+        name: this.conseil.name,
+        place: this.conseil.place,
+        description: this.conseil.description,
         project_type: this.projectType,
         end_date: this.end_date
       };
       try {
         const response = await this.$axios.post('project/', data);
+        console.log(response.data);
         this.id_project = response.data['id_project'];
         this.id_owner = response.data['owner'];
       } catch (error) {
+        console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
       }
     },
 
-    // We send a PUT request to the API with the id of the Consultation project to publish it
-    publishConsultation() {
+    // We send a PUT request to the API with the id of the Conseil project to publish it
+    publishConseil() {
       this.$axios.put('publication', { project_id: this.id_project });
     },
 
@@ -354,6 +384,7 @@ export default {
       };
       try {
         const response_1 = await this.$axios.post('question/', question_data);
+        console.log(response_1.data);
         const question_id = response_1.data['id_question'];
         if (this.question_type_name === 'QCM') {
           for (const choice in this.question.choices) {
@@ -361,11 +392,17 @@ export default {
               wording: this.question.choices[choice],
               question: question_id
             };
-            await this.$axios.post('mcq_answer/', answer_data);
+            const response_2 = await this.$axios.post(
+              'mcq_answer/',
+              answer_data
+            );
+            console.log(response_2.data);
           }
         }
         this.question.choices = [];
       } catch (error) {
+        console.log(error.response);
+        // const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data;
         window.alert(errorMessage);
         this.question.choices = [];
@@ -383,11 +420,12 @@ export default {
     // FUNCTIONS CALLED BY THE BUTTONS
 
     // We call this function when clicking on one of the 3 buttons (Save and quit, Publish and quit, add a question)
-    handleOkConsultation() {
+    handleOkConseil() {
+      // bvModalEvt.preventDefault();
       this.handleSubmit();
     },
-    // Alternative to handleOkConsultation() in the case we want to quit (publish or only saving) and not add any question
-    handleQuitConsultation() {
+    // Alternative to handleOkConseil() in the case we want to quit (publish or only saving) and not add any question
+    handleQuitConseil() {
       if (!this.checkFormValidity()) {
         return;
       } else {
@@ -395,24 +433,35 @@ export default {
         this.handleSubmit();
       }
     },
-
+    handlePublishConseil() {
+      if (!this.checkFormValidity()) {
+        return;
+      } else {
+        this.publish = true;
+        this.handleSubmit();
+      }
+    },
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit() {
       if (!this.checkFormValidity()) {
         return;
       }
-      this.projectType = await this.getConsultationType();
-      await this.postConsultationData();
+      this.projectType = await this.getConseilType();
+      await this.postConseilData();
+      if (this.publish == true) {
+        this.publishConseil();
+      }
       this.$nextTick(() => {
-        this.$bvModal.hide('modal-prevent-closing-1');
-        if (this.quit == false) {
-          this.$bvModal.show('modal-prevent-closing-2');
+        this.$bvModal.hide('modal-modify-project');
+        if (this.quit == false && this.publish == false) {
+          this.$bvModal.show('modal-modify-questions');
         }
       });
     },
 
     // We call this function when validating a question and adding a new one
     handleOkQuestion() {
+      // bvModalEvt.preventDefault();
       this.handleSubmit_2();
     },
     // Alternative to handleOkQuestion() in case we want to quit (publish or just save) without adding new question
@@ -440,15 +489,35 @@ export default {
       this.question.type = await this.getQuestionType();
       this.postQuestionData();
       if (this.publish == true) {
-        this.publishConsultation();
+        this.publishConseil();
       }
       this.$nextTick(() => {
-        this.$bvModal.hide('modal-prevent-closing-2');
+        this.$bvModal.hide('modal-modify-questions');
         if (this.quit == false && this.publish == false) {
-          this.$bvModal.show('modal-prevent-closing-2');
+          this.$bvModal.show('modal-modify-questions');
         }
       });
     }
+  },
+  async fetch() {
+    // let response = await this.$axios.get(`project/${this.id_project}`);
+    // this.project = response.data;
+    console.log('THIS PROJECT DATA ', this.project_data);
+    this.conseil.questions = this.project_data.question;
+    console.log('QUESTIONS ', this.conseil.questions.length);
+    if (this.conseil.questions.length > 0) {
+      for (const question in this.conseil.questions) {
+        let mcq = this.conseil.questions[question].mcqanswer;
+        if (typeof mcq !== 'undefined' && mcq.length > 0) {
+          for (const choice in mcq) {
+            const response = await this.$axios.get(mcq[choice]);
+            this.mcq_answers.push(response.data['wording']);
+          }
+        }
+      }
+    }
+    this.loaded = true;
+    this.$nuxt.refresh();
   }
 };
 </script>

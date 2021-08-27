@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-button v-b-modal.modal-prevent-closing-1 variant="dark">
-      Créer une pétition
+      {{ button_label }}
     </b-button>
 
     <b-modal
@@ -78,6 +78,7 @@
 
 <script>
 export default {
+  props: ['button'],
   computed: {
     nameState() {
       return this.petition.name.length > 0 ? true : false;
@@ -91,6 +92,7 @@ export default {
   },
   data() {
     return {
+      button_label: this.button,
       publish: false,
       petition: {
         name: '',

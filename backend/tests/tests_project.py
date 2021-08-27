@@ -95,8 +95,8 @@ class ProjectUnitaryTests(APITestCase):
         self.assertEqual(len(data), 1)
         print("ASSERT 3 DONE")
 
-    def test_consult_projects_list_not_authenticated(self):
-        print("\nTEST - UnitaryProjectTests --> test_consult_projects_list_not_authenticated()\n")
+    def test_list_projects_2(self):
+        print("\nTEST - UnitaryProjectTests --> LIST PROJECTS NOT AUTHENTICATED\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test_1 = models.Project(name='Essai',
@@ -125,6 +125,123 @@ class ProjectUnitaryTests(APITestCase):
         print("self.assertEqual(len(data), 1)")
         self.assertEqual(len(data), 1)
         print("ASSERT 3 DONE")
+
+    def test_list_projects_3(self):
+        print("\nTEST - UnitaryProjectTests --> LIST OF NOT PUBLISHED PROJECTS WHEN NOT AUTHENTICATED\n")
+        project_type_test = models.ProjectType(name='Consultation')
+        project_type_test.save()
+        project_test_1 = models.Project(name='Essai',
+                                        place='Paris',
+                                        description='Essai de création de projet via test',
+                                        owner=self.user_test,
+                                        project_type=project_type_test)
+        project_test_1.save()
+        project_test_2 = models.Project(name='Essai numéro 2',
+                                        place='Londres',
+                                        description='Deuxième essai de création de projet via test',
+                                        owner=self.user_test,
+                                        project_type=project_type_test)
+        project_test_2.save()
+        test_view = views.NonPublishedProjectsView.as_view()
+        request = self.factory.get('project/')
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 500) NO PROJECT TYPE PASSED IN THE REQUEST")
+        self.assertEqual(response.status_code, 500)
+        print("ASSERT 1 DONE")
+        request_2 = self.factory.get('not_published/', {'project_type': project_type_test.id_project_type})
+        response_2 = test_view(request_2)
+        print("self.assertEqual(response.status_code, 404) PROJECT TYPE CONSULTATION PASSED IN")
+        print(response.data)
+        self.assertEqual(response_2.status_code, 404)
+        print("ASSERT 1 DONE")
+
+    def test_list_projects_4(self):
+        print("\nTEST - UnitaryProjectTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN NOT OWNER BUT ADMIN\n")
+        project_type_test = models.ProjectType(name='Consultation')
+        project_type_test.save()
+        project_test_1 = models.Project(name='Essai',
+                                        place='Paris',
+                                        description='Essai de création de projet via test',
+                                        owner=self.user_test,
+                                        project_type=project_type_test)
+        project_test_1.save()
+        project_test_2 = models.Project(name='Essai numéro 2',
+                                        place='Londres',
+                                        description='Deuxième essai de création de projet via test',
+                                        owner=self.user_test,
+                                        project_type=project_type_test)
+        project_test_2.save()
+        test_view = views.NonPublishedProjectsView.as_view()
+        request = self.factory.get('not_published/', {'project_type': project_type_test.id_project_type,
+                                                      'owner_id': self.user_test.id})
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(len(response.data), 2)")
+        self.assertEqual(len(response.data), 2)
+        print("ASSERT 2 DONE")
+
+    def test_list_projects_5(self):
+        print("\nTEST - UnitaryProjectTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN NEITHER OWNER NOR ADMIN\n")
+        project_type_test = models.ProjectType(name='Consultation')
+        project_type_test.save()
+        project_test_1 = models.Project(name='Essai',
+                                        place='Paris',
+                                        description='Essai de création de projet via test',
+                                        owner=self.admin_test,
+                                        project_type=project_type_test)
+        project_test_1.save()
+        project_test_2 = models.Project(name='Essai numéro 2',
+                                        place='Londres',
+                                        description='Deuxième essai de création de projet via test',
+                                        owner=self.admin_test,
+                                        project_type=project_type_test)
+        project_test_2.save()
+        test_view = views.NonPublishedProjectsView.as_view()
+        request = self.factory.get('not_published/', {'project_type': project_type_test.id_project_type,
+                                                      'owner_id': self.admin_test.id})
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_list_projects_6(self):
+        print("\nTEST - UnitaryProjectTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN OWNER\n")
+        project_type_test = models.ProjectType(name='Consultation')
+        project_type_test.save()
+        project_test_1 = models.Project(name='Essai',
+                                        place='Paris',
+                                        description='Essai de création de projet via test',
+                                        owner=self.user_test,
+                                        project_type=project_type_test)
+        project_test_1.save()
+        project_test_2 = models.Project(name='Essai numéro 2',
+                                        place='Londres',
+                                        description='Deuxième essai de création de projet via test',
+                                        owner=self.user_test_2,
+                                        project_type=project_type_test)
+        project_test_2.save()
+        project_test_3 = models.Project(name='Essai numéro 3',
+                                        place='Madrid',
+                                        description='Troisième essai de création de projet via test',
+                                        owner=self.user_test,
+                                        project_type=project_type_test)
+        project_test_3.save()
+        test_view = views.NonPublishedProjectsView.as_view()
+        request = self.factory.get('not_published/', {'project_type': project_type_test.id_project_type,
+                                                      'owner_id': self.user_test.id})
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print(response.data)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(len(response.data), 2)")
+        self.assertEqual(len(response.data), 2)
+        print("ASSERT 2 DONE")
 
     def test_delete_project_when_not_owner(self):
         print("\nTEST - UnitaryProjectTests --> test_delete_project_when_not_owner()\n")

@@ -10,7 +10,7 @@
         class="h-100 justify-content-center text-center"
         v-if="isAuthenticated"
       >
-        <PetitionForm />
+        <PetitionForm button="Créer une pétition" />
       </div>
       <div class="row justify-content-center">
         <ListOfProjects

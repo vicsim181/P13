@@ -39,23 +39,3 @@ class IsPublishedOrNot(permissions.BasePermission):
             else:
                 print('obj owner and request user FALSE and user is NOT staff')
                 return False
-
-
-class IsOwnerOrAdminListIncluded(permissions.BasePermission):
-    """
-    Custom permission to only retrieve a project that is published if the user looking for it is not an admin or the owner of it.
-    """
-    def has_object_permission(self, request, view, obj):
-        print('REQUEST USER ', request.user)
-        if obj.ready_for_publication:
-            return True
-        else:
-            if obj.owner == request.user:
-                print('obj owner and request user TRUE')
-                return True
-            elif request.user.is_staff:
-                print('obj owner and request user FALSE and user is staff')
-                return True
-            else:
-                print('obj owner and request user FALSE and user is NOT staff')
-                return False

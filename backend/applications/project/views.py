@@ -7,6 +7,7 @@ from django.db import IntegrityError
 from rest_framework import viewsets, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.exceptions import APIException
 from . import models, serializers
 from ..permissions import IsOwnerOrAdmin, IsPublishedOrNot
 
@@ -51,15 +52,22 @@ class ProjectViewSet(viewsets.ModelViewSet):
 class NonPublishedProjectsView(generics.ListAPIView):
     queryset = models.Project.objects.all()
     permission_classes = [IsOwnerOrAdmin]
+    filterset_fields = ['project_type']
 
     def get(self, request):
         context = {'request': request}
+        if 'project_type' not in request.GET:
+            raise APIException('Vous devez fournir un type de projet')
+        if 'owner_id' not in request.GET:
+            raise APIException('Vous devez fournir un user id')
         project_type_id = request.GET['project_type']
+        owner_id = request.GET['owner_id']
         queryset = get_list_or_404(models.Project,
                                    ready_for_publication=False,
-                                   owner=request.user.id,
+                                   owner=owner_id,
                                    project_type=project_type_id)
-        self.check_object_permissions(self.request, queryset)
+        for element in queryset:
+            self.check_object_permissions(self.request, element)
         serializer = serializers.ProjectSerializer(queryset, context=context, many=True)
         return Response(serializer.data)
 

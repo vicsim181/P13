@@ -164,6 +164,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$bvModal.hide('modal-address');
+        this.$nuxt.refresh();
       });
     }
   }
