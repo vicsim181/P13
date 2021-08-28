@@ -17,8 +17,6 @@
       header-bg-variant="dark"
       header-text-variant="light"
       button-size="lg"
-      @show="resetModal"
-      @hidden="resetModal"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
         <b-form-group
@@ -307,25 +305,14 @@ export default {
       }
     },
 
-    // We reset the data of the first form, the conseil basic infos
-    resetModal() {
-      // this.conseil.name = '';
-      // this.conseil.place = '';
-      // this.conseil.description = '';
-      // this.end_day = '';
-      // this.end_time = '';
-      // this.quit = false;
-      // this.publish = false;
-    },
-
     // We reset the data of the second form, question infos
     resetModal_2() {
-      // this.question.wording = '';
-      // this.question.type = '';
-      // this.question.number_of_choices = 2;
-      // this.quit = false;
-      // this.publish = false;
-      // this.question.choices = [];
+      this.question.wording = '';
+      this.question.type = '';
+      this.question.number_of_choices = 2;
+      this.quit = false;
+      this.publish = false;
+      this.question.choices = [];
     },
 
     // Function refreshing the question.choices list depending on the number of fields displayed in the question configuration modal
@@ -338,6 +325,7 @@ export default {
           this.question.choices.pop();
         }
       }
+      console.log('NUMBER OF CHOCIES ', this.question.number_of_choices);
     },
 
     // We send a GET request to the API to get the id of the project type Conseil
@@ -380,23 +368,27 @@ export default {
       const question_data = {
         wording: this.question.wording,
         question_type: this.question.type,
-        project: this.id_project
+        project: this.project_data.id_project
       };
+      console.log('QUESTION DATA ', question_data);
       try {
         const response_1 = await this.$axios.post('question/', question_data);
         console.log(response_1.data);
         const question_id = response_1.data['id_question'];
         if (this.question_type_name === 'QCM') {
+          console.log('QUESTION CHOICES ', this.question.choices);
           for (const choice in this.question.choices) {
+            console.log('CHOICE ', this.question.choices[choice]);
             const answer_data = {
               wording: this.question.choices[choice],
               question: question_id
             };
+            console.log('DATA MCQ ANSWER ', answer_data);
             const response_2 = await this.$axios.post(
               'mcq_answer/',
               answer_data
             );
-            console.log(response_2.data);
+            console.log('REPONSE POST REQUETE ', response_2.data);
           }
         }
         this.question.choices = [];
@@ -487,7 +479,8 @@ export default {
         return;
       }
       this.question.type = await this.getQuestionType();
-      this.postQuestionData();
+      await this.postQuestionData();
+      this.$emit('done');
       if (this.publish == true) {
         this.publishConseil();
       }
@@ -500,11 +493,7 @@ export default {
     }
   },
   async fetch() {
-    // let response = await this.$axios.get(`project/${this.id_project}`);
-    // this.project = response.data;
-    console.log('THIS PROJECT DATA ', this.project_data);
     this.conseil.questions = this.project_data.question;
-    console.log('QUESTIONS ', this.conseil.questions.length);
     if (this.conseil.questions.length > 0) {
       for (const question in this.conseil.questions) {
         let mcq = this.conseil.questions[question].mcqanswer;
@@ -517,7 +506,6 @@ export default {
       }
     }
     this.loaded = true;
-    this.$nuxt.refresh();
   }
 };
 </script>

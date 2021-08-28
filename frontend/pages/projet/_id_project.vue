@@ -98,39 +98,52 @@
         </div>
         <div v-if="!project.ready_for_publication">
           <div class="column">
-            <ul v-for="question in questions" :key="question.id_question">
-              <li>{{ question.wording }}</li>
-              <!--RAJOUTER FORMULAIRE POUR MODIFIER LA QUESTION OU LA SUPPRIMER -->
-              <div v-if="question.mcqanswer">
+            <ul
+              v-for="question in questions_not_published"
+              :key="question.id_question"
+            >
+              <li>
+                {{ question[0].wording }}
+                <b-button
+                  size="sm"
+                  class="button delete"
+                  @click="handleDeleteQuestion(question[0].id_question)"
+                  >Supprimer la question</b-button
+                >
+              </li>
+              <div v-if="question[1].length > 0">
                 <div
-                  v-for="mcqanswer in question.mcqanswer"
+                  v-for="mcqanswer in question[1]"
                   :key="mcqanswer.id_answer"
                 >
                   <ul>
                     <li>
-                      {{ mcqanswer }}
+                      {{ mcqanswer.wording }}
                     </li>
                   </ul>
                 </div>
               </div>
             </ul>
           </div>
-          <div class="column">
+          <div class="column" v-if="project.project_type === conseil_type_id">
             <MyNotPublishedConseil
-              v-if="project.project_type === conseil_type_id"
               :project_data="project"
+              v-on:done="refresh()"
             />
           </div>
-          <div class="column">
+          <div
+            class="column"
+            v-if="project.project_type === consultation_type_id"
+          >
             <MyNotPublishedConsultation
-              v-if="project.project_type === consultation_type_id"
               :project_data="project"
+              v-on:done="refresh()"
             />
           </div>
-          <div class="column">
+          <div class="column" v-if="project.project_type === petition_type_id">
             <MyNotPublishedPetition
-              v-if="project.project_type === petition_type_id"
               :project_data="project"
+              v-on:done="refresh()"
             />
           </div>
         </div>
@@ -179,6 +192,7 @@ export default {
       id_project: this.$route.params.id_project,
       project: null,
       questions: [],
+      questions_not_published: {},
       conseil_type_id: '',
       consultation_type_id: '',
       petition_type_id: '',
@@ -186,14 +200,14 @@ export default {
       loaded: false,
       comment_saved: null,
       user_comment_input: '',
-      comments_published: []
+      comments_published: [],
+      nombre: null
     };
   },
   async fetch() {
-    let response = await this.$axios.get(`project/${this.id_project}`);
-    this.project = response.data;
+    await this.fetchProjectData();
     let data = { name: 'Conseil de quartier' };
-    response = await this.$axios.get('project_type', { params: data });
+    let response = await this.$axios.get('project_type', { params: data });
     let type_id = response.data['id_project_type'];
     this.conseil_type_id = type_id;
     data = { name: 'Pétition' };
@@ -204,36 +218,14 @@ export default {
     response = await this.$axios.get('project_type', { params: data });
     type_id = response.data['id_project_type'];
     this.consultation_type_id = type_id;
-    if (this.project.question.length > 0) {
-      for (let question in this.project.question) {
-        response = await this.$axios.get(this.project.question[question]);
-        this.questions.push(response.data);
-      }
-    }
-    for (const question in this.questions) {
-      const data = {
-        question: this.questions[question].id_question,
-        user: this.loggedInUser.id
-      };
-      response = await this.$axios.get('user_answer/', { params: data });
-      if (typeof response.data[0] !== 'undefined') {
-        this.questions_answered.push(response.data[0]);
-      }
-    }
-    data = { owner: this.loggedInUser.id, project: this.id_project };
-    response = await this.$axios.get('comment', { params: data });
-    if (typeof response.data[0] !== 'undefined') {
-      this.comment_saved = response.data[0]['id_comment'];
-    }
-    this.comments_published = [];
-    data = { project: this.id_project };
-    response = await this.$axios.get('comment', { params: data });
-    if (typeof response.data[0] !== 'undefined') {
-      for (const element in response.data) {
-        this.comments_published.push(response.data[element]);
-      }
+    await this.fetchQuestions();
+    if (this.project.ready_for_publication) {
+      await this.fetchQuestionsAnswered();
+      await this.fetchCommentSaved();
+      await this.fetchCommentsPublished();
     }
     this.loaded = true;
+    // this.$nuxt.refresh();
   },
 
   methods: {
@@ -268,7 +260,9 @@ export default {
     },
 
     // Function refreshing the element
-    refresh() {
+    async refresh() {
+      await this.fetchProjectData();
+      await this.fetchQuestions();
       this.$nuxt.refresh();
     },
 
@@ -286,6 +280,7 @@ export default {
       }
     },
 
+    // Function called when a user decides to comment a petition
     async handleSubmitComment() {
       if (!this.commentState) {
         return;
@@ -293,6 +288,102 @@ export default {
         await this.postComment();
       }
       this.$nuxt.refresh();
+    },
+
+    // Function called when a user wants to delete a question from one of his non published projects
+    async handleDeleteQuestion(id) {
+      await this.deleteQuestion(id);
+    },
+
+    // Function fetching the data of the project
+    async fetchProjectData() {
+      const response = await this.$axios.get(`project/${this.id_project}`);
+      this.project = response.data;
+    },
+
+    // Function fecthing the questions to display for a non published project
+    async fetchQuestions() {
+      if (this.project.question.length > 0) {
+        if (this.project.ready_for_publication) {
+          for (let question in this.project.question) {
+            let response = await this.$axios.get(
+              this.project.question[question]
+            );
+            this.questions.push(response.data);
+            for (const question in this.questions) {
+              const data = {
+                question: this.questions[question].id_question,
+                user: this.loggedInUser.id
+              };
+              response = await this.$axios.get('', { params: data });
+            }
+          }
+        } else {
+          for (let question in this.project.question) {
+            let response = await this.$axios.get(
+              this.project.question[question]
+            );
+            const answers = [];
+            if (response.data['mcqanswer'].length > 0) {
+              for (const mcqanswer in response.data['mcqanswer']) {
+                const response_mcqanswer = await this.$axios.get(
+                  response.data['mcqanswer'][mcqanswer]
+                );
+                answers.push(response_mcqanswer.data);
+              }
+            }
+            this.questions_not_published[question] = [response.data, answers];
+          }
+        }
+      } else {
+        this.questions_not_published = {};
+        this.questions = [];
+      }
+    },
+
+    // Function fetching the questions answered by the user, in order to check if the user has participated to this project
+    async fetchQuestionsAnswered() {
+      for (const question in this.questions) {
+        const data = {
+          question: this.questions[question].id_question,
+          user: this.loggedInUser.id
+        };
+        const response = await this.$axios.get('user_answer/', {
+          params: data
+        });
+        if (typeof response.data[0] !== 'undefined') {
+          this.questions_answered.push(response.data[0]);
+        }
+      }
+    },
+
+    // Function fetching the comment saved by the user on this project, if there is one
+    async fetchCommentSaved() {
+      const data = { owner: this.loggedInUser.id, project: this.id_project };
+      const response = await this.$axios.get('comment', { params: data });
+      if (typeof response.data[0] !== 'undefined') {
+        this.comment_saved = response.data[0]['id_comment'];
+      }
+    },
+
+    // Function fetching the comments published if there are
+    async fetchCommentsPublished() {
+      this.comments_published = [];
+      const data = { project: this.id_project };
+      const response = await this.$axios.get('comment', { params: data });
+      if (typeof response.data[0] !== 'undefined') {
+        for (const element in response.data) {
+          this.comments_published.push(response.data[element]);
+        }
+      }
+    },
+
+    // Function called when the user decides to delete a question on a not published project
+    async deleteQuestion(id) {
+      await this.$axios.delete(`question/${id}/`);
+      this.questions = [];
+      this.questions_not_published = {};
+      this.refresh();
     }
   }
 };
@@ -301,7 +392,7 @@ export default {
 <style>
 .container {
   padding-top: 8.4rem;
-  padding-bottom: 4rem;
+  padding-bottom: 10rem;
   min-width: 100%;
   padding-left: 0;
   padding-right: 0;
@@ -335,6 +426,9 @@ export default {
 .button {
   color: rgb(247, 247, 247);
   background-color: rgb(0, 14, 116);
+}
+.delete {
+  margin-left: 1rem;
 }
 .button:hover {
   background-color: rgb(247, 247, 247);

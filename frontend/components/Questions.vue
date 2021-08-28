@@ -82,7 +82,7 @@ export default {
 
   // Function getting the ids of the two different kinds of question
   async fetch() {
-    // console.log('QUESTIONS  ', this.questions);
+    console.log('QUESTIONS  ', this.questions);
     let data = { name: 'QCM' };
     let response = await this.$axios.get('question_type', { params: data });
     let type_id = response.data['id_question_type'];
