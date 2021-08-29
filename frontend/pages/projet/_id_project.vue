@@ -12,7 +12,11 @@
           <h3 class="text-center">{{ this.project.place }}</h3>
         </div>
         <div class="column">
-          <p>{{ this.project.description }}</p>
+          <p>
+            <u>Description du projet :</u> <br />{{ this.project.description }}
+          </p>
+          <br />
+          <u>Prend fin le :</u> <br />{{ this.project.end_date }}
         </div>
       </div>
       <div v-if="loaded">
@@ -96,7 +100,7 @@
             </b-collapse>
           </div>
         </div>
-        <div v-if="!project.ready_for_publication">
+        <div v-if="!project.ready_for_publication" class="not_published">
           <div class="column">
             <ul
               v-for="question in questions_not_published"
@@ -225,6 +229,8 @@ export default {
       await this.fetchCommentsPublished();
     }
     this.loaded = true;
+
+    // console.log('QUESTIONS NOT PUBLISHED ', this.questions_not_published);
     // this.$nuxt.refresh();
   },
 
@@ -299,10 +305,12 @@ export default {
     async fetchProjectData() {
       const response = await this.$axios.get(`project/${this.id_project}`);
       this.project = response.data;
+      console.log('PROJET INFOS ', this.project);
     },
 
     // Function fecthing the questions to display for a non published project
     async fetchQuestions() {
+      console.log('QUESTIONS ', this.project.question);
       if (this.project.question.length > 0) {
         if (this.project.ready_for_publication) {
           for (let question in this.project.question) {
@@ -447,6 +455,13 @@ export default {
   padding-left: 15rem;
   padding-bottom: 4rem;
   padding-right: 15rem;
+}
+.not_published {
+  padding-top: 2rem;
+  padding-bottom: 3.5rem;
+  padding-left: 15rem;
+  padding-right: 15rem;
+  text-align: justify;
 }
 @media (max-width: 1200px) {
   .container {

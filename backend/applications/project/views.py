@@ -128,6 +128,7 @@ class ProjectPublication(APIView):
     permission_classes = [IsOwnerOrAdmin]
 
     def put(self, request):
+        print('REQUETE  : ', request)
         project_id = request.data['project_id']
         project = get_object_or_404(models.Project, id_project=project_id)
         self.check_object_permissions(request, project)

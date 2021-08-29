@@ -56,47 +56,15 @@
             required
           ></b-form-textarea>
         </b-form-group>
-        <b-form-group
-          label="Choisissez la date du conseil (minimum 7 jours à partir d'aujourd'hui)"
-          label-for="datepicker"
-          invalid-feedback="Choisissez une date"
-          :state="dateState"
-        >
-          <b-form-datepicker
-            id="datepicker"
-            :state="dateState"
-            v-model="end_day"
-            class="mb-2"
-            :min="min_date"
-            placeholder="Choisissez une date"
-          ></b-form-datepicker>
-        </b-form-group>
-        <b-form-group
-          label="Choisissez l'heure du conseil"
-          label-for="timepicker"
-          invalid-feedback="Choisissez une heure"
-          :state="timeState"
-        >
-          <b-form-timepicker
-            id="timepicker"
-            :state="timeState"
-            v-model="end_time"
-            class="mb-3"
-            locale="fr"
-          ></b-form-timepicker>
-        </b-form-group>
       </form>
       <template #modal-footer="{cancel}">
-        <b-button size="md" variant="primary" @click="handleQuitConseil()">
-          Sauvegarder et quitter
+        <b-button size="lg" variant="primary" @click="handleQuitConseil()">
+          Sauvegarder le conseil
         </b-button>
-        <b-button size="md" variant="primary" @click="handleOkConseil()">
-          Valider et ajouter une question
+        <b-button size="lg" variant="primary" @click="handleOkConseil()">
+          Ajouter une question
         </b-button>
-        <b-button size="md" variant="success" @click="handlePublishConseil()">
-          Publier le conseil
-        </b-button>
-        <b-button size="md" variant="danger" @click="cancel()">
+        <b-button size="lg" variant="danger" @click="cancel()">
           Annuler
         </b-button>
       </template>
@@ -182,19 +150,32 @@
         </div>
       </form>
       <template #modal-footer="{cancel}">
-        <b-button size="md" variant="primary" @click="handleQuitQuestion()">
-          Sauvegarder et quitter
+        <b-button size="lg" variant="primary" @click="handleQuitQuestion()">
+          Sauvegarder le conseil
         </b-button>
-        <b-button size="md" variant="primary" @click="handleOkQuestion()">
-          Valider et ajouter une question
+        <b-button size="lg" variant="primary" @click="handleOkQuestion()">
+          Ajouter une question
         </b-button>
-        <b-button size="md" variant="success" @click="handlePublishQuestion()">
-          Publier le conseil
-        </b-button>
-        <b-button size="md" variant="danger" @click="cancel()">
+        <b-button size="lg" variant="danger" @click="cancel()">
           Annuler
         </b-button>
       </template>
+    </b-modal>
+
+    <!-- THIRD MODAL FOR CONFIRMATION -->
+    <b-modal id="modal-validation" title="Conseil sauvegardé" hide-footer>
+      <div class="d-block text-center">
+        <h3>
+          Votre projet est sauvegardé et accessible depuis votre profil, mes
+          conseils, non publiés.
+        </h3>
+      </div>
+      <b-button
+        class="mt-3 button"
+        block
+        @click="$bvModal.hide('modal-validation')"
+        >Ok</b-button
+      >
     </b-modal>
   </div>
 </template>
@@ -203,12 +184,6 @@
 export default {
   props: ['button'],
   computed: {
-    dateState() {
-      return this.end_day.length > 0;
-    },
-    timeState() {
-      return this.end_time.length > 0;
-    },
     nameState() {
       return this.conseil.name.length > 0;
     },
@@ -243,10 +218,6 @@ export default {
     }
   },
   data() {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const minDate = new Date(today);
-    minDate.setDate(minDate.getDate() + 7);
     return {
       button_label: this.button,
       publish: false,
@@ -255,7 +226,6 @@ export default {
         name: '',
         place: '',
         description: '',
-        end_date: '',
         project_type: ''
       },
       question: {
@@ -264,10 +234,6 @@ export default {
         number_of_choices: 2,
         choices: []
       },
-      min_date: minDate,
-      end_day: '',
-      end_time: '',
-      end_date: '',
       id_project: '',
       id_owner: '',
       question_type_name: ''
@@ -277,12 +243,7 @@ export default {
     // We check the form with the infos of the Conseil is valid
     checkFormValidity() {
       const valid = this.$refs.form.checkValidity();
-      if (this.dateState && this.timeState) {
-        this.end_date = this.end_day + ' ' + this.end_time;
-        return valid;
-      } else {
-        return false;
-      }
+      return valid;
     },
 
     // We check the form with the question infos is valid
@@ -312,10 +273,7 @@ export default {
       this.conseil.name = '';
       this.conseil.place = '';
       this.conseil.description = '';
-      this.end_day = '';
-      this.end_time = '';
       this.quit = false;
-      this.publish = false;
     },
 
     // We reset the data of the second form, question infos
@@ -324,8 +282,6 @@ export default {
       this.question.type = '';
       this.question.number_of_choices = 2;
       this.quit = false;
-      this.publish = false;
-      // this.question.choices = [];
     },
 
     // Function refreshing the question.choices list depending on the number of fields displayed in the question configuration modal
@@ -354,8 +310,7 @@ export default {
         name: this.conseil.name,
         place: this.conseil.place,
         description: this.conseil.description,
-        project_type: this.projectType,
-        end_date: this.end_date
+        project_type: this.projectType
       };
       try {
         const response = await this.$axios.post('project/', data);
@@ -368,11 +323,6 @@ export default {
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
       }
-    },
-
-    // We send a PUT request to the API with the id of the Conseil project to publish it
-    publishConseil() {
-      this.$axios.put('publication', { project_id: this.id_project });
     },
 
     // We send a POST request to the API to post a question
@@ -402,7 +352,6 @@ export default {
         this.question.choices = [];
       } catch (error) {
         console.log(error.response);
-        // const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data;
         window.alert(errorMessage);
         this.question.choices = [];
@@ -421,32 +370,14 @@ export default {
 
     // We call this function when clicking on one of the 3 buttons (Save and quit, Publish and quit, add a question)
     handleOkConseil() {
-      // bvModalEvt.preventDefault();
       this.handleSubmit();
     },
     // Alternative to handleOkConseil() in the case we want to quit (publish or only saving) and not add any question
     handleQuitConseil() {
-      if (!this.checkFormValidity()) {
-        console.log('HANDLE QUIT CHECK FORM INVALID');
-        console.log('QUIT    :', this.quit);
-        return;
-      } else {
-        console.log('HANDLE QUIT CHECK FORM VALID');
-        this.quit = true;
-        this.handleSubmit();
-      }
+      this.quit = true;
+      this.handleSubmit();
     },
-    handlePublishConseil() {
-      if (!this.checkFormValidity()) {
-        console.log('HANDLE PUBLISH CHECK FORM INVALID');
-        console.log('PUBLISH    :', this.publish);
-        return;
-      } else {
-        console.log('HANDLE PUBLISH CHECK FORM VALID');
-        this.publish = true;
-        this.handleSubmit();
-      }
-    },
+
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit() {
       if (!this.checkFormValidity()) {
@@ -454,49 +385,27 @@ export default {
       }
       this.projectType = await this.getConseilType();
       await this.postConseilData();
-      if (this.publish == true) {
-        this.publishConseil();
-      }
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing-1');
-        console.log('this PUBLISH  ', this.publish);
-        console.log('this QUIT  ', this.quit);
-        console.log('CLOSING MODAL 1  ');
-        if (this.quit == false && this.publish == false) {
-          console.log('OPENING MODAL 2  ');
+        if (this.quit === false) {
           this.$bvModal.show('modal-prevent-closing-2');
+        } else {
+          this.$bvModal.show('modal-validation');
         }
       });
     },
 
     // We call this function when validating a question and adding a new one
     handleOkQuestion() {
-      // bvModalEvt.preventDefault();
       this.handleSubmit_2();
     },
+
     // Alternative to handleOkQuestion() in case we want to quit (publish or just save) without adding new question
     handleQuitQuestion() {
-      if (!this.checkForm2Validity()) {
-        console.log('HANDLE QUIT CHECK FORM INVALID');
-        console.log('QUIT    :', this.quit);
-        return;
-      } else {
-        console.log('HANDLE QUIT CHECK FORM VALID');
-        this.quit = true;
-        this.handleSubmit_2();
-      }
+      this.quit = true;
+      this.handleSubmit_2();
     },
-    handlePublishQuestion() {
-      if (!this.checkForm2Validity()) {
-        console.log('HANDLE PUBLISH CHECK FORM INVALID');
-        console.log('PUBLISH    :', this.publish);
-        return;
-      } else {
-        console.log('HANDLE PUBLISH CHECK FORM VALID');
-        this.publish = true;
-        this.handleSubmit_2();
-      }
-    },
+
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit_2() {
       if (!this.checkForm2Validity()) {
@@ -504,17 +413,15 @@ export default {
       }
       this.question.type = await this.getQuestionType();
       this.postQuestionData();
-      console.log('this PUBLISH  ', this.publish);
-      console.log('this QUIT  ', this.quit);
       if (this.publish == true) {
         this.publishConseil();
       }
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing-2');
-        console.log('MODAL 2 CLOSED');
-        if (this.quit == false && this.publish == false) {
-          console.log('SHOW MODAL 2');
+        if (this.quit === false) {
           this.$bvModal.show('modal-prevent-closing-2');
+        } else {
+          this.$bvModal.show('modal-validation');
         }
       });
     }

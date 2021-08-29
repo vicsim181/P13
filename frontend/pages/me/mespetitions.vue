@@ -72,7 +72,6 @@ import MyProjectsPublished from '../../components/MyProjectsPublished.vue';
 import MyProjectsNotPublished from '../../components/MyProjectsNotPublished.vue';
 
 export default {
-  auth: false,
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser'])
   },

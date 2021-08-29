@@ -65,9 +65,9 @@
         <b-button size="lg" variant="primary" @click="handleQuitPetition()">
           Sauvegarder et quitter
         </b-button>
-        <b-button size="lg" variant="success" @click="handleOkPetition()">
+        <!-- <b-button size="lg" variant="success" @click="handleOkPetition()">
           Publier la pétition
-        </b-button>
+        </b-button> -->
         <b-button size="lg" variant="danger" @click="cancel()">
           Annuler
         </b-button>

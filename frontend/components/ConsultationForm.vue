@@ -54,7 +54,7 @@
             required
           ></b-form-textarea>
         </b-form-group>
-        <b-form-group
+        <!-- <b-form-group
           label="Choisissez la date de fin de la consultation (minimum dans 30 jours à partir d'aujourd'hui)"
           label-for="datepicker"
           invalid-feedback="Choisissez une date"
@@ -68,14 +68,14 @@
             :min="min_date"
             placeholder="Choisissez une date"
           ></b-form-datepicker>
-        </b-form-group>
+        </b-form-group> -->
       </form>
       <template #modal-footer="{cancel}">
         <b-button size="lg" variant="primary" @click="handleQuitConsultation()">
-          Sauvegarder et quitter
+          Sauvegarder la consultation
         </b-button>
         <b-button size="lg" variant="primary" @click="handleOkConsultation()">
-          Valider et ajouter une question
+          Ajouter une question
         </b-button>
         <b-button size="lg" variant="danger" @click="cancel()">
           Annuler
@@ -163,16 +163,16 @@
         </div>
       </form>
       <template #modal-footer="{cancel}">
-        <b-button size="md" variant="primary" @click="handleQuitQuestion()">
-          Sauvegarder et quitter
+        <b-button size="lg" variant="primary" @click="handleQuitQuestion()">
+          Sauvegarder la consultation
         </b-button>
-        <b-button size="md" variant="primary" @click="handleOkQuestion()">
-          Valider et ajouter une question
+        <b-button size="lg" variant="primary" @click="handleOkQuestion()">
+          Ajouter une question
         </b-button>
-        <b-button size="md" variant="success" @click="handlePublishQuestion()">
+        <!-- <b-button size="md" variant="success" @click="handlePublishQuestion()">
           Publier la consultation
-        </b-button>
-        <b-button size="md" variant="danger" @click="cancel()">
+        </b-button> -->
+        <b-button size="lg" variant="danger" @click="cancel()">
           Annuler
         </b-button>
       </template>
