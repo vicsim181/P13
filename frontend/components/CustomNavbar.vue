@@ -17,7 +17,7 @@
         >
         <b-nav-item-dropdown right v-if="isAuthenticated" no-caret>
           <template #button-content>
-            <h4 class="col-md-1 item compte">Mon compte</h4>
+            <p class="col-md-3 item"><b>MON COMPTE</b></p>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"

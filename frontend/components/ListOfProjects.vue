@@ -19,18 +19,23 @@
           <div class="card-body d-flex flex-column">
             <ul class="list-unstyled mt-3 mb-4">
               <li>
-                <b-card-text id="description">{{
+                <b-card-text id="description" class="pre-formatted">{{
                   project.description
                 }}</b-card-text>
               </li>
               <br />
               <li>
                 <b-card-text>
-                  Publié le : {{ project.publication }}
+                  Publié le: {{ project.publication }}
                 </b-card-text>
               </li>
               <li>
-                <b-card-text> Fin le {{ project.end_date }} </b-card-text>
+                <b-card-text v-if="project_type === 'Conseil de quartier'">
+                  Date du conseil: {{ project.end_date }}
+                </b-card-text>
+                <b-card-text v-else>
+                  Prend fin le: {{ project.end_date }}
+                </b-card-text>
               </li>
               <div v-if="project_type === 'Pétition'">
                 <li>
@@ -347,6 +352,9 @@ export default {
 .button:hover {
   color: rgb(0, 14, 116);
   background-color: rgb(247, 247, 247);
+}
+.pre-formatted {
+  white-space: pre;
 }
 @media (max-width: 1200px) {
   .project {

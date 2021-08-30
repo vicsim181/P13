@@ -56,22 +56,31 @@
             required
           ></b-form-textarea>
         </b-form-group>
-        <b-form-group
-          label="Une pétition a une durée de vie de 90 jours à partir de sa publication"
-        >
-        </b-form-group>
       </form>
       <template #modal-footer="{cancel}">
         <b-button size="lg" variant="primary" @click="handleQuitPetition()">
           Sauvegarder et quitter
         </b-button>
-        <!-- <b-button size="lg" variant="success" @click="handleOkPetition()">
-          Publier la pétition
-        </b-button> -->
         <b-button size="lg" variant="danger" @click="cancel()">
           Annuler
         </b-button>
       </template>
+    </b-modal>
+
+    <!-- SECOND MODAL FOR CONFIRMATION -->
+    <b-modal id="modal-validation" title="Pétition sauvegardée" hide-footer>
+      <div class="d-block text-center">
+        <h3>
+          Votre projet de pétition est sauvegardé et accessible depuis votre
+          profil, mes pétitions, non publiées.
+        </h3>
+      </div>
+      <b-button
+        class="mt-3 button"
+        block
+        @click="$bvModal.hide('modal-validation')"
+        >Ok</b-button
+      >
     </b-modal>
   </div>
 </template>
@@ -93,7 +102,6 @@ export default {
   data() {
     return {
       button_label: this.button,
-      publish: false,
       petition: {
         name: '',
         place: '',
@@ -116,7 +124,6 @@ export default {
       this.petition.name = '';
       this.petition.place = '';
       this.petition.description = '';
-      this.publish = false;
     },
 
     // We send a POST request to the API with the data about the Petition
@@ -148,34 +155,11 @@ export default {
       }
     },
 
-    // We send a PUT request to the API with the id of the Conseil project to publish it
-    publishPetition() {
-      this.$axios.put('publication', { project_id: this.id_project });
-    },
-
     // FUNCTIONS CALLED BY THE BUTTONS
 
-    // We call this function when clicking on one of the 3 buttons (Save and quit, Publish and quit, add a question)
-    handleOkPetition() {
-      // bvModalEvt.preventDefault();
-      if (!this.checkFormValidity()) {
-        console.log('HANDLE QUIT CHECK FORM INVALID');
-        return;
-      } else {
-        console.log('HANDLE QUIT CHECK FORM VALID');
-        this.publish = true;
-        this.handleSubmit();
-      }
-    },
     // Alternative to handleOkPetition() in the case we want to quit (only saving) instead of publishing
     handleQuitPetition() {
-      if (!this.checkFormValidity()) {
-        console.log('HANDLE QUIT CHECK FORM INVALID');
-        return;
-      } else {
-        console.log('HANDLE QUIT CHECK FORM VALID');
-        this.handleSubmit();
-      }
+      this.handleSubmit();
     },
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit() {
@@ -184,11 +168,9 @@ export default {
       }
       this.projectType = await this.getPetitionType();
       await this.postPetitionData();
-      if (this.publish == true) {
-        this.publishPetition();
-      }
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing-1');
+        this.$bvModal.show('modal-validation');
       });
     }
   }

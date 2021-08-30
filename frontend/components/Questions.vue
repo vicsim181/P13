@@ -22,20 +22,21 @@
           :key="number"
           :state="answerState"
         >
-          <b-card-title>{{ questions[number - 1].wording }}</b-card-title>
-          <div v-if="questions[number - 1].question_type === free_type_id">
+          <b-card-title>{{ questions[number - 1][0].wording }}</b-card-title>
+          <div v-if="questions[number - 1][0].question_type === free_type_id">
             <b-form-textarea
               id="question_answer"
-              v-model="user_answers[questions[number - 1].id_question]"
+              v-model="user_answers[questions[number - 1][0].id_question]"
               :state="answerState"
             ></b-form-textarea>
           </div>
           <div v-else>
             <b-form-select
-              v-model="user_answers[questions[number - 1].id_question]"
-              :options="mcq_answers"
+              v-model="user_answers[questions[number - 1][0].id_question]"
+              :options="mcq_answers[questions[number - 1][0].id_question]"
               :state="answerState"
-            ></b-form-select>
+            >
+            </b-form-select>
           </div>
         </b-form-group>
       </form>
@@ -48,12 +49,34 @@
         </b-button>
       </template>
     </b-modal>
+
+    <!-- SECOND MODAL FOR VALIDATION -->
+    <b-modal
+      id="modal-validation"
+      title="Vous avez participé au sondage"
+      hide-footer
+    >
+      <div class="d-block text-center">
+        <h3>
+          Votre participation au sondage a bien été enregistrée.
+        </h3>
+      </div>
+      <b-button
+        class="mt-3 button"
+        block
+        @click="
+          answersSaved();
+          $bvModal.hide('modal-validation');
+        "
+        >Ok</b-button
+      >
+    </b-modal>
   </div>
 </template>
 
 <script>
 export default {
-  props: ['project', 'user', 'questions'],
+  props: ['project', 'user', 'questions', 'mcqanswers'],
   computed: {
     answerState() {
       if (Object.keys(this.user_answers).length !== this.number_of_questions) {
@@ -72,17 +95,18 @@ export default {
   },
   data() {
     return {
-      number_of_questions: this.questions.length,
-      mcq_answers: [],
+      number_of_questions: Object.keys(this.questions).length,
+      questions_data: this.questions,
+      mcq_answers: this.mcqanswers,
       user_answers: {},
       qcm_type_id: '',
-      free_type_id: ''
+      free_type_id: '',
+      loaded: false
     };
   },
 
   // Function getting the ids of the two different kinds of question
   async fetch() {
-    console.log('QUESTIONS  ', this.questions);
     let data = { name: 'QCM' };
     let response = await this.$axios.get('question_type', { params: data });
     let type_id = response.data['id_question_type'];
@@ -91,15 +115,7 @@ export default {
     response = await this.$axios.get('question_type', { params: data });
     type_id = response.data['id_question_type'];
     this.free_type_id = type_id;
-    for (const question in this.questions) {
-      let mcq = this.questions[question].mcqanswer;
-      if (mcq.length > 0) {
-        for (const choice in mcq) {
-          const response = await this.$axios.get(mcq[choice]);
-          this.mcq_answers.push(response.data['wording']);
-        }
-      }
-    }
+    this.loaded = true;
   },
 
   methods: {
@@ -134,8 +150,10 @@ export default {
           const keys = Object.keys(error.response.data);
           const errorMessage = error.response.data[keys[0]];
           window.alert(errorMessage);
+          return false;
         }
       }
+      return true;
     },
 
     // Function handling the validation of the answers
@@ -143,12 +161,24 @@ export default {
       if (!this.checkFormValidity()) {
         return;
       } else {
-        await this.postUserAnswer();
+        const response = await this.postUserAnswer();
+        console.log('response ', response);
         this.$nextTick(() => {
-          this.$bvModal.hide('modal-questions');
-          this.$emit('hasparticipated');
+          if (response) {
+            this.$bvModal.hide('modal-questions');
+            this.$bvModal.show('modal-validation');
+          } else {
+            window.alert(
+              'Erreur lors de la sauvegarde de vos réponses. \n Veuillez réessayer.'
+            );
+          }
         });
       }
+    },
+
+    // Function called when Ok is clicked on the confirmation the answers are saved
+    answersSaved() {
+      this.$emit('hasparticipated');
     }
   }
 };

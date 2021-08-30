@@ -16,7 +16,7 @@
       id="modal-modify-project"
       size="lg"
       ref="modal"
-      title="Création de conseil de quartier"
+      title="Modification du conseil de quartier"
       no-close-on-backdrop
       header-bg-variant="dark"
       header-text-variant="light"
@@ -176,7 +176,7 @@
         <b-form-group label="Informations du conseil: ">
           <h5>{{ conseil.name }}</h5>
           <p>{{ conseil.place }}</p>
-          <p>{{ conseil.description }}</p>
+          <p class="text-justify">{{ conseil.description }}</p>
         </b-form-group>
 
         <b-form-group
@@ -217,6 +217,25 @@
           Annuler
         </b-button>
       </template>
+    </b-modal>
+
+    <!-- FOURTH MODAL FOR VALIDATION -->
+    <b-modal id="modal-validation" title="Conseil publié" hide-footer>
+      <div class="d-block text-center">
+        <h3>
+          Votre projet est publié et désormais visible par tous. Si vous y avez
+          attaché un sondage, les membres inscrits pourront y participer.
+        </h3>
+      </div>
+      <b-button
+        class="mt-3 button"
+        block
+        @click="
+          projectPublished();
+          $bvModal.hide('modal-validation');
+        "
+        >Ok</b-button
+      >
     </b-modal>
   </div>
 </template>
@@ -366,6 +385,29 @@ export default {
 
     // We send a POST request to the API with the data about the Conseil
     async putConseilData() {
+      console.log('END DATE ', this.end_date);
+      const data = {
+        name: this.conseil.name,
+        place: this.conseil.place,
+        description: this.conseil.description,
+        project_type: this.conseil.project_type
+      };
+      try {
+        const response = await this.$axios.put(
+          `project/${this.conseil.id_project}/`,
+          data
+        );
+        console.log(response.data);
+      } catch (error) {
+        console.log(error.response);
+        const keys = Object.keys(error.response.data);
+        const errorMessage = error.response.data[keys[0]];
+        window.alert(errorMessage);
+      }
+    },
+
+    // Set the end_date of the project when published
+    async setEndDate() {
       const data = {
         name: this.conseil.name,
         place: this.conseil.place,
@@ -387,29 +429,12 @@ export default {
       }
     },
 
-    // Set the end_date of the project when published
-    async setDate() {
-      const data = { end_date: this.end_date };
-      try {
-        const response = await this.$axios.put(
-          `project/${this.conseil.id_project}/`,
-          data
-        );
-        console.log(response.data);
-      } catch (error) {
-        console.log(error.response);
-        const keys = Object.keys(error.response.data);
-        const errorMessage = error.response.data[keys[0]];
-        window.alert(errorMessage);
-      }
-    },
-
     // We send a PUT request to the API with the id of the Conseil project to publish it
     async publishConseil() {
-      const response = this.$axios.put('publication', {
+      const response = await this.$axios.put('publication', {
         project_id: this.project_data.id_project
       });
-      console.log('RESPONSE TO PUBLISH ', response);
+      return response.status;
     },
 
     // We send a POST request to the API to post a question
@@ -419,25 +444,17 @@ export default {
         question_type: this.question.type,
         project: this.project_data.id_project
       };
-      console.log('QUESTION DATA ', question_data);
       try {
         const response_1 = await this.$axios.post('question/', question_data);
         console.log(response_1.data);
         const question_id = response_1.data['id_question'];
         if (this.question_type_name === 'QCM') {
-          console.log('QUESTION CHOICES ', this.question.choices);
           for (const choice in this.question.choices) {
-            console.log('CHOICE ', this.question.choices[choice]);
             const answer_data = {
               wording: this.question.choices[choice],
               question: question_id
             };
-            console.log('DATA MCQ ANSWER ', answer_data);
-            const response_2 = await this.$axios.post(
-              'mcq_answer/',
-              answer_data
-            );
-            console.log('REPONSE POST REQUETE ', response_2.data);
+            await this.$axios.post('mcq_answer/', answer_data);
           }
         }
         this.question.choices = [];
@@ -482,21 +499,27 @@ export default {
     },
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit() {
-      if (!this.checkFormValidity()) {
+      if (!this.checkForm3Validity()) {
         return;
       }
-      await this.putConseilData();
-      await this.publishConseil();
-      // this.$nextTick(() => {
-      //   if (response.data['status_code'] === '200') {
-      //     console.log('PROJET PUBLIE !!!');
-      //   } else {
-      //     console.log('PROJET NON PUBLIE');
-      //   }
-      //   this.$emit('done');
-      //   this.$bvModal.hide('modal-modify-project');
-      // this.$bvModal.show('modal-validation');
-      // });
+      // await this.putConseilData();
+      await this.setEndDate();
+      const publish_response = await this.publishConseil();
+      this.$nextTick(() => {
+        if (publish_response === 200) {
+          this.$bvModal.hide('modal-modify-project');
+          this.$bvModal.show('modal-validation');
+        } else {
+          window.alert(
+            'Erreur lors de la publication du projet. \n Veuillez réessayer.'
+          );
+        }
+      });
+    },
+
+    // Function called when Ok is clicked on the confirmation the project is published
+    projectPublished() {
+      this.$emit('done');
     },
 
     // Alternative to handleOkQuestion() in case we want to quit (publish or just save) without adding new question

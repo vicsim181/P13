@@ -249,21 +249,16 @@ export default {
     // We check the form with the question infos is valid
     checkForm2Validity() {
       const valid = this.$refs.form.checkValidity();
-      console.log('CHECK VALIDITY FORM 2  valid:', valid);
       if (this.questionNameState && this.questionTypeState) {
-        console.log('questionNameState && questionTypeState OK');
         if (this.question_type_name === 'QCM') {
-          console.log('ASNWERSTATE  :', this.answerState);
           if (this.answerState) {
             return valid;
           } else {
             return false;
           }
         }
-        console.log('QUESTION NOT QCM return valid');
         return valid;
       } else {
-        console.log('questionNameState && questionTypeState NOT OK');
         return false;
       }
     },
@@ -334,7 +329,6 @@ export default {
       };
       try {
         const response_1 = await this.$axios.post('question/', question_data);
-        console.log(response_1.data);
         const question_id = response_1.data['id_question'];
         if (this.question_type_name === 'QCM') {
           for (const choice in this.question.choices) {
@@ -342,11 +336,7 @@ export default {
               wording: this.question.choices[choice],
               question: question_id
             };
-            const response_2 = await this.$axios.post(
-              'mcq_answer/',
-              answer_data
-            );
-            console.log(response_2.data);
+            await this.$axios.post('mcq_answer/', answer_data);
           }
         }
         this.question.choices = [];
@@ -413,9 +403,6 @@ export default {
       }
       this.question.type = await this.getQuestionType();
       this.postQuestionData();
-      if (this.publish == true) {
-        this.publishConseil();
-      }
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing-2');
         if (this.quit === false) {

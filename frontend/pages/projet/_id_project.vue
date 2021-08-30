@@ -12,11 +12,14 @@
           <h3 class="text-center">{{ this.project.place }}</h3>
         </div>
         <div class="column">
-          <p>
+          <p class="pre-formatted">
             <u>Description du projet :</u> <br />{{ this.project.description }}
           </p>
           <br />
-          <u>Prend fin le :</u> <br />{{ this.project.end_date }}
+          <u v-if="project.project_type === conseil_type_id"
+            >Date du conseil:</u
+          >
+          <u v-else>Prend fin le:</u> <br />{{ this.project.end_date }}
         </div>
       </div>
       <div v-if="loaded">
@@ -35,6 +38,7 @@
                 :project="project"
                 :user="loggedInUser.id"
                 :questions="questions"
+                :mcqanswers="mcqanswers"
                 v-on:hasparticipated="refresh()"
               />
             </div>
@@ -153,6 +157,9 @@
         </div>
       </div>
     </div>
+    <div v-else class="not-found text-center">
+      <h3>Le projet recherché n'existe pas.</h3>
+    </div>
     <CustomFooter />
   </div>
 </template>
@@ -195,7 +202,7 @@ export default {
     return {
       id_project: this.$route.params.id_project,
       project: null,
-      questions: [],
+      questions: {},
       questions_not_published: {},
       conseil_type_id: '',
       consultation_type_id: '',
@@ -205,7 +212,8 @@ export default {
       comment_saved: null,
       user_comment_input: '',
       comments_published: [],
-      nombre: null
+      nombre: null,
+      mcqanswers: {}
     };
   },
   async fetch() {
@@ -229,8 +237,6 @@ export default {
       await this.fetchCommentsPublished();
     }
     this.loaded = true;
-
-    // console.log('QUESTIONS NOT PUBLISHED ', this.questions_not_published);
     // this.$nuxt.refresh();
   },
 
@@ -305,64 +311,52 @@ export default {
     async fetchProjectData() {
       const response = await this.$axios.get(`project/${this.id_project}`);
       this.project = response.data;
-      console.log('PROJET INFOS ', this.project);
     },
 
     // Function fecthing the questions to display for a non published project
     async fetchQuestions() {
-      console.log('QUESTIONS ', this.project.question);
       if (this.project.question.length > 0) {
-        if (this.project.ready_for_publication) {
-          for (let question in this.project.question) {
-            let response = await this.$axios.get(
-              this.project.question[question]
-            );
-            this.questions.push(response.data);
-            for (const question in this.questions) {
-              const data = {
-                question: this.questions[question].id_question,
-                user: this.loggedInUser.id
-              };
-              response = await this.$axios.get('', { params: data });
+        for (let question in this.project.question) {
+          let response = await this.$axios.get(this.project.question[question]);
+          let answers = [];
+          let mcqanswers_wording = [];
+          if (response.data['mcqanswer'].length > 0) {
+            for (const mcqanswer in response.data['mcqanswer']) {
+              const response_mcqanswer = await this.$axios.get(
+                response.data['mcqanswer'][mcqanswer]
+              );
+              answers.push(response_mcqanswer.data);
+              mcqanswers_wording.push(response_mcqanswer.data.wording);
             }
+            this.mcqanswers[response.data.id_question] = mcqanswers_wording;
           }
-        } else {
-          for (let question in this.project.question) {
-            let response = await this.$axios.get(
-              this.project.question[question]
-            );
-            const answers = [];
-            if (response.data['mcqanswer'].length > 0) {
-              for (const mcqanswer in response.data['mcqanswer']) {
-                const response_mcqanswer = await this.$axios.get(
-                  response.data['mcqanswer'][mcqanswer]
-                );
-                answers.push(response_mcqanswer.data);
-              }
-            }
+          if (this.project.ready_for_publication) {
+            this.questions[question] = [response.data, answers];
+          } else {
             this.questions_not_published[question] = [response.data, answers];
           }
         }
       } else {
         this.questions_not_published = {};
-        this.questions = [];
+        this.questions = {};
       }
     },
 
     // Function fetching the questions answered by the user, in order to check if the user has participated to this project
     async fetchQuestionsAnswered() {
-      for (const question in this.questions) {
+      for (let question in Object.keys(this.questions)) {
         const data = {
-          question: this.questions[question].id_question,
-          user: this.loggedInUser.id
+          user: this.loggedInUser.id,
+          question: this.questions[question][0].id_question
         };
-        const response = await this.$axios.get('user_answer/', {
+        const response = await this.$axios.get('user_answer', {
           params: data
         });
         if (typeof response.data[0] !== 'undefined') {
           this.questions_answered.push(response.data[0]);
         }
       }
+      console.log('QUESTIONS ANSWERED ', this.questions_answered);
     },
 
     // Function fetching the comment saved by the user on this project, if there is one
@@ -406,12 +400,16 @@ export default {
   padding-right: 0;
   color: rgb(0, 14, 116);
 }
+.not-found {
+  padding-top: 13rem;
+  color: rgb(0, 14, 116);
+}
 #top {
   background-color: rgb(0, 14, 116);
   color: whitesmoke;
   height: 12rem;
   text-align: center;
-  padding-top: 5rem;
+  padding-top: 4rem;
   padding-bottom: 5rem;
 }
 #data {
@@ -457,11 +455,13 @@ export default {
   padding-right: 15rem;
 }
 .not_published {
-  padding-top: 2rem;
   padding-bottom: 3.5rem;
   padding-left: 15rem;
   padding-right: 15rem;
   text-align: justify;
+}
+.pre-formatted {
+  white-space: pre-wrap;
 }
 @media (max-width: 1200px) {
   .container {
