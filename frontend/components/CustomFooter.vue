@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-9 text-left">
-          <a href="#"><b>Mentions Légales</b></a>
+          <a href="mentions"><b>Mentions Légales</b></a>
         </div>
         <div class="col-md-3 text-right"><p>@ Copyright - Victor SIMON</p></div>
       </div>
@@ -13,7 +13,8 @@
 
 <style>
 .container-fluid div div {
-  align-content: space-around;
+  padding-left: 3rem;
+  padding-right: 3rem;
   align-items: baseline;
   text-align: center;
 }

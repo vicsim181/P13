@@ -41,4 +41,5 @@ urlpatterns = [
     path('project_type', project.views.ProjectTypeRetrieveView.as_view(), name='retrieve_project_type'),
     path('question_type', project.views.QuestionTypeRetrieveView.as_view(), name='retrieve_question_type'),
     path('not_published', project.views.NonPublishedProjectsView.as_view(), name='not_published'),
+    path('not_published_questions', project.views.NonPublishedQuestionsView.as_view(), name='not_published_questions'),
 ]

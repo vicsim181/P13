@@ -9,6 +9,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         """
         Check if the owner of the object and the user in the request are the same user.
         """
+        print('PERMISSION: IsOwnerOrAdmin')
         print('OBJ ', obj)
         permission_1, permission_2, permission_3 = None, None, None
         print('REQUEST USER ', request.user)
@@ -26,6 +27,7 @@ class IsPublishedOrNot(permissions.BasePermission):
     Custom permission to only retrieve a project that is published if the user looking for it is not an admin or the owner of it.
     """
     def has_object_permission(self, request, view, obj):
+        print('PERMISSION: IsPublishedOrNot')
         print('REQUEST USER ', request.user)
         if obj.ready_for_publication:
             return True
@@ -39,3 +41,31 @@ class IsPublishedOrNot(permissions.BasePermission):
             else:
                 print('obj owner and request user FALSE and user is NOT staff')
                 return False
+
+
+class QuestionOfPublishedProject(permissions.BasePermission):
+    """
+    Custom permission called when requesting a list of the questions, in order to return only the questions belonging to a published project
+    """
+    def has_object_permission(self, request, view, obj):
+        print('PERMISSION: QuestionOfPublishedProject')
+        # queryset_allowed = []
+        print('REQUEST USER ', request.user)
+        print('OBJET ', obj)
+        print('OBJ PROJECT PUBLISHED ', obj.project.ready_for_publication)
+        if obj.project.ready_for_publication:
+            print('obj belongs to published project TRUE')
+            # queryset_allowed.append(element)
+            return True
+        elif obj.owner == request.user:
+            print('obj owner and request user TRUE')
+            # queryset_allowed.append(element)
+            return True
+        elif request.user.is_staff:
+            print('obj owner and request user FALSE and user is staff')
+            # queryset_allowed.append(element)
+            return True
+        else:
+            print('obj owner and request user FALSE and user is NOT staff')
+            return False
+        # return queryset_allowed

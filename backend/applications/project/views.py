@@ -1,6 +1,6 @@
 import datetime
 import django_filters.rest_framework
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.http import Http404
 from django.db import IntegrityError
@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
 from . import models, serializers
-from ..permissions import IsOwnerOrAdmin, IsPublishedOrNot
+from ..permissions import IsOwnerOrAdmin, IsPublishedOrNot, QuestionOfPublishedProject
 
 
 # Create your views here.
@@ -59,7 +59,7 @@ class NonPublishedProjectsView(generics.ListAPIView):
         if 'project_type' not in request.GET:
             raise APIException('Vous devez fournir un type de projet')
         if 'owner_id' not in request.GET:
-            raise APIException('Vous devez fournir un user id')
+            raise APIException('Vous devez fournir un owner_id')
         project_type_id = request.GET['project_type']
         owner_id = request.GET['owner_id']
         queryset = get_list_or_404(models.Project,
@@ -77,10 +77,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.QuestionSerializer
 
     def get_permissions(self):
-        if self.action == 'retrieve' or self.action == 'list' or self.action == 'create':
-            permission_classes = [permissions.IsAuthenticated]
+        if self.action == 'retrieve':
+            permission_classes = [QuestionOfPublishedProject]
         elif self.action == 'destroy' or self.action == 'update':
             permission_classes = [IsOwnerOrAdmin]
+        elif self.action == 'list':
+            permission_classes = [permissions.IsAuthenticated]
         else:
             permission_classes = [permissions.IsAdminUser]
         return [permission() for permission in permission_classes]
@@ -88,6 +90,44 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
         return
+
+    def list(self, request):
+        filters = {}
+        for filter in request.GET:
+            filters[filter] = request.GET[filter]
+        context = {'request': request}
+        queryset = get_list_or_404(models.Question,
+                                   **filters)
+        allowed_queryset = []
+        for element in queryset:
+            if element.project.ready_for_publication:
+                allowed_queryset.append(element)
+            elif request.user.is_staff:
+                allowed_queryset.append(element)
+        self.check_object_permissions(self.request, allowed_queryset)
+        serializer = serializers.QuestionSerializer(allowed_queryset, context=context, many=True)
+        return Response(serializer.data)
+
+
+class NonPublishedQuestionsView(generics.ListAPIView):
+    queryset = models.Question.objects.all()
+    permission_classes = [IsOwnerOrAdmin]
+
+    def get(self, request):
+        context = {'request': request}
+        filters = {}
+        for filter in request.GET:
+            filters[filter] = request.GET[filter]
+        context = {'request': request}
+        queryset = get_list_or_404(models.Question,
+                                   **filters)
+        non_published_queryset = []
+        for element in queryset:
+            if not element.project.ready_for_publication:
+                non_published_queryset.append(element)
+        self.check_object_permissions(self.request, non_published_queryset)
+        serializer = serializers.ProjectSerializer(non_published_queryset, context=context, many=True)
+        return Response(serializer.data)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -104,10 +144,28 @@ class CommentViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.IsAdminUser]
         return [permission() for permission in permission_classes]
 
-    def perform_create(self, serializer):
-        user = self.request.user
-        serializer.save(owner=user, publication=datetime.datetime.now())
-        return
+    # def perform_create(self, serializer):
+    #     user = self.request.user
+    #     # print("REQUEST ", self.request.data['project'])
+    #     petition = models.Project.objects.get(pk=self.request.data['project'])
+    #     if not petition.ready_for_publication:
+    #         return False
+    #     serializer.save(owner=user, publication=datetime.datetime.now())
+    #     return
+
+    def create(self, validated_data):
+        petition_type = models.ProjectType.objects.get(name='Pétition')
+        petition = models.Project.objects.get(pk=validated_data.data['project'])
+        if petition.project_type.id_project_type == petition_type.id_project_type:
+            if petition.ready_for_publication:
+                response = models.Comment.objects.create(owner=self.request.user,
+                                                         publication=datetime.datetime.now(),
+                                                         text=validated_data.data['text'],
+                                                         project=petition)
+                return Response(response)
+            else:
+                response = HttpResponseForbidden
+                return Response(response)
 
 
 class LikeViews(generics.CreateAPIView, generics.DestroyAPIView):
