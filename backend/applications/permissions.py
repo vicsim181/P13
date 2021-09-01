@@ -14,6 +14,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         permission_1, permission_2, permission_3 = None, None, None
         print('REQUEST USER ', request.user)
         if hasattr(obj, 'owner'):
+            print('OWNER ATTRIBUTE ')
             permission_1 = obj.owner == request.user
         if hasattr(obj, 'id'):
             permission_2 = obj.id == request.user.id

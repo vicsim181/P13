@@ -4,7 +4,7 @@ from django.http.response import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.http import Http404
 from django.db import IntegrityError
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets, permissions, generics, exceptions
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import APIException
@@ -136,7 +136,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     filterset_fields = ['owner', 'project']
 
     def get_permissions(self):
-        if self.action == 'retrieve' or self.action == 'destroy' or self.action == 'update':
+        if self.action == 'retrieve':
             permission_classes = [IsOwnerOrAdmin]
         elif self.action == 'list' or self.action == 'create':
             permission_classes = [permissions.IsAuthenticated]
@@ -186,7 +186,6 @@ class ProjectPublication(APIView):
     permission_classes = [IsOwnerOrAdmin]
 
     def put(self, request):
-        print('REQUETE  : ', request)
         project_id = request.data['project_id']
         project = get_object_or_404(models.Project, id_project=project_id)
         self.check_object_permissions(request, project)
@@ -237,11 +236,43 @@ class MCQAnswerViewSet(viewsets.ModelViewSet):
 class UserAnswerViewSet(viewsets.ModelViewSet):
     queryset = models.UserAnswer.objects.all()
     serializer_class = serializers.UserAnswerSerializer
-    filterset_fields = ['question', 'user']
+    filterset_fields = ['question', 'owner']
 
     def get_permissions(self):
-        if self.action == 'retrieve' or self.action == 'list' or self.action == 'create':
+        if self.action == 'create':
+            permission_classes = [permissions.IsAuthenticated]
+        elif self.action == 'list':
             permission_classes = [IsOwnerOrAdmin]
         else:
             permission_classes = [permissions.IsAdminUser]
         return [permission() for permission in permission_classes]
+
+    def list(self, request):
+        user = self.request.user
+        print('REQUEST ', self.request.GET)
+        if not user.is_authenticated:
+            print('USER ANONYMOUS ')
+            raise exceptions.AuthenticationFailed('Utilisateur non authentifié')
+        filters = {}
+        if self.request.GET['question']:
+            print('QUESTION FILTER')
+            filters['question'] = self.request.GET['question']
+        if user.is_staff:
+            filters['owner'] = self.request.GET['owner']
+            print('USER STAFF')
+            queryset = get_list_or_404(models.UserAnswer,
+                                       **filters)
+        context = {'request': request}
+        if user and not user.is_staff:
+            print('USER NON STAFF')
+            queryset = get_list_or_404(models.UserAnswer,
+                                       owner=user,
+                                       **filters)
+        for element in queryset:
+            self.check_object_permissions(self.request, element)
+        serializer = serializers.UserAnswerSerializer(queryset, context=context, many=True)
+        return Response(serializer.data)
+
+    # ENREGISTRER LES FILTERS DANS LE DICTIONNAIRE FILTERS
+    # PUIS VERIFIER SI DANS LES CLES IL Y A QUESTION ET OWNER
+    # SI USER NOT STAFF ALORS REMPLACER LA VALEUR DE OWNER PAR USER

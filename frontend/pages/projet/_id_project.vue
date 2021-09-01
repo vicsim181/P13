@@ -346,14 +346,18 @@ export default {
     async fetchQuestionsAnswered() {
       for (let question in Object.keys(this.questions)) {
         const data = {
-          user: this.loggedInUser.id,
           question: this.questions[question][0].id_question
         };
-        const response = await this.$axios.get('user_answer', {
-          params: data
-        });
-        if (typeof response.data[0] !== 'undefined') {
-          this.questions_answered.push(response.data[0]);
+        try {
+          const response = await this.$axios.get('user_answer', {
+            params: data
+          });
+          console.log('RESPONSE ', response.data);
+          if (typeof response.data[0] !== 'undefined') {
+            this.questions_answered.push(response.data[0]);
+          }
+        } catch (error) {
+          console.log(error.data);
         }
       }
       console.log('QUESTIONS ANSWERED ', this.questions_answered);

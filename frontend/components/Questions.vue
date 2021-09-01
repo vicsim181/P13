@@ -138,7 +138,7 @@ export default {
     async postUserAnswer() {
       for (const [id, answer] of Object.entries(this.user_answers)) {
         const data = {
-          user: this.user,
+          owner: this.user,
           question: id,
           answer: answer
         };

@@ -211,9 +211,9 @@ export default {
 
     // Function sending a request to the API to get the answers of the user to the different forms
     async getUserAnswers() {
-      return await fetch(
-        `http://127.0.0.1:8000/user_answer/?user=${this.loggedInUser.id}`
-      ).then(res => res.json());
+      // const data = { owner: this.loggedInUser.id };
+      const response = await this.$axios.get('user_answer/');
+      return response.data;
     },
 
     // Function sending a request to the API to get the questions to which the user answered

@@ -7,18 +7,20 @@
       </div>
       <div class="row h-100 w-auto justify-content-center text-center">
         <h3>
-          Vous souhaitez apporter votre avis sur un projet lancé par la
+          Vous souhaitez participer à une consultation lancée par la
           municipalité ?
         </h3>
       </div>
       <div class="row h-100 w-auto justify-content-center text-center">
         <h3>
-          Interpeller l'équipe municipale en vue d'un conseil de quartier ?
+          Soumettre vos idées ou opinions à l'équipe municipale en vue d'un
+          conseil de quartier ?
         </h3>
       </div>
       <div class="row h-100 w-auto justify-content-center text-center">
         <h3>
-          Ou même créer une pétition et recueillir les avis de vos concitoyens ?
+          Ou même créer une pétition et recueillir les avis et le soutien de vos
+          concitoyens ?
         </h3>
       </div>
     </div>
