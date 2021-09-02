@@ -1,3 +1,4 @@
+from applications.project import models
 from rest_framework import permissions
 
 
@@ -50,23 +51,88 @@ class QuestionOfPublishedProject(permissions.BasePermission):
     """
     def has_object_permission(self, request, view, obj):
         print('PERMISSION: QuestionOfPublishedProject')
-        # queryset_allowed = []
         print('REQUEST USER ', request.user)
-        print('OBJET ', obj)
-        print('OBJ PROJECT PUBLISHED ', obj.project.ready_for_publication)
         if obj.project.ready_for_publication:
-            print('obj belongs to published project TRUE')
-            # queryset_allowed.append(element)
             return True
         elif obj.owner == request.user:
-            print('obj owner and request user TRUE')
-            # queryset_allowed.append(element)
             return True
         elif request.user.is_staff:
-            print('obj owner and request user FALSE and user is staff')
-            # queryset_allowed.append(element)
             return True
         else:
-            print('obj owner and request user FALSE and user is NOT staff')
             return False
-        # return queryset_allowed
+
+
+class IsPublishedPetition(permissions.BasePermission):
+    """
+    Custom permission called when requesting to comment or like a petition
+    """
+    def has_object_permission(self, request, view, obj):
+        print('PERMISSION: IsPublishedPetition')
+        print('REQUEST USER ', request.user)
+        petition_type = models.ProjectType.objects.get(name='Pétition')
+        if not request.user.is_authenticated:
+            return False
+        if not obj.project_type == petition_type:
+            return False
+        else:
+            if not obj.ready_for_publication:
+                return False
+            else:
+                return True
+
+
+class MCQAnswerOfPublishedProject(permissions.BasePermission):
+    """
+    Custom permission called when requesting to list or retrieve a mcqanswer
+    """
+    def has_object_permission(self, request, view, obj):
+        print('PERMISSION: MCQAnswerOfPublishedProject')
+        print('REQUEST USER ', request.user)
+        if not request.user.is_authenticated:
+            return False
+        question = obj.question
+        project = question.project
+        if project.ready_for_publication:
+            return True
+        if question.owner == request.user:
+            return True
+        if request.user.is_staff:
+            return True
+        else:
+            return False
+
+
+class MCQAnswerCreatorOwnerOfQuestion(permissions.BasePermission):
+    """
+    Custom permission called when requesting to create, update or delete a mcqanswer
+    """
+    def has_object_permission(self, request, view, obj):
+        print('PERMISSION: MCQAnswerOwnerOfQuestion')
+        print('REQUEST USER ', request.user)
+        # question = obj.question
+        if not request.user.is_authenticated:
+            return False
+        if request.user == obj.owner:
+            return True
+        if request.user.is_staff:
+            return True
+        else:
+            return False
+
+
+class OnwerOfMCQAnswer(permissions.BasePermission):
+    """
+    Custom permission called when requestion to update or delete a mcqanswer
+    """
+    def has_object_permission(self, request, view, obj):
+        print('PERMISSION: OnwerOfMCQAnswer')
+        print('REQUEST USER ', request.user)
+        question = obj.question
+        if not request.user.is_authenticated:
+            return False
+        if request.user == question.owner:
+            return True
+        if request.user.is_staff:
+            return True
+        else:
+            return False

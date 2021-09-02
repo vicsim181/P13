@@ -433,10 +433,14 @@ export default {
 
     // We send a PUT request to the API with the id of the Conseil project to publish it
     async publishConsultation() {
-      const response = await this.$axios.put('publication', {
-        project_id: this.project_data.id_project
-      });
-      return response.status;
+      try {
+        const response = await this.$axios.put('publication', {
+          project_id: this.project_data.id_project
+        });
+        return response.status;
+      } catch (error) {
+        return error.message;
+      }
     },
 
     // We send a POST request to the API to post a question
@@ -446,25 +450,17 @@ export default {
         question_type: this.question.type,
         project: this.project_data.id_project
       };
-      console.log('QUESTION DATA ', question_data);
       try {
         const response_1 = await this.$axios.post('question/', question_data);
         console.log(response_1.data);
         const question_id = response_1.data['id_question'];
         if (this.question_type_name === 'QCM') {
-          console.log('QUESTION CHOICES ', this.question.choices);
           for (const choice in this.question.choices) {
-            console.log('CHOICE ', this.question.choices[choice]);
             const answer_data = {
               wording: this.question.choices[choice],
               question: question_id
             };
-            console.log('DATA MCQ ANSWER ', answer_data);
-            const response_2 = await this.$axios.post(
-              'mcq_answer/',
-              answer_data
-            );
-            console.log('REPONSE POST REQUETE ', response_2.data);
+            await this.$axios.post('mcq_answer/', answer_data);
           }
         }
         this.question.choices = [];
@@ -516,16 +512,14 @@ export default {
       //   await this.putConsultationData();
       await this.setEndDate();
       const publish_response = await this.publishConsultation();
-      this.$nextTick(() => {
-        if (publish_response === 200) {
-          this.$bvModal.hide('modal-modify-project');
-          this.$bvModal.show('modal-validation');
-        } else {
-          window.alert(
-            "Erreur lors de la publication du projet. \n Assurez-vous d'avoir créé au moins une question rattachée à cette consultation."
-          );
-        }
-      });
+      if (publish_response === 200) {
+        this.$bvModal.hide('modal-modify-project');
+        this.$bvModal.show('modal-validation');
+      } else {
+        window.alert(
+          "Erreur lors de la publication du projet. \n Assurez-vous d'avoir créé au moins une question rattachée à cette consultation."
+        );
+      }
     },
 
     // Function called when Ok is clicked on the confirmation the project is published

@@ -414,10 +414,10 @@ export default {
   height: 12rem;
   text-align: center;
   padding-top: 4rem;
-  padding-bottom: 5rem;
+  padding-bottom: 2rem;
 }
 #data {
-  padding-top: 4rem;
+  padding-top: 2rem;
   padding-bottom: 3.5rem;
   padding-left: 15rem;
   padding-right: 15rem;

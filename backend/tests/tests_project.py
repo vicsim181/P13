@@ -1,4 +1,5 @@
 import json
+from applications import project
 from rest_framework.test import APIRequestFactory, force_authenticate, APITestCase
 from applications.project import models, views
 from applications.authentication.models import CustomUser
@@ -33,7 +34,7 @@ class ProjectUnitaryTests(APITestCase):
         self.admin_test.save()
 
     def test_create_project_when_authenticated(self):
-        print("\nTEST - UnitaryProjectTests --> test_create_project_when_authenticated()\n")
+        print("\nTEST - ProjectUnitaryTests --> test_create_project_when_authenticated()\n")
         project_type_test = models.ProjectType(name='Pétition')
         project_type_test.save()
         test_view = views.ProjectViewSet.as_view({'post': 'create'})
@@ -50,7 +51,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 1 DONE")
 
     def test_create_project_when_not_authenticated(self):
-        print("\nTEST - UnitaryProjectTests --> test_create_project_when_not_authenticated()\n")
+        print("\nTEST - ProjectUnitaryTests --> test_create_project_when_not_authenticated()\n")
         project_type_test = models.ProjectType(name='Pétition')
         project_type_test.save()
         test_view = views.ProjectViewSet.as_view({'post': 'create'})
@@ -64,7 +65,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_list_projects_1(self):
-        print("\nTEST - UnitaryProjectTests --> LIST PROJECTS WHEN AUTHENTICATED\n")
+        print("\nTEST - ProjectUnitaryTests --> LIST PROJECTS WHEN AUTHENTICATED\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test_1 = models.Project(name='Essai',
@@ -96,7 +97,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 3 DONE")
 
     def test_list_projects_2(self):
-        print("\nTEST - UnitaryProjectTests --> LIST PROJECTS NOT AUTHENTICATED\n")
+        print("\nTEST - ProjectUnitaryTests --> LIST PROJECTS NOT AUTHENTICATED\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test_1 = models.Project(name='Essai',
@@ -127,7 +128,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 3 DONE")
 
     def test_list_projects_3(self):
-        print("\nTEST - UnitaryProjectTests --> LIST OF NOT PUBLISHED PROJECTS WHEN NOT AUTHENTICATED\n")
+        print("\nTEST - ProjectUnitaryTests --> LIST OF NOT PUBLISHED PROJECTS WHEN NOT AUTHENTICATED\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test_1 = models.Project(name='Essai',
@@ -148,15 +149,16 @@ class ProjectUnitaryTests(APITestCase):
         print("self.assertEqual(response.status_code, 500) NO PROJECT TYPE PASSED IN THE REQUEST")
         self.assertEqual(response.status_code, 500)
         print("ASSERT 1 DONE")
-        request_2 = self.factory.get('not_published/', {'project_type': project_type_test.id_project_type})
+        request_2 = self.factory.get('not_published/', {'project_type': project_type_test.id_project_type,
+                                                        'owner_id': self.user_test.id})
         response_2 = test_view(request_2)
-        print("self.assertEqual(response.status_code, 404) PROJECT TYPE CONSULTATION PASSED IN")
+        print("self.assertEqual(response.status_code, 401) PROJECT TYPE CONSULTATION PASSED IN")
         print(response.data)
-        self.assertEqual(response_2.status_code, 404)
+        self.assertEqual(response_2.status_code, 401)
         print("ASSERT 1 DONE")
 
     def test_list_projects_4(self):
-        print("\nTEST - UnitaryProjectTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN NOT OWNER BUT ADMIN\n")
+        print("\nTEST - ProjectUnitaryTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN ADMIN\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test_1 = models.Project(name='Essai',
@@ -176,6 +178,7 @@ class ProjectUnitaryTests(APITestCase):
                                                       'owner_id': self.user_test.id})
         force_authenticate(request, user=self.admin_test)
         response = test_view(request)
+        print(response.data)
         print("self.assertEqual(response.status_code, 200)")
         self.assertEqual(response.status_code, 200)
         print("ASSERT 1 DONE")
@@ -184,7 +187,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 2 DONE")
 
     def test_list_projects_5(self):
-        print("\nTEST - UnitaryProjectTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN NEITHER OWNER NOR ADMIN\n")
+        print("\nTEST - ProjectUnitaryTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN NEITHER OWNER NOR ADMIN\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test_1 = models.Project(name='Essai',
@@ -209,7 +212,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_list_projects_6(self):
-        print("\nTEST - UnitaryProjectTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN OWNER\n")
+        print("\nTEST - ProjectUnitaryTests --> LIST OF NOT PUBLISHED CONSULTATIONS WHEN OWNER\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test_1 = models.Project(name='Essai',
@@ -244,7 +247,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 2 DONE")
 
     def test_delete_project_when_not_owner(self):
-        print("\nTEST - UnitaryProjectTests --> test_delete_project_when_not_owner()\n")
+        print("\nTEST - ProjectUnitaryTests --> test_delete_project_when_not_owner()\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test = models.Project(name='Essai Admin',
@@ -262,7 +265,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_delete_project_not_authenticated(self):
-        print("\nTEST - UnitaryProjectTests --> test_delete_project_not_authenticated()\n")
+        print("\nTEST - ProjectUnitaryTests --> test_delete_project_not_authenticated()\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test = models.Project(name='Essai Admin',
@@ -279,7 +282,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_delete_when_owner(self):
-        print("\nTEST - UnitaryProjectTests --> test_delete_when_owner()\n")
+        print("\nTEST - ProjectUnitaryTests --> test_delete_when_owner()\n")
         project_type_test = models.ProjectType(name='Pétition')
         project_type_test.save()
         project_test = models.Project(name='Essai',
@@ -297,7 +300,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_delete_when_owner_but_admin(self):
-        print("\nTEST - UnitaryProjectTests --> test_delete_when_owner_but_admin()\n")
+        print("\nTEST - ProjectUnitaryTests --> test_delete_when_owner_but_admin()\n")
         project_type_test = models.ProjectType(name='Pétition')
         project_type_test.save()
         project_test = models.Project(name='Essai',
@@ -315,7 +318,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_update_project_1(self):
-        print("\nTEST - UnitaryProjectTests --> UPDATE PROJECT NON OWNER\n")
+        print("\nTEST - ProjectUnitaryTests --> UPDATE PROJECT NON OWNER\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test = models.Project(name='Essai Admin',
@@ -338,7 +341,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_update_project_2(self):
-        print("\nTEST - UnitaryProjectTests --> UPDATE PROJECT BY OWNER\n")
+        print("\nTEST - ProjectUnitaryTests --> UPDATE PROJECT BY OWNER\n")
         project_type_test = models.ProjectType(name='Pétition')
         project_type_test.save()
         project_test = models.Project(name='Essai',
@@ -364,7 +367,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 2 DONE")
 
     def test_update_project_3(self):
-        print("\nTEST - UnitaryProjectTests --> UPDATE PROJECT BY NON AUTHENTICATED USER\n")
+        print("\nTEST - ProjectUnitaryTests --> UPDATE PROJECT BY NON AUTHENTICATED USER\n")
         project_type_test = models.ProjectType(name='Consultation')
         project_type_test.save()
         project_test = models.Project(name='Essai Admin',
@@ -386,7 +389,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_update_project_4(self):
-        print("\nTEST - UnitaryProjectTests --> UPDATE PROJECT BY ADMIN USER\n")
+        print("\nTEST - ProjectUnitaryTests --> UPDATE PROJECT BY ADMIN USER\n")
         project_type_test = models.ProjectType(name='Pétition')
         project_type_test.save()
         project_test = models.Project(name='Essai',
@@ -412,7 +415,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 2 DONE")
 
     def test_non_staff_user_can_create_petition_only(self):
-        print("\nTEST - UnitaryProjectTests --> test_non_staff_user_can_create_petition_only()\n")
+        print("\nTEST - ProjectUnitaryTests --> test_non_staff_user_can_create_petition_only()\n")
         consultation_type_test = models.ProjectType(name='Consultation')
         consultation_type_test.save()
         petition_type_test = models.ProjectType(name='Pétition')
@@ -476,9 +479,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT 9 DONE")
 
     def test_consult_questions_linked_to_project(self):
-        # A retravailler pour tester avec non admin et non authentifié
-        # vérifier les infos de la question via un retrieve
-        print("\nTEST - UnitaryProjectTests --> test_consult_questions_linked_to_project()\n")
+        print("\nTEST - ProjectUnitaryTests --> test_consult_questions_linked_to_project()\n")
         consultation_type_test = models.ProjectType(name='Consultation')
         consultation_type_test.save()
         question_type_test = models.QuestionType(name='Réponse libre')
@@ -517,108 +518,278 @@ class ProjectUnitaryTests(APITestCase):
         self.assertEqual(str(question_type_test), 'Réponse libre')
         print("ASSERT 5 DONE")
 
-    def test_publish_petition(self):
-        # Créer un projet, regarder son ready_for_publication, le publier et revérifier le ready_for_publication
+    def test_publish_petition_1(self):
+        print("\nTEST - ProjectUnitaryTests --> PETITION PUBLISHED BY ITS OWNER\n")
         petition_type_test = models.ProjectType(name='Pétition')
         petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
         project_test = models.Project(name='Essai',
                                       place='Berlin',
                                       description='Création de projet via test',
                                       owner=self.user_test,
-                                      project_type=petition_type_test)
+                                      project_type=petition_type_test,
+                                      ready_for_publication=False)
         project_test.save()
         test_view = views.ProjectPublication.as_view()
-        request = self.factory.post('publication/')
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
         force_authenticate(request, user=self.user_test)
-        response = test_view(request, project_id=project_test.id_project)
-        print("self.assertEqual(response.status_code, 404)")
-        self.assertEqual(response.status_code, 404)
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
         print("ASSERT 1 DONE")
-        question_type_test = models.QuestionType(name='Réponse libre')
-        question_type_test.save()
-        question_test = models.Question(wording='Que pensez-vous de ce test ?',
-                                        question_type=question_type_test,
-                                        project=project_test,
-                                        owner=self.user_test)
-        question_test.save()
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, True)")
+        self.assertEqual(project_test.ready_for_publication, True)
+        print("ASSERT 2 DONE")
+
+    def test_publish_petition_2(self):
+        print("\nTEST - ProjectUnitaryTests --> PETITION PUBLISHED BY AUTHENTICATED USER NOT OWNER\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=petition_type_test,
+                                      ready_for_publication=False)
+        project_test.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
         force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, project_id=project_test.id_project)
-        data = json.loads(response.render().content)
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
         print("self.assertEqual(response.status_code, 403)")
         self.assertEqual(response.status_code, 403)
         print("ASSERT 1 DONE")
-        test_view = views.ProjectViewSet.as_view({'get': 'retrieve'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, pk=project_test.id_project)
-        data = json.loads(response.render().content)
-        print("self.assertEqual(data['publication'], None)")
-        self.assertEqual(data['publication'], None)
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, False)")
+        self.assertEqual(project_test.ready_for_publication, False)
         print("ASSERT 2 DONE")
-        print("self.assertEqual(data['end_date'], None)")
-        self.assertEqual(data['end_date'], None)
-        print("ASSERT 3 DONE")
-        print("self.assertFalse(data['ready_for_publication'])")
-        self.assertFalse(data['ready_for_publication'])
-        print("ASSERT 4 DONE")
-        test_view = views.ProjectPublication.as_view()
-        request = self.factory.post('publication/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, project_id=project_test.id_project)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 5 DONE")
-        test_view = views.ProjectViewSet.as_view({'get': 'retrieve'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, pk=project_test.id_project)
-        data = json.loads(response.render().content)
-        print("self.assertNotEqual(data['publication'], None)")
-        self.assertNotEqual(data['publication'], None)
-        print("ASSERT 6 DONE")
-        print("self.assertNotEqual(data['end_date'], None)")
-        self.assertNotEqual(data['end_date'], None)
-        print("ASSERT 7 DONE")
-        print("self.assertTrue(data['ready_for_publication'])")
-        self.assertTrue(data['ready_for_publication'])
-        print("ASSERT 8 DONE")
 
-    def test_publish_conseil(self):
-        # Créer un projet, regarder son ready_for_publication, le publier et revérifier le ready_for_publication
-        pass
-
-    def test_publish_consultation(self):
-        # Créer un projet, regarder son ready_for_publication, le publier et revérifier le ready_for_publication
-        pass
-
-    def test_publish_comment_on_petition(self):
-        print("\nTEST - UnitaryProjectTests --> test_publish_comment_on_petition()\n")
+    def test_publish_petition_3(self):
+        print("\nTEST - ProjectUnitaryTests --> PETITION PUBLISHED BY NOT AUTHENTICATED USER\n")
         petition_type_test = models.ProjectType(name='Pétition')
         petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
         project_test = models.Project(name='Essai',
                                       place='Berlin',
                                       description='Création de projet via test',
                                       owner=self.user_test,
-                                      project_type=petition_type_test)
+                                      project_type=petition_type_test,
+                                      ready_for_publication=False)
         project_test.save()
-        comment_to_post = {'owner': self.user_test_2,
-                           'text': 'Je trouve le test de cette fonctionnalité très pertinent. Je recommende vivement !',
-                           'project': project_test.id_project}
-        test_view = views.CommentViewSet.as_view({'post': 'create'})
-        request = self.factory.post('comment/', comment_to_post)
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT 1 DONE")
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, False)")
+        self.assertEqual(project_test.ready_for_publication, False)
+        print("ASSERT 2 DONE")
+
+    def test_publish_conseil_1(self):
+        print("\nTEST - ProjectUnitaryTests --> CONSEIL PUBLISHED BY ITS OWNER\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
+        conseil_type_test = models.ProjectType(name='Conseil de quartier')
+        conseil_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=conseil_type_test,
+                                      ready_for_publication=False)
+        project_test.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, True)")
+        self.assertEqual(project_test.ready_for_publication, True)
+        print("ASSERT 2 DONE")
+
+    def test_publish_conseil_2(self):
+        print("\nTEST - ProjectUnitaryTests --> CONSEIL PUBLISHED BY AUTHENTICATED USER NOT OWNER\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
+        conseil_type_test = models.ProjectType(name='Conseil de quartier')
+        conseil_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=conseil_type_test,
+                                      ready_for_publication=False)
+        project_test.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
         force_authenticate(request, user=self.user_test_2)
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 201)")
-        self.assertEqual(response.status_code, 201)
-        print("ASSERT DONE")
-        # Retenter pour vérifier impossibilité de commenter deux fois une même pétition
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 1 DONE")
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, False)")
+        self.assertEqual(project_test.ready_for_publication, False)
+        print("ASSERT 2 DONE")
 
-    def test_publish_comment_on_petition_not_authenticated(self):
-        # Essayer sans force_authenticate
-        pass
+    def test_publish_conseil_3(self):
+        print("\nTEST - ProjectUnitaryTests --> CONSEIL PUBLISHED BY NOT AUTHENTICATED USER\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
+        conseil_type_test = models.ProjectType(name='Conseil de quartier')
+        conseil_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=conseil_type_test,
+                                      ready_for_publication=False)
+        project_test.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT 1 DONE")
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, False)")
+        self.assertEqual(project_test.ready_for_publication, False)
+        print("ASSERT 2 DONE")
 
-    def test_like_a_petition(self):
-        print("\nTEST - UnitaryProjectTests --> test_like_a_petition()\n")
+    def test_publish_consultation_1(self):
+        print("\nTEST - ProjectUnitaryTests --> CONSULTATION PUBLISHED BY NOT AUTHENTICATED USER\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=consultation_type_test,
+                                      ready_for_publication=False)
+        project_test.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT 1 DONE")
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, False)")
+        self.assertEqual(project_test.ready_for_publication, False)
+        print("ASSERT 2 DONE")
+
+    def test_publish_consultation_2(self):
+        print("\nTEST - ProjectUnitaryTests --> CONSULTATION PUBLISHED BY AUTHENTICATED USER NOT OWNER\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=consultation_type_test,
+                                      ready_for_publication=False)
+        project_test.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 1 DONE")
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, False)")
+        self.assertEqual(project_test.ready_for_publication, False)
+        print("ASSERT 2 DONE")
+
+    def test_publish_consultation_3(self):
+        print("\nTEST - ProjectUnitaryTests --> CONSULTATION PUBLISHED BY OWNER WITHOUT ANY QUESTION ATTACHED\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=consultation_type_test,
+                                      ready_for_publication=False)
+        project_test.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 404)")
+        self.assertEqual(response.status_code, 404)
+        print("ASSERT 1 DONE")
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, False)")
+        self.assertEqual(project_test.ready_for_publication, False)
+        print("ASSERT 2 DONE")
+
+    def test_publish_consultation_4(self):
+        print("\nTEST - ProjectUnitaryTests --> CONSULTATION PUBLISHED BY OWNER WITHOUT ONE QUESTION ATTACHED\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        consultation_type_test = models.ProjectType(name='Consultation')
+        consultation_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=consultation_type_test,
+                                      ready_for_publication=False)
+        project_test.save()
+        question_type = models.QuestionType(name='Réponse libre')
+        question_type.save()
+        test_question = models.Question(wording="Essai de question",
+                                        question_type=question_type,
+                                        project=project_test,
+                                        owner=self.admin_test)
+        test_question.save()
+        test_view = views.ProjectPublication.as_view()
+        request = self.factory.put('publication', {'project_id': project_test.id_project})
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print('RESPONSE IN TEST', response.data)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        project_test = models.Project.objects.get(pk=project_test.id_project)
+        print("self.assertEqual(project_test.ready_for_publication, True)")
+        self.assertEqual(project_test.ready_for_publication, True)
+        print("ASSERT 2 DONE")
+
+    def test_like_a_petition_1(self):
+        print("\nTEST - ProjectUnitaryTests --> NOT AUTHENTICATED USER TRIES TO LIKE A NON PUBLISHED PETITION\n")
         petition_type_test = models.ProjectType(name='Pétition')
         petition_type_test.save()
         project_test = models.Project(name='Essai',
@@ -628,16 +799,75 @@ class ProjectUnitaryTests(APITestCase):
                                       project_type=petition_type_test)
         project_test.save()
         test_view = views.LikeViews.as_view()
-        request = self.factory.post('like/')
+        request = self.factory.put('like/', {'project_id': project_test.id_project,
+                                             'action': 'add'})
+        response = test_view(request)
+        print(response.data)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT 1 DONE")
+
+    def test_like_a_petition_2(self):
+        print("\nTEST - ProjectUnitaryTests --> AUTHENTICATED USER TRIES TO LIKE A NON PUBLISHED PETITION\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=petition_type_test)
+        project_test.save()
+        test_view = views.LikeViews.as_view()
+        request = self.factory.put('like/', {'project_id': project_test.id_project,
+                                             'action': 'add'})
         force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, project_id=project_test.id_project)
+        response = test_view(request)
+        print(response.data)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 1 DONE")
+
+    def test_like_a_petition_3(self):
+        print("\nTEST - ProjectUnitaryTests --> NOT AUTHENTICATED USER TRIES TO LIKE A PUBLISHED PETITION\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=petition_type_test,
+                                      ready_for_publication=True)
+        project_test.save()
+        test_view = views.LikeViews.as_view()
+        request = self.factory.put('like/', {'project_id': project_test.id_project,
+                                             'action': 'add'})
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_like_a_petition_4(self):
+        print("\nTEST - ProjectUnitaryTests --> AUTHENTICATED USER TRIES TO LIKE A PUBLISHED PETITION\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=petition_type_test,
+                                      ready_for_publication=True)
+        project_test.save()
+        test_view = views.LikeViews.as_view()
+        request = self.factory.put('like/', {'project_id': project_test.id_project,
+                                             'action': 'add'})
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request)
         print("self.assertEqual(response.status_code, 200)")
         self.assertEqual(response.status_code, 200)
         print("ASSERT DONE")
-        # Tester l'effet d'une deuxième demande
 
     def test_retrieve_project_1(self):
-        print("\nTEST - UnitaryProjectTests --> RETRIEVE NON PUBLISHED PROJECT WITH NON AUTHENTICATED USER\n")
+        print("\nTEST - ProjectUnitaryTests --> RETRIEVE NON PUBLISHED PROJECT WITH NON AUTHENTICATED USER\n")
         petition_type_test = models.ProjectType(name='Pétition')
         petition_type_test.save()
         project_test = models.Project(name='Essai',
@@ -654,7 +884,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_retrieve_project_2(self):
-        print("\nTEST - UnitaryProjectTests --> RETRIEVE NON PUBLISHED PROJECT WITH NEITHER ADMIN NOR OWNER USER\n")
+        print("\nTEST - ProjectUnitaryTests --> RETRIEVE NON PUBLISHED PROJECT WITH NEITHER ADMIN NOR OWNER USER\n")
         petition_type_test = models.ProjectType(name='Pétition')
         petition_type_test.save()
         project_test = models.Project(name='Essai',
@@ -672,7 +902,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_retrieve_project_3(self):
-        print("\nTEST - UnitaryProjectTests --> RETRIEVE NON PUBLISHED PROJECT WITH OWNER USER\n")
+        print("\nTEST - ProjectUnitaryTests --> RETRIEVE NON PUBLISHED PROJECT WITH OWNER USER\n")
         petition_type_test = models.ProjectType(name='Pétition')
         petition_type_test.save()
         project_test = models.Project(name='Essai',
@@ -690,7 +920,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_retrieve_project_4(self):
-        print("\nTEST - UnitaryProjectTests --> RETRIEVE NON PUBLISHED PROJECT WITH ADMIN USER\n")
+        print("\nTEST - ProjectUnitaryTests --> RETRIEVE NON PUBLISHED PROJECT WITH ADMIN USER\n")
         petition_type_test = models.ProjectType(name='Pétition')
         petition_type_test.save()
         project_test = models.Project(name='Essai',
@@ -708,7 +938,7 @@ class ProjectUnitaryTests(APITestCase):
         print("ASSERT DONE")
 
     def test_retrieve_project_5(self):
-        print("\nTEST - UnitaryProjectTests --> RETRIEVE PUBLISHED PROJECT WITH NON AUTHENTICATED USER\n")
+        print("\nTEST - ProjectUnitaryTests --> RETRIEVE PUBLISHED PROJECT WITH NON AUTHENTICATED USER\n")
         petition_type_test = models.ProjectType(name='Pétition')
         petition_type_test.save()
         project_test = models.Project(name='Essai',
@@ -1153,6 +1383,10 @@ class CommentUnitaryTests(APITestCase):
         print("self.assertEqual(response.status_code, 401)")
         self.assertEqual(response.status_code, 401)
         print("ASSERT DONE")
+        comment = models.Comment.objects.all()
+        print("self.assertEqual(len(comment), 0)")
+        self.assertEqual(len(comment), 0)
+        print("ASSERT 2 DONE")
 
     def test_create_2(self):
         print("\n\nTEST - CommentUnitaryTests --> CREATE COMMENT ON NON PUBLISHED PETITION WHEN NEITHER OWNER NOR ADMIN\n")
@@ -1163,8 +1397,8 @@ class CommentUnitaryTests(APITestCase):
         request = self.factory.post('comment/', test_comment_to_create)
         force_authenticate(request, user=self.user_test_2)
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
         print("ASSERT 1 DONE")
         comment = models.Comment.objects.all()
         print("self.assertEqual(len(comment), 0)")
@@ -1180,8 +1414,8 @@ class CommentUnitaryTests(APITestCase):
         request = self.factory.post('comment/', test_comment_to_create)
         force_authenticate(request, user=self.admin_test)
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
         print("ASSERT 1 DONE")
         comment = models.Comment.objects.all()
         print("self.assertEqual(len(comment), 0)")
@@ -1197,8 +1431,8 @@ class CommentUnitaryTests(APITestCase):
         request = self.factory.post('comment/', test_comment_to_create)
         force_authenticate(request, user=self.user_test)
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
         print("ASSERT 1 DONE")
         comment = models.Comment.objects.all()
         print("self.assertEqual(len(comment), 0)")
@@ -1230,8 +1464,8 @@ class CommentUnitaryTests(APITestCase):
         request = self.factory.post('comment/', test_comment_to_create)
         force_authenticate(request, user=self.user_test)
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
+        print("self.assertEqual(response.status_code, 201)")
+        self.assertEqual(response.status_code, 201)
         print("ASSERT 1 DONE")
         comment = models.Comment.objects.all()
         print("self.assertEqual(len(comment), 1)")
@@ -1697,7 +1931,8 @@ class UserAnswerUnitaryTests(APITestCase):
         print("self.assertEqual(response.status_code, 401) FOR LIST OF ALL USER ANSWERS")
         self.assertEqual(response.status_code, 401)
         print("ASSERT 1 DONE")
-        request_2 = self.factory.get('user_answer', question=self.test_question_2.id_question)
+        data = {'question': self.test_question_2.id_question}
+        request_2 = self.factory.get('user_answer', data)
         response_2 = test_view(request_2)
         print("self.assertEqual(response.status_code, 401) FOR LIST OF USER ANSWERS ON TEST_QUESTION_2")
         self.assertEqual(response_2.status_code, 401)
@@ -1720,7 +1955,8 @@ class UserAnswerUnitaryTests(APITestCase):
         print("self.assertEqual(response.status_code, 404) FOR LIST OF ALL USER ANSWERS")
         self.assertEqual(response.status_code, 404)
         print("ASSERT 1 DONE")
-        request_2 = self.factory.get('user_answer', question=self.test_question_2.id_question)
+        data = {'question': self.test_question_2.id_question}
+        request_2 = self.factory.get('user_answer', data)
         response_2 = test_view(request_2)
         print("self.assertEqual(response.status_code, 401) FOR LIST OF USER ANSWERS ON TEST_QUESTION_2")
         self.assertEqual(response_2.status_code, 401)
@@ -1744,21 +1980,33 @@ class UserAnswerUnitaryTests(APITestCase):
         request = self.factory.get('user_answer')
         force_authenticate(request, user=self.user_test_2)
         response = test_view(request)
-        print("self.assertEqual(response.status_code, 200) FOR LIST OF ALL USER ANSWERS")
+        print("self.assertEqual(response.status_code, 200) FOR LIST OF ALL USER ANSWERS REQUESTED BY USER_TEST_2")
         self.assertEqual(response.status_code, 200)
         print("ASSERT 1 DONE")
         print("self.assertEqual(len(response.data), 1)")
         self.assertEqual(len(response.data), 1)
         print("ASSERT 2 DONE")
-        request_2 = self.factory.get('user_answer', question=self.test_question_2.id_question)
-        force_authenticate(request_2, user=self.user_test_2)
+        data = {'question': self.test_question_2.id_question}
+        request_2 = self.factory.get('user_answer', data)
+        force_authenticate(request_2, user=self.user_test)
         response_2 = test_view(request_2)
-        print("self.assertEqual(response.status_code, 200) FOR LIST OF USER ANSWERS ON TEST_QUESTION_2")
+        print("self.assertEqual(response.status_code, 200) FOR LIST OF USER ANSWERS ON TEST_QUESTION_2 REQUESTED BY USER_TEST")
         self.assertEqual(response_2.status_code, 200)
         print("ASSERT 3 DONE")
         print("self.assertEqual(len(response.data), 1)")
         self.assertEqual(len(response_2.data), 1)
         print("ASSERT 4 DONE")
+        data = {'owner': self.user_test_2.id}
+        request_3 = self.factory.get('user_answer', data)
+        force_authenticate(request_3, user=self.user_test)
+        response_3 = test_view(request_3)
+        print("self.assertEqual(response.status_code, 200) FOR LIST OF USER ANSWERS OF USER_TEST_2 REQUESTED BY USER_TEST")
+        self.assertEqual(response_3.status_code, 200)
+        print("ASSERT 5 DONE")
+        print(response_3.data)
+        print("self.assertEqual(len(response.data), 2)")
+        self.assertEqual(len(response_3.data), 2)
+        print("ASSERT 6 DONE")
 
     def test_list_4(self):
         print("\n\nTEST - UserAnswerUnitaryTests --> LIST USER ANSWERS WHEN ADMIN\n")
@@ -1784,7 +2032,8 @@ class UserAnswerUnitaryTests(APITestCase):
         print("self.assertEqual(len(response.data), 3)")
         self.assertEqual(len(response.data), 3)
         print("ASSERT 2 DONE")
-        request_2 = self.factory.get('user_answer', question=str(self.test_question_2.id_question))
+        data = {'question': self.test_question_2.id_question}
+        request_2 = self.factory.get('user_answer', data)
         force_authenticate(request_2, user=self.admin_test)
         response_2 = test_view(request_2)
         print("self.assertEqual(response.status_code, 200) FOR LIST OF USER ANSWERS ON TEST_QUESTION_2")
@@ -1794,6 +2043,331 @@ class UserAnswerUnitaryTests(APITestCase):
         print("self.assertEqual(len(response.data), 2)")
         self.assertEqual(len(response_2.data), 2)
         print("ASSERT 4 DONE")
+        data = {'owner': self.user_test.id}
+        request_2 = self.factory.get('user_answer', data)
+        force_authenticate(request_2, user=self.admin_test)
+        response_2 = test_view(request_2)
+        print("self.assertEqual(response.status_code, 200) FOR LIST OF USER ANSWERS OF USER_TEST")
+        self.assertEqual(response_2.status_code, 200)
+        print("ASSERT 5 DONE")
+        print(response_2.data)
+        print("self.assertEqual(len(response.data), 2)")
+        self.assertEqual(len(response_2.data), 2)
+        print("ASSERT 6 DONE")
+
+    def test_delete_1(self):
+        print("\n\nTEST - UserAnswerUnitaryTests --> DELETE USER ANSWER WHEN NOT AUTHENTICATED\n")
+        test_user_answer = models.UserAnswer(answer="Essai de réponse à une question libre",
+                                             owner=self.user_test,
+                                             question=self.test_question)
+        test_user_answer.save()
+        test_view = views.UserAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('user_answer')
+        response = test_view(request, pk=test_user_answer.id_owner_answer)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_delete_2(self):
+        print("\n\nTEST - UserAnswerUnitaryTests --> DELETE USER ANSWER WHEN NOT OWNER\n")
+        test_user_answer = models.UserAnswer(answer="Essai de réponse à une question libre",
+                                             owner=self.user_test,
+                                             question=self.test_question)
+        test_user_answer.save()
+        test_view = views.UserAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('user_answer')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=test_user_answer.id_owner_answer)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_delete_3(self):
+        print("\n\nTEST - UserAnswerUnitaryTests --> DELETE USER ANSWER WHEN OWNER BUT NOT ADMIN\n")
+        test_user_answer = models.UserAnswer(answer="Essai de réponse à une question libre",
+                                             owner=self.user_test,
+                                             question=self.test_question)
+        test_user_answer.save()
+        test_view = views.UserAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('user_answer')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request, pk=test_user_answer.id_owner_answer)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_delete_4(self):
+        print("\n\nTEST - UserAnswerUnitaryTests --> DELETE USER ANSWER WHEN ADMIN\n")
+        test_user_answer = models.UserAnswer(answer="Essai de réponse à une question libre",
+                                             owner=self.user_test,
+                                             question=self.test_question)
+        test_user_answer.save()
+        test_view = views.UserAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('user_answer')
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request, pk=test_user_answer.id_owner_answer)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response.status_code, 204)
+        print("ASSERT DONE")
+
+
+class MCQAnswerUnitaryTests(APITestCase):
+    """
+    Class hosting unitary tests for the MCQAnswer model and view.
+    """
+    def setUp(self):
+        self.factory = APIRequestFactory()
+        self.user_test = models.CustomUser(email='donald@duck.us',
+                                           password=None,
+                                           first_name="Donald",
+                                           last_name="Duck")
+        self.user_test.set_password("sup€Rp@sswoRd")
+        self.user_test.save()
+        self.user_test_2 = models.CustomUser(email='mickey@mouse.us',
+                                             password=None,
+                                             first_name="Mickey",
+                                             last_name="Mouse")
+        self.user_test_2.set_password("sup€Rp@sswoRd")
+        self.user_test_2.save()
+        self.admin_test = models.CustomUser(email='admin@email.fr',
+                                            password=None,
+                                            first_name='Dark',
+                                            last_name='Vador',
+                                            username='Admin',
+                                            is_staff=True)
+        self.admin_test.set_password('Sup€rp@ssw0rd')
+        self.admin_test.save()
+        project_type_test = models.ProjectType(name='Consultation')
+        project_type_test.save()
+        self.project_test = models.Project(name='Consultation test non publiée',
+                                           place='Paris',
+                                           description='Essai de création de projet via test',
+                                           owner=self.admin_test,
+                                           project_type=project_type_test,
+                                           ready_for_publication=False)
+        self.project_test.save()
+        self.project_test_2 = models.Project(name='Consultation test publiée',
+                                             place='Paris',
+                                             description='Essai de création de projet via test',
+                                             owner=self.admin_test,
+                                             project_type=project_type_test,
+                                             ready_for_publication=True)
+        self.project_test_2.save()
+        self.question_type = models.QuestionType(name='QCM')
+        self.question_type.save()
+        self.test_question = models.Question(wording="Essai de question QCM",
+                                             question_type=self.question_type,
+                                             project=self.project_test,
+                                             owner=self.user_test_2)
+        self.test_question.save()
+        self.test_question_2 = models.Question(wording="Essai de question QCM",
+                                               question_type=self.question_type,
+                                               project=self.project_test_2,
+                                               owner=self.user_test_2)
+        self.test_question_2.save()
+
+    def test_create_1(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> CREATE MCQANSWER WHEN NOT AUTHENTICATED\n")
+        test_mcqanswer_to_create = {"question": self.test_question.id_question,
+                                    "wording": 'Essai de mcqanswer'
+                                    }
+        test_view = views.MCQAnswerViewSet.as_view({'post': 'create'})
+        request = self.factory.post('mcq_answer/', test_mcqanswer_to_create)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_create_2(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> CREATE MCQANSWER WHEN AUTHENTICATED BUT NOT OWNER OF THE QUESTION\n")
+        test_mcqanswer_to_create = {"question": self.test_question.id_question,
+                                    "wording": 'Essai de mcqanswer'
+                                    }
+        test_view = views.MCQAnswerViewSet.as_view({'post': 'create'})
+        request = self.factory.post('mcq_answer/', test_mcqanswer_to_create)
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_create_3(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> CREATE MCQANSWER WHEN ADMIN BUT NOT OWNER OF THE QUESTION\n")
+        test_mcqanswer_to_create = {"question": self.test_question.id_question,
+                                    "wording": 'Essai de mcqanswer'
+                                    }
+        test_view = views.MCQAnswerViewSet.as_view({'post': 'create'})
+        request = self.factory.post('mcq_answer/', test_mcqanswer_to_create)
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 201)")
+        self.assertEqual(response.status_code, 201)
+        print("ASSERT DONE")
+
+    def test_create_4(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> CREATE MCQANSWER WHEN AUTHENTICATED AND OWNER OF THE QUESTION\n")
+        test_mcqanswer_to_create = {"question": self.test_question.id_question,
+                                    "wording": 'Essai de mcqanswer'
+                                    }
+        test_view = views.MCQAnswerViewSet.as_view({'post': 'create'})
+        request = self.factory.post('mcq_answer/', test_mcqanswer_to_create)
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 201)")
+        self.assertEqual(response.status_code, 201)
+        print("ASSERT DONE")
+
+    def test_retrieve_1(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> RETRIEVE MCQANSWER WHEN NOT AUTHENTICATED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('mcq_answer/')
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_retrieve_2(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> RETRIEVE MCQANSWER WHEN PROJECT NOT PUBLISHED AND NOT OWNER NOR ADMIN\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('mcq_answer/')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_retrieve_3(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> RETRIEVE MCQANSWER WHEN PROJECT NOT PUBLISHED AND OWNER\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('mcq_answer/')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(response.data['wording'], 'Essai de mcqanswer')")
+        self.assertEqual(response.data['wording'], 'Essai de mcqanswer')
+        print("ASSERT 2 DONE")
+
+    def test_retrieve_4(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> RETRIEVE MCQANSWER WHEN PROJECT NOT PUBLISHED AND ADMIN\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('mcq_answer/')
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(response.data['wording'], 'Essai de mcqanswer')")
+        self.assertEqual(response.data['wording'], 'Essai de mcqanswer')
+        print("ASSERT 2 DONE")
+
+    def test_retrieve_5(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> RETRIEVE MCQANSWER WHEN AUTHENTICATED AND PROJECT PUBLISHED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('mcq_answer/')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(response.data['wording'], 'Essai de mcqanswer')")
+        self.assertEqual(response.data['wording'], 'Essai de mcqanswer')
+        print("ASSERT 2 DONE")
+
+    def test_retrieve_6(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> RETRIEVE MCQANSWER WHEN NOT AUTHENTICATED AND PROJECT PUBLISHED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'retrieve'})
+        request = self.factory.get('mcq_answer/')
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_update_1(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> UPDATE MCQANSWER WHEN NOT AUTHENTICATED \n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        mcqanswer_update = {'wording': 'Cette possibilité de réponse a été modifiée',
+                            'question': self.test_question_2.id_question}
+        test_view = views.MCQAnswerViewSet.as_view({'put': 'update'})
+        request = self.factory.put('mcq_answer/', mcqanswer_update)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_update_2(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> UPDATE MCQANSWER WHEN AUTHENTICATED AND NOT ADMIN NOR OWNER\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        mcqanswer_update = {'wording': 'Cette possibilité de réponse a été modifiée',
+                            'question': self.test_question_2.id_question}
+        test_view = views.MCQAnswerViewSet.as_view({'put': 'update'})
+        request = self.factory.put('mcq_answer/', mcqanswer_update)
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_update_3(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> UPDATE MCQANSWER WHEN AUTHENTICATED AND OWNER\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        mcqanswer_update = {'wording': 'Cette possibilité de réponse a été modifiée',
+                            'question': self.test_question_2.id_question}
+        test_view = views.MCQAnswerViewSet.as_view({'put': 'update'})
+        request = self.factory.put('mcq_answer/', mcqanswer_update)
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        modified_mcqanswer = models.MCQAnswer.objects.get(pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(modified_mcqanswer.wording, 'Cette possibilité de réponse a été modifiée')")
+        self.assertEqual(modified_mcqanswer.wording, 'Cette possibilité de réponse a été modifiée')
+        print("ASSERT 2 DONE")
+
+    def test_update_4(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> UPDATE MCQANSWER WHEN AUTHENTICATED AND OWNER\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        mcqanswer_update = {'wording': 'Cette possibilité de réponse a été modifiée',
+                            'question': self.test_question_2.id_question}
+        test_view = views.MCQAnswerViewSet.as_view({'put': 'update'})
+        request = self.factory.put('mcq_answer/', mcqanswer_update)
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        modified_mcqanswer = models.MCQAnswer.objects.get(pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(modified_mcqanswer.wording, 'Cette possibilité de réponse a été modifiée')")
+        self.assertEqual(modified_mcqanswer.wording, 'Cette possibilité de réponse a été modifiée')
+        print("ASSERT 2 DONE")
 
 
 class ProjectQuestionIntegrationTests(APITestCase):

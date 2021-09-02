@@ -42,13 +42,13 @@ class Project(models.Model):
             project_type = ProjectType.objects.get(name='Pétition')
         return project_type
 
-    def publicate_project(project, project_type_id):
+    def publicate_project(project, project_type):
         consultation_type = get_object_or_404(ProjectType, name='Consultation')
         petition_type = get_object_or_404(ProjectType, name='Pétition')
-        if consultation_type == project_type_id:
+        if consultation_type == project_type:
             questions = get_list_or_404(Question, project=project.id_project)
         project.publication = str(datetime.datetime.now())
-        if project_type_id == petition_type:
+        if project_type == petition_type:
             project.end_date = str(datetime.datetime.now() + datetime.timedelta(days=90))
         project.ready_for_publication = True
         project.save()
@@ -62,13 +62,13 @@ class Project(models.Model):
                 if liker_id == liker.id:
                     return
             project_to_like.liked_by.add(liker_id)
-            return
+            return project_to_like.liked_by
         elif action == 'delete':
             likers = project_to_like.liked_by.all()
             for liker in likers:
                 if liker_id == liker.id:
                     project_to_like.liked_by.remove(liker_id)
-                    return
+                    return project_to_like.liked_by
             return
 
 

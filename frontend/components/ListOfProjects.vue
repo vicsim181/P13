@@ -340,6 +340,7 @@ export default {
   height: 7rem;
   overflow: hidden;
   mask-image: linear-gradient(to bottom, black 20%, transparent 100%);
+  white-space: pre-wrap;
 }
 .noresult {
   text-align: center;
