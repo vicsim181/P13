@@ -10,17 +10,12 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         """
         Check if the owner of the object and the user in the request are the same user.
         """
-        print('PERMISSION: IsOwnerOrAdmin')
-        print('OBJ ', obj)
         permission_1, permission_2, permission_3 = None, None, None
-        print('REQUEST USER ', request.user)
         if hasattr(obj, 'owner'):
-            print('OWNER ATTRIBUTE ')
             permission_1 = obj.owner == request.user
         if hasattr(obj, 'id'):
             permission_2 = obj.id == request.user.id
         permission_3 = request.user.is_staff
-        print('permission 1 ', permission_1, ' permission 2 ', permission_2, ' permission 3 ', permission_3)
         return permission_1 or permission_2 or permission_3
 
 
@@ -29,19 +24,14 @@ class IsPublishedOrNot(permissions.BasePermission):
     Custom permission to only retrieve a project that is published if the user looking for it is not an admin or the owner of it.
     """
     def has_object_permission(self, request, view, obj):
-        print('PERMISSION: IsPublishedOrNot')
-        print('REQUEST USER ', request.user)
         if obj.ready_for_publication:
             return True
         else:
             if obj.owner == request.user:
-                print('obj owner and request user TRUE')
                 return True
             elif request.user.is_staff:
-                print('obj owner and request user FALSE and user is staff')
                 return True
             else:
-                print('obj owner and request user FALSE and user is NOT staff')
                 return False
 
 
@@ -50,8 +40,6 @@ class QuestionOfPublishedProject(permissions.BasePermission):
     Custom permission called when requesting a list of the questions, in order to return only the questions belonging to a published project
     """
     def has_object_permission(self, request, view, obj):
-        print('PERMISSION: QuestionOfPublishedProject')
-        print('REQUEST USER ', request.user)
         if obj.project.ready_for_publication:
             return True
         elif obj.owner == request.user:
@@ -67,8 +55,6 @@ class IsPublishedPetition(permissions.BasePermission):
     Custom permission called when requesting to comment or like a petition
     """
     def has_object_permission(self, request, view, obj):
-        print('PERMISSION: IsPublishedPetition')
-        print('REQUEST USER ', request.user)
         petition_type = models.ProjectType.objects.get(name='Pétition')
         if not request.user.is_authenticated:
             return False
@@ -86,8 +72,6 @@ class MCQAnswerOfPublishedProject(permissions.BasePermission):
     Custom permission called when requesting to list or retrieve a mcqanswer
     """
     def has_object_permission(self, request, view, obj):
-        print('PERMISSION: MCQAnswerOfPublishedProject')
-        print('REQUEST USER ', request.user)
         if not request.user.is_authenticated:
             return False
         question = obj.question
@@ -107,9 +91,6 @@ class MCQAnswerCreatorOwnerOfQuestion(permissions.BasePermission):
     Custom permission called when requesting to create, update or delete a mcqanswer
     """
     def has_object_permission(self, request, view, obj):
-        print('PERMISSION: MCQAnswerOwnerOfQuestion')
-        print('REQUEST USER ', request.user)
-        # question = obj.question
         if not request.user.is_authenticated:
             return False
         if request.user == obj.owner:
@@ -125,8 +106,6 @@ class OnwerOfMCQAnswer(permissions.BasePermission):
     Custom permission called when requestion to update or delete a mcqanswer
     """
     def has_object_permission(self, request, view, obj):
-        print('PERMISSION: OnwerOfMCQAnswer')
-        print('REQUEST USER ', request.user)
         question = obj.question
         if not request.user.is_authenticated:
             return False

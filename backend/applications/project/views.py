@@ -1,4 +1,6 @@
 import datetime
+
+from django.db.models import query
 import django_filters.rest_framework
 from django.http.response import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -127,7 +129,7 @@ class NonPublishedQuestionsView(generics.ListAPIView):
             if not element.project.ready_for_publication:
                 non_published_queryset.append(element)
         self.check_object_permissions(self.request, non_published_queryset)
-        serializer = serializers.ProjectSerializer(non_published_queryset, context=context, many=True)
+        serializer = serializers.QuestionSerializer(non_published_queryset, context=context, many=True)
         return Response(serializer.data)
 
 
@@ -234,21 +236,15 @@ class MCQAnswerViewSet(viewsets.ModelViewSet):
         for filter in request.GET:
             filters[filter] = request.GET[filter]
         context = {'request': request}
-        queryset = get_list_or_404(models.Question,
+        queryset = get_list_or_404(models.MCQAnswer,
                                    **filters)
-        allowed_queryset = []
         for element in queryset:
             self.check_object_permissions(self.request, element)
-            # if element.project.ready_for_publication:
-            #     allowed_queryset.append(element)
-            # elif request.user.is_staff:
-            #     allowed_queryset.append(element)
-        serializer = serializers.QuestionSerializer(allowed_queryset, context=context, many=True)
+        serializer = serializers.MCQAnswerSerializer(queryset, context=context, many=True)
         return Response(serializer.data)
 
     def perform_create(self, serializer):
         question_id = self.request.data['question']
-        print('QUESTION ID ', question_id)
         question = models.Question.objects.get(pk=question_id)
         self.check_object_permissions(self.request, question)
         serializer.save()

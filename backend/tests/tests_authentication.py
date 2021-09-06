@@ -1,6 +1,9 @@
 from config.settings.base import DATABASES
 import json
 
+from urllib3 import PoolManager
+from urllib3.util import Retry
+from requests.adapters import HTTPAdapter
 from django.contrib.auth import login
 from rest_framework.test import APIRequestFactory, force_authenticate, APITestCase, APIClient
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -497,14 +500,16 @@ class LoginTest(APITestCase):
         self.request = self.factory.post('users/', user_test_to_create)
         self.view(self.request)
 
-    def test_login_existing_user(self):
-        print("\nTEST - LoginTest --> test_login_existing_user()\n")
-        user_data = {'email': 'balt@picsou.us', 'password': 'sup€rp@ssW0rd'}
-        self.factory = APIRequestFactory()
-        request = self.factory.post('login/', user_data)
-        view = csrf_exempt(views.login)
-        response = view(request)
-        print(response.data)
+    # def test_login_existing_user(self):
+    #     print("\nTEST - LoginTest --> test_login_existing_user()\n")
+    #     user_data = {'email': 'balt@picsou.us', 'password': 'sup€rp@ssW0rd'}
+    #     encoded_data = json.dumps(user_data).encode("utf-8")
+    #     self.factory = APIRequestFactory()
+    #     request = self.factory.post('login/', user_data)
+    #     retries = Retry(connect=5, read=2, redirect=5)
+    #     http = PoolManager(retries=retries)
+    #     response = http.request("POST", "http://127.0.0.1:8000/login", fields={'email': 'balt@picsou.us', 'password': 'sup€rp@ssW0rd'}, retries=False)
+    #     print('RESPONSE DATA ', response.data)
 
     # ###########################   ERROR MESSAGE WHEN TESTING   ############################
 
@@ -515,6 +520,8 @@ class LoginTest(APITestCase):
     # requests.exceptions.ConnectionError: HTTPConnectionPool(host='testserver', port=80):
     # Max retries exceeded with url: /token_obtain (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x00000228B16ED280>:
     # Failed to establish a new connection: [Errno 11001] getaddrinfo failed'))
+
+    # Tried with urllib3 but unable to test the function
 
     def test_login_existing_user_bad_password(self):
         print("\nTEST - LoginTest --> test_login_existing_user_bad_password()\n")

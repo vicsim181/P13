@@ -866,6 +866,49 @@ class ProjectUnitaryTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         print("ASSERT DONE")
 
+    def test_like_a_petition_and_delete_like(self):
+        print("\nTEST - ProjectUnitaryTests --> AUTHENTICATED USER TRIES TO LIKE A PUBLISHED PETITION THEN DELETE HIS LIKE\n")
+        petition_type_test = models.ProjectType(name='Pétition')
+        petition_type_test.save()
+        project_test = models.Project(name='Essai',
+                                      place='Berlin',
+                                      description='Création de projet via test',
+                                      owner=self.user_test,
+                                      project_type=petition_type_test,
+                                      ready_for_publication=True)
+        project_test.save()
+        test_view = views.LikeViews.as_view()
+        request = self.factory.put('like/', {'project_id': project_test.id_project,
+                                             'action': 'add'})
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertTrue(self.user_test_2 in project_test.liked_by.all())")
+        self.assertTrue(self.user_test_2 in project_test.liked_by.all())
+        print("ASSERT 2 DONE")
+        request = self.factory.put('like/', {'project_id': project_test.id_project,
+                                             'action': 'add'})
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 3 DONE")
+        print("self.assertEqual(len(project_test.liked_by.all()), 1)")
+        self.assertEqual(len(project_test.liked_by.all()), 1)
+        print("ASSERT 4 DONE")
+        request = self.factory.put('like/', {'project_id': project_test.id_project,
+                                             'action': 'delete'})
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 5 DONE")
+        print("self.assertFalse(self.user_test_2 in project_test.liked_by.all())")
+        self.assertFalse(self.user_test_2 in project_test.liked_by.all())
+        print("ASSERT 6 DONE")
+
     def test_retrieve_project_1(self):
         print("\nTEST - ProjectUnitaryTests --> RETRIEVE NON PUBLISHED PROJECT WITH NON AUTHENTICATED USER\n")
         petition_type_test = models.ProjectType(name='Pétition')
@@ -998,6 +1041,13 @@ class QuestionUnitaryTests(APITestCase):
                                              project_type=project_type_test,
                                              ready_for_publication=True)
         self.project_test_2.save()
+        self.project_test_3 = models.Project(name='Essai',
+                                             place='Paris',
+                                             description='Essai de création de projet via test',
+                                             owner=self.user_test_2,
+                                             project_type=project_type_test,
+                                             ready_for_publication=False)
+        self.project_test_3.save()
         self.question_type_1 = models.QuestionType(name='Réponse libre')
         self.question_type_1.save()
 
@@ -1265,10 +1315,16 @@ class QuestionUnitaryTests(APITestCase):
         test_question_2.save()
         test_view = views.QuestionViewSet.as_view({'get': 'list'})
         request = self.factory.get('question/')
-        response = test_view(request,)
+        response = test_view(request)
         print("self.assertEqual(response.status_code, 401)")
         self.assertEqual(response.status_code, 401)
-        print("ASSERT DONE")
+        print("ASSERT 1 DONE")
+        test_view = views.NonPublishedQuestionsView.as_view()
+        request = self.factory.get('not_published_questions/')
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT 2 DONE")
 
     def test_list_2(self):
         print("\n\nTEST - QuestionUnitaryTests --> LIST QUESTIONS OF NON PUBLISHED AND PUBLISHED PROJECT WHEN NOT ADMIN\n")
@@ -1296,6 +1352,13 @@ class QuestionUnitaryTests(APITestCase):
         print("self.assertEqual(response.data[0]['wording'], 'Essai de question projet publié')")
         self.assertEqual(response.data[0]['wording'], 'Essai de question projet publié')
         print("ASSERT 3 DONE")
+        test_view = views.NonPublishedQuestionsView.as_view()
+        request = self.factory.get('not_published_questions/')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 4 DONE")
 
     def test_list_3(self):
         print("\n\nTEST - QuestionUnitaryTests --> LIST QUESTIONS OF NON PUBLISHED AND PUBLISHED PROJECT WHEN ADMIN\n")
@@ -1325,6 +1388,57 @@ class QuestionUnitaryTests(APITestCase):
         print("self.assertEqual(response.data[1]['wording'], 'Essai de question projet publié')")
         self.assertEqual(response.data[1]['wording'], 'Essai de question projet publié')
         print("ASSERT 4 DONE")
+        test_view = views.NonPublishedQuestionsView.as_view()
+        request = self.factory.get('not_published_questions/')
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 5 DONE")
+        print("self.assertEqual(len(response.data), 1)")
+        self.assertEqual(len(response.data), 1)
+        print("ASSERT 6 DONE")
+
+    def test_list_4(self):
+        print("\n\nTEST - QuestionUnitaryTests --> LIST QUESTIONS OF NON PUBLISHED AND PUBLISHED PROJECT WHEN OWNER\n")
+        test_question_1 = models.Question(wording="Essai de question projet non publié",
+                                          question_type=self.question_type_1,
+                                          project=self.project_test_3,
+                                          owner=self.user_test_2)
+        test_question_1.save()
+        test_question_2 = models.Question(wording="Essai de question projet publié",
+                                          question_type=self.question_type_1,
+                                          project=self.project_test_2,
+                                          owner=self.admin_test)
+        test_question_2.save()
+        test_question_1 = models.Question(wording="Essai de question 2 projet non publié",
+                                          question_type=self.question_type_1,
+                                          project=self.project_test_3,
+                                          owner=self.user_test_2)
+        test_question_1.save()
+        test_view = views.QuestionViewSet.as_view({'get': 'list'})
+        request = self.factory.get('question/')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request,)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(len(response.data), 1)")
+        self.assertEqual(len(response.data), 1)
+        print("ASSERT 2 DONE")
+        print("self.assertEqual(response.data[0]['wording'], 'Essai de question projet publié')")
+        self.assertEqual(response.data[0]['wording'], 'Essai de question projet publié')
+        print("ASSERT 3 DONE")
+        test_view = views.NonPublishedQuestionsView.as_view()
+        request = self.factory.get('not_published_questions/')
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 200)")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 4 DONE")
+        print("self.assertEqual(len(response.data), 2)")
+        self.assertEqual(len(response.data), 2)
+        print("ASSERT 5 DONE")
 
 
 class CommentUnitaryTests(APITestCase):
@@ -2165,6 +2279,11 @@ class MCQAnswerUnitaryTests(APITestCase):
                                                project=self.project_test_2,
                                                owner=self.user_test_2)
         self.test_question_2.save()
+        self.test_question_3 = models.Question(wording="Essai de question QCM",
+                                               question_type=self.question_type,
+                                               project=self.project_test,
+                                               owner=self.admin_test)
+        self.test_question_3.save()
 
     def test_create_1(self):
         print("\n\nTEST - MCQAnswerUnitaryTests --> CREATE MCQANSWER WHEN NOT AUTHENTICATED\n")
@@ -2369,6 +2488,328 @@ class MCQAnswerUnitaryTests(APITestCase):
         self.assertEqual(modified_mcqanswer.wording, 'Cette possibilité de réponse a été modifiée')
         print("ASSERT 2 DONE")
 
+    def test_list_1(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> LIST MCQANSWERS WHEN NOT AUTHENTICATED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        test_mcqanswer_2 = models.MCQAnswer(question=self.test_question_2,
+                                            wording='Essai de mcqanswer numéro 2')
+        test_mcqanswer_2.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'list'})
+        request = self.factory.get('mcq_answer')
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 401) FOR LIST OF ALL MCQANSWERS")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT 1 DONE")
+        data = {'question': self.test_question_2.id_question}
+        request_2 = self.factory.get('mcq_answer', data)
+        response_2 = test_view(request_2)
+        print("self.assertEqual(response.status_code, 401) FOR LIST OF MCQANSWERS ON TEST_QUESTION_2")
+        self.assertEqual(response_2.status_code, 401)
+        print("ASSERT 2 DONE")
+
+    def test_list_2(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> LIST MCQANSWERS OF NON PUBLISHED QUESTION WHEN AUTHENTICATED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording='Essai de mcqanswer')
+        test_mcqanswer.save()
+        test_mcqanswer_2 = models.MCQAnswer(question=self.test_question,
+                                            wording='Essai de mcqanswer numéro 2')
+        test_mcqanswer_2.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'list'})
+        request = self.factory.get('mcq_answer')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 403) FOR LIST OF ALL MCQANSWERS")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 1 DONE")
+        data = {'question': self.test_question.id_question}
+        request_2 = self.factory.get('mcq_answer', data)
+        force_authenticate(request_2, user=self.user_test)
+        response_2 = test_view(request_2)
+        print("self.assertEqual(response.status_code, 403) FOR LIST OF MCQANSWERS ON TEST_QUESTION_2")
+        self.assertEqual(response_2.status_code, 403)
+        print("ASSERT 2 DONE")
+
+    def test_list_3(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> LIST MCQANSWERS OF NON PUBLISHED AND PUBLISHED QUESTION WHEN NOT AUTHENTICATED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_mcqanswer_2 = models.MCQAnswer(question=self.test_question_2,
+                                            wording="Essai de mcqanswer d'une question publiée")
+        test_mcqanswer_2.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'list'})
+        request = self.factory.get('mcq_answer')
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 401) FOR LIST OF ALL MCQANSWERS")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT 1 DONE")
+        data = {'question': self.test_question.id_question}
+        request_2 = self.factory.get('mcq_answer', data)
+        response_2 = test_view(request_2)
+        print("self.assertEqual(response.status_code, 401) FOR LIST OF MCQANSWERS ON TEST_QUESTION_2")
+        self.assertEqual(response_2.status_code, 401)
+        print("ASSERT 2 DONE")
+
+    def test_list_4(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> LIST MCQANSWERS OF NON PUBLISHED AND PUBLISHED QUESTION WHEN AUTHENTICATED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_mcqanswer_2 = models.MCQAnswer(question=self.test_question_2,
+                                            wording="Essai de mcqanswer d'une question publiée")
+        test_mcqanswer_2.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'list'})
+        request = self.factory.get('mcq_answer')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 403) FOR LIST OF ALL MCQANSWERS")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(len(response.data), 1)")
+        self.assertEqual(len(response.data), 1)
+        print('ASSERT 2 DONE')
+        data = {'question': self.test_question.id_question}
+        request_2 = self.factory.get('mcq_answer', data)
+        force_authenticate(request_2, user=self.user_test)
+        response_2 = test_view(request_2)
+        print("self.assertEqual(response_2.status_code, 403) FOR LIST OF MCQANSWERS ON NOT PUBLISHED TEST_QUESTION")
+        self.assertEqual(response_2.status_code, 403)
+        print("ASSERT 3 DONE")
+        data = {'question': self.test_question_2.id_question}
+        request_3 = self.factory.get('mcq_answer', data)
+        force_authenticate(request_3, user=self.user_test)
+        response_3 = test_view(request_3)
+        print("self.assertEqual(response_3.status_code, 200) FOR LIST OF MCQANSWERS ON PUBLISHED TEST_QUESTION_2")
+        self.assertEqual(response_3.status_code, 200)
+        print("ASSERT 4 DONE")
+        print("self.assertEqual(len(response_3.data), 1)")
+        self.assertEqual(len(response_3.data), 1)
+        print('ASSERT 5 DONE')
+        print("self.assertEqual(response_3.data[0].wording, 'Essai de mcqanswer d'une question publiée')")
+        self.assertEqual(response_3.data[0]['wording'], "Essai de mcqanswer d'une question publiée")
+        print('ASSERT 6 DONE')
+
+    def test_list_5(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> LIST MCQANSWERS OF NON PUBLISHED AND PUBLISHED QUESTION WHEN ADMIN\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_mcqanswer_2 = models.MCQAnswer(question=self.test_question_2,
+                                            wording="Essai de mcqanswer d'une question publiée")
+        test_mcqanswer_2.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'list'})
+        request = self.factory.get('mcq_answer')
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 200) FOR LIST OF ALL MCQANSWERS")
+        self.assertEqual(response.status_code, 200)
+        print("ASSERT 1 DONE")
+        print("self.assertEqual(len(response.data), 2)")
+        self.assertEqual(len(response.data), 2)
+        print('ASSERT 2 DONE')
+        print("self.assertEqual(response.data[1].wording, 'Essai de mcqanswer d'une question publiée')")
+        self.assertEqual(response.data[1]['wording'], "Essai de mcqanswer d'une question publiée")
+        print('ASSERT 3 DONE')
+        data = {'question': self.test_question.id_question}
+        request_2 = self.factory.get('mcq_answer', data)
+        force_authenticate(request_2, user=self.admin_test)
+        response_2 = test_view(request_2)
+        print("self.assertEqual(response_2.status_code, 200) FOR LIST OF MCQANSWERS ON NOT PUBLISHED TEST_QUESTION")
+        self.assertEqual(response_2.status_code, 200)
+        print("ASSERT 4 DONE")
+        print("self.assertEqual(len(response_2.data), 1)")
+        self.assertEqual(len(response_2.data), 1)
+        print('ASSERT 5 DONE')
+        print("self.assertEqual(response_2.data[0].wording, 'Essai de mcqanswer d'une question non publiée')")
+        self.assertEqual(response_2.data[0]['wording'], "Essai de mcqanswer d'une question non publiée")
+        print('ASSERT 6 DONE')
+        data = {'question': self.test_question_2.id_question}
+        request_3 = self.factory.get('mcq_answer', data)
+        force_authenticate(request_3, user=self.admin_test)
+        response_3 = test_view(request_3)
+        print("self.assertEqual(response_3.status_code, 200) FOR LIST OF MCQANSWERS ON PUBLISHED TEST_QUESTION_2")
+        self.assertEqual(response_3.status_code, 200)
+        print("ASSERT 7 DONE")
+        print("self.assertEqual(len(response_3.data), 1)")
+        self.assertEqual(len(response_3.data), 1)
+        print('ASSERT 8 DONE')
+        print("self.assertEqual(response_3.data[0].wording, 'Essai de mcqanswer d'une question publiée')")
+        self.assertEqual(response_3.data[0]['wording'], "Essai de mcqanswer d'une question publiée")
+        print('ASSERT 9 DONE')
+
+    def test_list_6(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> LIST MCQANSWERS OF NON PUBLISHED AND PUBLISHED QUESTION WHEN OWNER\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_mcqanswer_2 = models.MCQAnswer(question=self.test_question_2,
+                                            wording="Essai de mcqanswer d'une question publiée")
+        test_mcqanswer_2.save()
+        test_mcqanswer_3 = models.MCQAnswer(question=self.test_question_3,
+                                            wording="Essai de mcqanswer d'une question non publiée admin")
+        test_mcqanswer_3.save()
+        test_view = views.MCQAnswerViewSet.as_view({'get': 'list'})
+        request = self.factory.get('mcq_answer')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request)
+        print("self.assertEqual(response.status_code, 403) FOR LIST OF ALL MCQANSWERS")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT 1 DONE")
+        data = {'question': self.test_question.id_question}
+        request_2 = self.factory.get('mcq_answer', data)
+        force_authenticate(request_2, user=self.user_test_2)
+        response_2 = test_view(request_2)
+        print("self.assertEqual(response_2.status_code, 200) FOR LIST OF MCQANSWERS ON NOT PUBLISHED TEST_QUESTION")
+        self.assertEqual(response_2.status_code, 200)
+        print("ASSERT 2 DONE")
+        print("self.assertEqual(len(response_2.data), 1)")
+        self.assertEqual(len(response_2.data), 1)
+        print('ASSERT 3 DONE')
+        print("self.assertEqual(response_2.data[0].wording, 'Essai de mcqanswer d'une question non publiée')")
+        self.assertEqual(response_2.data[0]['wording'], "Essai de mcqanswer d'une question non publiée")
+        print('ASSERT 4 DONE')
+        data = {'question': self.test_question_2.id_question}
+        request_3 = self.factory.get('mcq_answer', data)
+        force_authenticate(request_3, user=self.user_test_2)
+        response_3 = test_view(request_3)
+        print("self.assertEqual(response_3.status_code, 200) FOR LIST OF MCQANSWERS ON PUBLISHED TEST_QUESTION_2")
+        self.assertEqual(response_3.status_code, 200)
+        print("ASSERT 6 DONE")
+        print("self.assertEqual(len(response_3.data), 1)")
+        self.assertEqual(len(response_3.data), 1)
+        print('ASSERT 7 DONE')
+        print("self.assertEqual(response_3.data[0].wording, 'Essai de mcqanswer d'une question publiée')")
+        self.assertEqual(response_3.data[0]['wording'], "Essai de mcqanswer d'une question publiée")
+        print('ASSERT 8 DONE')
+        data = {'question': self.test_question_3.id_question}
+        request_4 = self.factory.get('mcq_answer', data)
+        force_authenticate(request_4, user=self.user_test_2)
+        response_4 = test_view(request_4)
+        print("self.assertEqual(response_3.status_code, 403) FOR LIST OF MCQANSWERS ON PUBLISHED TEST_QUESTION_3")
+        self.assertEqual(response_4.status_code, 403)
+        print("ASSERT 9 DONE")
+
+    def test_delete_1(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> DELETE MCQANSWER OF NOT PUBLISHED QUESTION WHEN NOT AUTHENTICATED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('mcq_answer')
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_delete_2(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> DELETE MCQANSWER OF PUBLISHED QUESTION WHEN NOT AUTHENTICATED\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('mcq_answer')
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 401)")
+        self.assertEqual(response.status_code, 401)
+        print("ASSERT DONE")
+
+    def test_delete_3(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> DELETE MCQANSWER OF NOT PUBLISHED QUESTION WHEN NOT OWNER NOR ADMIN\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('mcq_answer')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_delete_4(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> DELETE MCQANSWER OF PUBLISHED QUESTION WHEN NOT OWNER NOR ADMIN\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('mcq_answer')
+        force_authenticate(request, user=self.user_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 403)")
+        self.assertEqual(response.status_code, 403)
+        print("ASSERT DONE")
+
+    def test_delete_5(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> DELETE MCQANSWER OF NOT PUBLISHED QUESTION WHEN OWNER\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('mcq_answer')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response.status_code, 204)
+        print("ASSERT 1 DONE")
+        mcqanswers = models.MCQAnswer.objects.all()
+        print("self.assertEqual(len(mcqanswers), 0)")
+        self.assertEqual(len(mcqanswers), 0)
+        print("ASSERT 2 DONE")
+
+    def test_delete_6(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> DELETE MCQANSWER OF PUBLISHED QUESTION WHEN OWNER\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('mcq_answer')
+        force_authenticate(request, user=self.user_test_2)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response.status_code, 204)
+        print("ASSERT 1 DONE")
+        mcqanswers = models.MCQAnswer.objects.all()
+        print("self.assertEqual(len(mcqanswers), 0)")
+        self.assertEqual(len(mcqanswers), 0)
+        print("ASSERT 2 DONE")
+
+    def test_delete_7(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> DELETE MCQANSWER OF NOT PUBLISHED QUESTION WHEN NOT OWNER BUT ADMIN\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('mcq_answer')
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response.status_code, 204)
+        print("ASSERT 1 DONE")
+        mcqanswers = models.MCQAnswer.objects.all()
+        print("self.assertEqual(len(mcqanswers), 0)")
+        self.assertEqual(len(mcqanswers), 0)
+        print("ASSERT 2 DONE")
+
+    def test_delete_8(self):
+        print("\n\nTEST - MCQAnswerUnitaryTests --> DELETE MCQANSWER OF PUBLISHED QUESTION WHEN NOT OWNER BUT ADMIN\n")
+        test_mcqanswer = models.MCQAnswer(question=self.test_question_2,
+                                          wording="Essai de mcqanswer d'une question non publiée")
+        test_mcqanswer.save()
+        test_view = views.MCQAnswerViewSet.as_view({'delete': 'destroy'})
+        request = self.factory.delete('mcq_answer')
+        force_authenticate(request, user=self.admin_test)
+        response = test_view(request, pk=test_mcqanswer.id_answer)
+        print("self.assertEqual(response.status_code, 204)")
+        self.assertEqual(response.status_code, 204)
+        print("ASSERT 1 DONE")
+        mcqanswers = models.MCQAnswer.objects.all()
+        print("self.assertEqual(len(mcqanswers), 0)")
+        self.assertEqual(len(mcqanswers), 0)
+        print("ASSERT 2 DONE")
+
 
 class ProjectQuestionIntegrationTests(APITestCase):
     """
@@ -2419,7 +2860,6 @@ class ProjectQuestionIntegrationTests(APITestCase):
         print("self.assertEqual(response.status_code, 201)")
         self.assertEqual(response_1.status_code, 201)
         print("ASSERT 1 DONE")
-        #
         test_view_3 = views.ProjectViewSet.as_view({'get': 'list'})
         request_3 = self.factory.get('project/')
         force_authenticate(request_3, user=self.user_test)
@@ -2430,7 +2870,7 @@ class ProjectQuestionIntegrationTests(APITestCase):
         test_project_to_retrieve = models.Project.objects.get(owner=self.admin_test.id, name='Essai de Consultation')
         test_view_2 = views.QuestionViewSet.as_view({'post': 'create'})
         test_question_to_create = {"wording": "Ceci est une question test via un test d'intégration par un utilisateur admin puisque destinée à une consultation publique.",
-                                   "question_type": self.question_type_test.id_type,
+                                   "question_type": self.question_type_test.id_question_type,
                                    "project": test_project_to_retrieve.id_project
                                    }
         request_2 = self.factory.post('question/', test_question_to_create)
@@ -2457,6 +2897,8 @@ class ProjectQuestionIntegrationTests(APITestCase):
         print("self.assertEqual(test_project_to_create, 'Essai de Consultation')")
         self.assertEqual(str(test_project_to_retrieve), "Essai de Consultation")
         print("ASSERT 6 DONE")
+        test_project_to_retrieve.ready_for_publication = True
+        test_project_to_retrieve.save()
         test_view_4 = views.QuestionViewSet.as_view({'get': 'retrieve'})
         request_4 = self.factory.get('question/')
         force_authenticate(request_4, user=self.user_test)
@@ -2506,174 +2948,3 @@ class ProjectQuestionIntegrationTests(APITestCase):
         print("self.assertEqual(response.status_code, 404)")
         self.assertEqual(response_3.status_code, 404)
         print("ASSERT 3 DONE")
-
-    def test_like_project_post_update_delete_comment_delete_like(self):
-        print("\nTEST - ProjectQuestionIntegrationTests -->test_like_project_post_update_delete_comment_delete_like()\n")
-        test_view_1 = views.ProjectViewSet.as_view({'post': 'create'})
-        test_project_to_create = {"name": "Essai de Consultation",
-                                  "place": "Paris",
-                                  "description": "Essai de création de pétition via un test utilisateur admin.",
-                                  "project_type": self.consultation_type_test.id_project_type,
-                                  "ready_for_publication": True
-                                  }
-        request_1 = self.factory.post('project/', test_project_to_create)
-        force_authenticate(request_1, user=self.admin_test)
-        response_1 = test_view_1(request_1)
-        print("self.assertEqual(response.status_code, 201)")
-        self.assertEqual(response_1.status_code, 201)
-        print("ASSERT 1 DONE")
-        project_to_retrieve = models.Project.objects.get(name='Essai de Consultation', owner=self.admin_test)
-        test_view = views.ProjectViewSet.as_view({'get': 'retrieve'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.admin_test)
-        response = test_view(request, pk=project_to_retrieve.id_project)
-        data = json.loads(response.render().content)
-        print(data)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 2 DONE")
-        data_1 = json.loads(response.render().content)
-        print("self.assertEqual(data['name], 'Essai de Consultation')")
-        self.assertEqual(data_1['name'], 'Essai de Consultation')
-        print("ASSERT 3 DONE")
-        test_view = views.ProjectViewSet.as_view({'get': 'list'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.user_test_2)
-        response = test_view(request)
-        print("self.assertEqual(response.status_code, 404)")
-        self.assertEqual(response.status_code, 404)
-        print("ASSERT 4 DONE")
-        test_view = views.QuestionViewSet.as_view({'post': 'create'})
-        test_question_to_create = {"wording": "Ceci est une question test via un test d'intégration par un utilisateur admin puisque destinée à une consultation publique.",
-                                   "question_type": self.question_type_test.id_type,
-                                   "project": project_to_retrieve.id_project
-                                   }
-        request = self.factory.post('question/', test_question_to_create)
-        force_authenticate(request, user=self.admin_test)
-        response = test_view(request)
-        print("self.assertEqual(response.status_code, 201)")
-        self.assertEqual(response.status_code, 201)
-        print("ASSERT 5 DONE")
-        test_view = views.ProjectPublication.as_view()
-        request = self.factory.post('publication/')
-        force_authenticate(request, self.user_test)
-        response = test_view(request, project_id=project_to_retrieve.id_project)
-        print("self.assertEqual(response.status_code, 403)")
-        self.assertEqual(response.status_code, 403)
-        print("ASSERT 6 DONE")
-        force_authenticate(request, self.admin_test)
-        response = test_view(request, project_id=project_to_retrieve.id_project)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 7 DONE")
-        test_view = views.LikeViews.as_view()
-        request = self.factory.post('like/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, project_id=project_to_retrieve.id_project)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 8 DONE")
-        comment_to_post = {'owner': self.user_test,
-                           'text': 'Je trouve le test de cette fonctionnalité très pertinent. Je recommande vivement !',
-                           'project': project_to_retrieve.id_project}
-        test_view = views.CommentViewSet.as_view({'post': 'create'})
-        request = self.factory.post('comment/', comment_to_post)
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request)
-        print("self.assertEqual(response.status_code, 201)")
-        self.assertEqual(response.status_code, 201)
-        print("ASSERT 9 DONE")
-        test_view = views.ProjectViewSet.as_view({'get': 'list'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request)
-        data = json.loads(response.render().content)
-        print("self.assertEqual(data[0]['liked_by'][0]['id'], str(self.user_test.id))")
-        self.assertEqual(data[0]['liked_by'][0]['id'], str(self.user_test.id))
-        print("ASSERT 10 DONE")
-        comment_to_find = models.Comment.objects.get(owner=self.user_test.id, project=project_to_retrieve.id_project)
-        print("self.assertEqual(data[0]['comment'][0], str(comment_to_find.id))")
-        self.assertEqual(data[0]['comment'][0], 'http://testserver/comment/' + str(comment_to_find.id_comment) + '/')
-        print("ASSERT 11 DONE")
-        comment_update = {'text': "En fait je ne trouve pas l'utilité à ce test...",
-                          'project': project_to_retrieve.id_project}
-        test_view = views.CommentViewSet.as_view({'put': 'update'})
-        request = self.factory.put('comment/', comment_update)
-        force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, pk=comment_to_find.id_comment)
-        print("self.assertEqual(response.status_code, 403) --> user used not the owner of the comment")
-        self.assertEqual(response.status_code, 403)
-        print("ASSERT 12 DONE")
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, pk=comment_to_find.id_comment)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 13 DONE")
-        test_view = views.CommentViewSet.as_view({'delete': 'destroy'})
-        request = self.factory.delete('comment/', comment_update)
-        force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, pk=comment_to_find.id_comment)
-        print("self.assertEqual(response.status_code, 403) --> user used not the owner of the comment")
-        self.assertEqual(response.status_code, 403)
-        print("ASSERT 14 DONE")
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, pk=comment_to_find.id_comment)
-        print("self.assertEqual(response.status_code, 204)")
-        self.assertEqual(response.status_code, 204)
-        print("ASSERT 15 DONE")
-        test_view = views.ProjectViewSet.as_view({'get': 'list'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request)
-        data = json.loads(response.render().content)
-        print("self.assertEqual(data[0]['comment'], [])")
-        self.assertEqual(data[0]['comment'], [])
-        print("ASSERT 16 DONE")
-        test_view = views.LikeViews.as_view()
-        request = self.factory.delete('like/')
-        force_authenticate(request, user=self.user_test_2)
-        response = test_view(request, project_id=project_to_retrieve.id_project)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 17 DONE")
-        test_view = views.ProjectViewSet.as_view({'get': 'list'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.user_test_2)
-        response = test_view(request)
-        data = json.loads(response.render().content)
-        print("self.assertEqual(data[0]['liked_by'][0]['id'], str(self.user_test.id))")
-        self.assertEqual(data[0]['liked_by'][0]['id'], str(self.user_test.id))
-        print("ASSERT 18 DONE")
-        test_view = views.LikeViews.as_view()
-        request = self.factory.post('like/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, project_id=project_to_retrieve.id_project)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 19 DONE")
-        test_view = views.ProjectViewSet.as_view({'get': 'list'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.user_test_2)
-        response = test_view(request)
-        data = json.loads(response.render().content)
-        print("self.assertEqual(len(data[0]['liked_by']), 1)")
-        self.assertEqual(len(data[0]['liked_by']), 1)
-        print("ASSERT 20 DONE")
-        test_view = views.LikeViews.as_view()
-        request = self.factory.delete('like/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request, project_id=project_to_retrieve.id_project)
-        print("self.assertEqual(response.status_code, 200)")
-        self.assertEqual(response.status_code, 200)
-        print("ASSERT 21 DONE")
-        test_view = views.ProjectViewSet.as_view({'get': 'list'})
-        request = self.factory.get('project/')
-        force_authenticate(request, user=self.user_test)
-        response = test_view(request)
-        data = json.loads(response.render().content)
-        print("self.assertEqual(data[0]['liked_by'], [])")
-        self.assertEqual(data[0]['liked_by'], [])
-        print("ASSERT 22 DONE")
-        print("self.assertEqual(data[0]['comment'], [])")
-        self.assertEqual(data[0]['comment'], [])
-        print("ASSERT 23 DONE")
