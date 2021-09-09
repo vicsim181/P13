@@ -81,13 +81,35 @@ export default {
   .container h3 {
     font-size: 1.5rem;
   }
+  .container h5 {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
   .container {
-    padding-top: 10rem;
+    padding-top: 9rem;
+    padding-bottom: 8rem;
+  }
+  .container p {
+    padding-top: 1rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
   }
 }
 @media (min-width: 1200px) and (max-width: 1565px) {
   .container {
-    padding-top: 11rem;
+    min-width: 100%;
+    padding-top: 15rem;
+    padding-bottom: 11rem;
+    color: rgb(0, 14, 116);
+  }
+  .container h1 {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+  }
+  .container p {
+    padding-top: 1rem;
+    padding-left: 10rem;
+    padding-right: 10rem;
   }
 }
 </style>

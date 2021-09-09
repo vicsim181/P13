@@ -85,5 +85,8 @@ export default {
   // Nuxt/auth settings for middleware set globally
   router: {
     middleware: ['auth']
-  }
+  },
+
+  // Nuxt parameter for deployment
+  target: 'server'
 };

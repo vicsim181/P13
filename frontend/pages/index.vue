@@ -53,6 +53,8 @@ export default {
   .container h1 {
     font-size: 2rem;
     margin-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   .container h3 {
     font-size: 1.5rem;

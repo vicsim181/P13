@@ -411,7 +411,6 @@ export default {
 #top {
   background-color: rgb(0, 14, 116);
   color: whitesmoke;
-  height: 12rem;
   text-align: center;
   padding-top: 4rem;
   padding-bottom: 2rem;
@@ -467,9 +466,84 @@ export default {
 .pre-formatted {
   white-space: pre-wrap;
 }
-@media (max-width: 1200px) {
+@media (min-width: 500px) and (max-width: 1200px) {
   .container {
-    padding-top: 10rem;
+    padding-top: 6rem;
+  }
+  #top {
+    padding-top: 3.5rem;
+  }
+  #data {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+  #data h3 {
+    padding-bottom: 2rem;
+  }
+  #form {
+    padding-left: 3rem;
+  }
+  #like {
+    padding-left: 3rem;
+    padding-bottom: 2rem;
+  }
+  #comment {
+    padding-left: 3rem;
+    padding-bottom: 2rem;
+    padding-right: 3rem;
+  }
+  #comments {
+    padding-left: 3rem;
+    padding-bottom: 4rem;
+    padding-right: 3rem;
+  }
+  .not_published {
+    padding-bottom: 3.5rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    text-align: justify;
+  }
+}
+@media (max-width: 499px) {
+  .container {
+    padding-top: 5rem;
+  }
+  #top {
+    padding-top: 4rem;
+  }
+  #data {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+  #data h3 {
+    padding-bottom: 2rem;
+  }
+  #form {
+    padding-left: 3rem;
+  }
+  #like {
+    padding-left: 3rem;
+    padding-bottom: 2rem;
+  }
+  #comment {
+    padding-left: 3rem;
+    padding-bottom: 2rem;
+    padding-right: 3rem;
+  }
+  #comments {
+    padding-left: 3rem;
+    padding-bottom: 4rem;
+    padding-right: 3rem;
+  }
+  .not_published {
+    padding-bottom: 3.5rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    text-align: justify;
   }
 }
 </style>

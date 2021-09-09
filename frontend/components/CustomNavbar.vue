@@ -72,7 +72,7 @@ export default {
   background-size: cover;
   background-repeat: no-repeat;
   flex-wrap: wrap;
-  padding-bottom: 1rem;
+  padding-bottom: 1.2rem;
 }
 #nav-collapse {
   flex-direction: column;
@@ -101,7 +101,7 @@ export default {
 }
 @media (max-width: 1200px) {
   .item {
-    font-size: 1rem;
+    font-size: 1.3rem;
   }
   .toggeable {
     size: 2px;
@@ -111,7 +111,12 @@ export default {
     height: auto;
   }
 }
-@media (min-width: 1200px) and (max-width: 1565px) {
+@media (min-width: 1200px) and (max-width: 1265px) {
+  .item {
+    font-size: 1.4rem;
+  }
+}
+@media (min-width: 1265px) and (max-width: 1565px) {
   .item {
     font-size: 1.5rem;
   }

@@ -12,6 +12,7 @@ djangorestframework-simplejwt = "*"
 coverage = "*"
 django-cors-headers = "*"
 requests = "*"
+selenium = "*"
 
 [dev-packages]
 
