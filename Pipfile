@@ -13,6 +13,7 @@ coverage = "*"
 django-cors-headers = "*"
 requests = "*"
 selenium = "*"
+sentry-sdk = "*"
 
 [dev-packages]
 
