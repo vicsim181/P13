@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="row h-100 w-auto justify-content-center text-center">
         <h1>Mentions légales</h1>
@@ -47,7 +47,7 @@
         </p>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 

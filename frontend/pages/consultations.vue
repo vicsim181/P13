@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="row h-100 w-auto justify-content-center text-center">
         <h1>Page des consultations</h1>
@@ -13,7 +13,7 @@
         <ConsultationForm
           v-if="loggedInUser.is_staff"
           button="Créer une consultation"
-        />
+        ></ConsultationForm>
       </div>
       <div class="row justify-content-center">
         <ListOfProjects
