@@ -63,9 +63,7 @@
         style="list-style-type:none;"
       >
         <li>
-          <nuxt-link :to="`/projet/${project.id_project}`">{{
-            project.name
-          }}</nuxt-link>
+          <a :href="`/projet/${project.id_project}`">{{ project.name }}</a>
         </li>
       </ul>
     </div>
@@ -77,9 +75,7 @@
         style="list-style-type:none;"
       >
         <li>
-          <nuxt-link :to="`/projet/${project.id_project}`">{{
-            project.name
-          }}</nuxt-link>
+          <a :href="`/projet/${project.id_project}`">{{ project.name }}</a>
         </li>
       </ul>
     </div>
@@ -91,9 +87,7 @@
         style="list-style-type:none;"
       >
         <li>
-          <nuxt-link :to="`/projet/${project.id_project}`">{{
-            project.name
-          }}</nuxt-link>
+          <a :href="`/projet/${project.id_project}`">{{ project.name }}</a>
         </li>
       </ul>
     </div>
@@ -307,7 +301,7 @@ export default {
         await this.sortUserAnswers(response);
       }
     }
-    console.log('PROJECTS  ', this.projects);
+    // console.log('PROJECTS  ', this.projects);
     const delay = ms => new Promise(res => setTimeout(res, ms));
     this.$emit('loaded');
     await delay(2000);
