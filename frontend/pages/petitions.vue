@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="h-100 justify-content-center text-center">
         <h1>Page des pétitions</h1>
@@ -10,7 +10,7 @@
         class="h-100 justify-content-center text-center"
         v-if="isAuthenticated"
       >
-        <PetitionForm button="Créer une pétition" />
+        <PetitionForm button="Créer une pétition"></PetitionForm>
       </div>
       <div class="row justify-content-center">
         <ListOfProjects
@@ -19,10 +19,10 @@
           my_projects="false"
           published="true"
           participated="false"
-        />
+        ></ListOfProjects>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 

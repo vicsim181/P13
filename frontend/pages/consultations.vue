@@ -23,10 +23,10 @@
           published="true"
           participated="false"
           img="../static/consultation.jpg"
-        />
+        ></ListOfProjects>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 

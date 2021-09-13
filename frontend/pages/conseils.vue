@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="h-100 justify-content-center text-center">
         <h1>Page des conseils</h1>
@@ -13,7 +13,7 @@
         <ConseilForm
           v-if="loggedInUser.is_staff"
           button="Créer un conseil de quartier"
-        />
+        ></ConseilForm>
       </div>
       <div class="row justify-content-center">
         <ListOfProjects
@@ -22,10 +22,10 @@
           my_projects="false"
           published="true"
           participated="false"
-        />
+        ></ListOfProjects>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 

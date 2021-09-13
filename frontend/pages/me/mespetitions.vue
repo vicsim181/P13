@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="h-100 justify-content-center text-center">
         <h1>Mes pétitions</h1>
@@ -55,13 +55,13 @@
           :is="activeTab"
           project_type="Pétition"
           v-on:loaded="loading()"
-        />
+        ></Component>
         <h3 v-if="welcome" id="welcome">
           Choisissez les pétitions que vous souhaitez consulter
         </h3>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 

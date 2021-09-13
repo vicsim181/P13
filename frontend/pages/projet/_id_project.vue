@@ -1,11 +1,11 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div v-if="this.project" v-bind="this.project" class="container">
       <div class="column" id="top">
-        <strong
-          ><h1>{{ this.project.name }}</h1></strong
-        >
+        <h1>
+          <strong>{{ this.project.name }}</strong>
+        </h1>
       </div>
       <div id="data">
         <div class="column">
@@ -40,7 +40,7 @@
                 :questions="questions"
                 :mcqanswers="mcqanswers"
                 v-on:hasparticipated="refresh()"
-              />
+              ></Questions>
             </div>
           </div>
         </div>
@@ -137,7 +137,7 @@
             <MyNotPublishedConseil
               :project_data="project"
               v-on:done="refresh()"
-            />
+            ></MyNotPublishedConseil>
           </div>
           <div
             class="column"
@@ -146,13 +146,13 @@
             <MyNotPublishedConsultation
               :project_data="project"
               v-on:done="refresh()"
-            />
+            ></MyNotPublishedConsultation>
           </div>
           <div class="column" v-if="project.project_type === petition_type_id">
             <MyNotPublishedPetition
               :project_data="project"
               v-on:done="refresh()"
-            />
+            ></MyNotPublishedPetition>
           </div>
         </div>
       </div>
@@ -160,7 +160,7 @@
     <div v-else class="not-found text-center">
       <h3>Le projet recherché n'existe pas.</h3>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 

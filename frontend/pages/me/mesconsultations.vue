@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="h-100 justify-content-center text-center">
         <h1>Mes consultations</h1>
@@ -62,17 +62,19 @@
             project_type="Consultation"
             v-on:spinner="spinner()"
             v-on:loaded="loading()"
-          />
+          ></Component>
           <h3 v-if="welcome" id="welcome">
             Choisissez les consultations que vous souhaitez consulter
           </h3>
         </div>
       </div>
       <div v-else>
-        <MyProjectsParticipated project_type="Consultation" />
+        <MyProjectsParticipated
+          project_type="Consultation"
+        ></MyProjectsParticipated>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 

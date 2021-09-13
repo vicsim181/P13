@@ -6,7 +6,7 @@
     participated="true"
     v-on:spinner="spinner()"
     v-on:loaded="loaded()"
-  />
+  ></ListOfProjects>
 </template>
 
 <script>

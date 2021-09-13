@@ -1,13 +1,13 @@
 <template>
   <div v-if="isAuthenticated">
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <h3>Vous êtes déjà connecté avec un compte.</h3>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
   <div v-else>
-    <CustomNavbar />
-    <Signup />
-    <CustomFooter />
+    <CustomNavbar></CustomNavbar>
+    <Signup></Signup>
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 

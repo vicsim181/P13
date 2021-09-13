@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="h-100 justify-content-center text-center">
         <h1>Mes conseils de quartier</h1>
@@ -64,17 +64,19 @@
             :is="activeTab"
             project_type="Conseil de quartier"
             v-on:loaded="loading()"
-          />
+          ></Component>
           <h3 v-if="welcome" id="welcome">
             Choisissez les conseils que vous souhaitez consulter
           </h3>
         </div>
       </div>
       <div v-else>
-        <MyProjectsParticipated project_type="Conseil de quartier" />
+        <MyProjectsParticipated
+          project_type="Conseil de quartier"
+        ></MyProjectsParticipated>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 
