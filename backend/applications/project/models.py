@@ -15,6 +15,9 @@ class ProjectType(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    class Meta:
+        unique_together = ['name']
+
 
 class Project(models.Model):
     id_project = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -89,6 +92,9 @@ class QuestionType(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    class Meta:
+        unique_together = ['name']
 
 
 class MCQAnswer(models.Model):
