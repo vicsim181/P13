@@ -100,8 +100,8 @@ export default {
       mcq_answers: this.mcqanswers,
       user_answers: {},
       qcm_type_id: '',
-      free_type_id: '',
-      loaded: false
+      free_type_id: ''
+      // loaded: false
     };
   },
 
@@ -115,7 +115,9 @@ export default {
     response = await this.$axios.get('question_type', { params: data });
     type_id = response.data['id_question_type'];
     this.free_type_id = type_id;
-    this.loaded = true;
+    console.log('QUESTIONS RECEIVED ', this.questions);
+    console.log('NOMBRE DE QUESTIONS  ', Object.keys(this.questions).length);
+    // this.loaded = true;
   },
 
   methods: {

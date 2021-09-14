@@ -1,6 +1,6 @@
 <template>
-  <div v-if="loaded">
-    <div v-if="projects.length > 0" class="project">
+  <div v-show="loaded">
+    <div v-show="projects.length > 0" class="project">
       <b-card-group
         v-for="project in projects"
         :key="project.id_project"
@@ -30,14 +30,14 @@
                 </b-card-text>
               </li>
               <li>
-                <b-card-text v-if="project_type === 'Conseil de quartier'">
+                <b-card-text v-show="project_type === 'Conseil de quartier'">
                   Date du conseil: {{ project.end_date }}
                 </b-card-text>
-                <b-card-text v-else>
+                <b-card-text v-show="!project_type === 'Conseil de quartier'">
                   Prend fin le: {{ project.end_date }}
                 </b-card-text>
               </li>
-              <div v-if="project_type === 'Pétition'">
+              <div v-show="project_type === 'Pétition'">
                 <li>
                   <b-icon icon="hand-thumbs-up"></b-icon>
                   {{ project.liked_by.length }}
@@ -55,7 +55,7 @@
         </b-card>
       </b-card-group>
     </div>
-    <div v-if="projects_participated.length > 0" class="noresult">
+    <div v-show="projects_participated.length > 0" class="noresult">
       <p>Vous avez répondu au sondage du/des projet(s) suivant(s):</p>
       <ul
         v-for="project in projects_participated"
@@ -67,7 +67,7 @@
         </li>
       </ul>
     </div>
-    <div v-if="projects_liked.length > 0" class="noresult">
+    <div v-show="projects_liked.length > 0" class="noresult">
       <p>Vous avez liké le(s) projet(s) suivant(s):</p>
       <ul
         v-for="project in projects_liked"
@@ -79,7 +79,7 @@
         </li>
       </ul>
     </div>
-    <div v-if="projects_commented.length > 0" class="noresult">
+    <div v-show="projects_commented.length > 0" class="noresult">
       <p>Vous avez commenté le(s) projet(s) suivant(s):</p>
       <ul
         v-for="project in projects_commented"
@@ -92,7 +92,7 @@
       </ul>
     </div>
     <div
-      v-else-if="
+      v-show="
         projects.length === 0 &&
           projects_commented.length === 0 &&
           projects_participated.length === 0 &&
@@ -107,7 +107,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-
 export default {
   props: ['project_type', 'my_projects', 'published', 'participated'],
   computed: {
@@ -137,9 +136,7 @@ export default {
     onlyUnique(value, index, self) {
       return self.indexOf(value) === index;
     },
-
     //  ADD FUNCTION TO CALL NEW VIEW FOR NON PUBLISHED PROJECTS
-
     // Function sending a request to the API to get the published projects created by the user
     async getMyPublishedProjects() {
       const data = {
@@ -153,7 +150,6 @@ export default {
         return [];
       }
     },
-
     // Function sending a request to the API to get the not published projects created by the user
     async getMyNOTPublishedProjects() {
       const data = {
@@ -169,7 +165,6 @@ export default {
         return [];
       }
     },
-
     // Function sending a request to the API to get the projects for which the user has participated (answering the question(s) of the form)
     async getProjects() {
       const data = {
@@ -182,7 +177,6 @@ export default {
         return [];
       }
     },
-
     // Function sending a request to the API to get the projects liked by the user
     async getProjectsLiked() {
       const data = {
@@ -195,31 +189,26 @@ export default {
         return [];
       }
     },
-
     // Function sending a request to the API to get the projects commented by the user
     async getProjectsCommented() {
       const data = { owner: this.loggedInUser.id };
       const response = await this.$axios.get('comment/', { params: data });
       return response.data;
     },
-
     // Function sending a request to the API to get the answers of the user to the different forms
     async getUserAnswers() {
       // const data = { owner: this.loggedInUser.id };
       const response = await this.$axios.get('user_answer/');
       return response.data;
     },
-
     // Function sending a request to the API to get the questions to which the user answered
     async getQuestionsAnswered(response, element) {
       return await this.$axios.get(`question/${response[element].question}`);
     },
-
     // Function sending a request to the API to get the project to which the user answered
     async getProject(id_project) {
       return await this.$axios.get(`project/${id_project}`);
     },
-
     // Function sorting out the comments obtained through a request to the API
     async sortComments(comments) {
       if (comments.length !== 0) {
@@ -235,7 +224,6 @@ export default {
         }
       }
     },
-
     // Function sorting the answers of the user and iterating throug the attached questions to find the concerned project
     async sortUserAnswers(response) {
       if (response.length !== 0) {
@@ -263,7 +251,6 @@ export default {
       }
     }
   },
-
   // Function fetching the data through requests to the API via other functions, depending on the projects requested by the user
   async fetch() {
     this.$emit('spinner');

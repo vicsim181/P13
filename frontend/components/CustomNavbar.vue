@@ -15,7 +15,7 @@
         <b-nav-item href="/conseils" class="col-md-3 item"
           ><b>CONSEIL DE QUARTIER</b></b-nav-item
         >
-        <b-nav-item-dropdown right v-if="isAuthenticated" no-caret>
+        <b-nav-item-dropdown right v-show="isAuthenticated" no-caret>
           <template #button-content>
             <p class="col-md-3 item"><b>MON COMPTE</b></p>
             <svg
@@ -36,7 +36,10 @@
             >Me déconnecter</b-dropdown-item
           >
         </b-nav-item-dropdown>
-        <b-nav-item href="/login" class="col-md-3 item" v-else
+        <b-nav-item
+          href="/login"
+          class="col-md-3 item"
+          v-show="!isAuthenticated"
           ><b>Se connecter / S'inscrire</b></b-nav-item
         >
       </b-navbar-nav>

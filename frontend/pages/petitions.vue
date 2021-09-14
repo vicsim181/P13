@@ -8,7 +8,7 @@
       <div
         id="petitionForm"
         class="h-100 justify-content-center text-center"
-        v-if="isAuthenticated"
+        v-show="isAuthenticated"
       >
         <PetitionForm button="Créer une pétition"></PetitionForm>
       </div>
@@ -28,7 +28,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-
 export default {
   auth: false,
   computed: {

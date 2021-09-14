@@ -55,7 +55,7 @@
             id="spinner"
             style="width: 6rem; height: 6rem;"
             label="Large Spinner"
-            v-if="showspinner"
+            v-show="showspinner"
           ></b-spinner>
           <Component
             :is="activeTab"
@@ -63,7 +63,7 @@
             v-on:spinner="spinner()"
             v-on:loaded="loading()"
           ></Component>
-          <h3 v-if="welcome" id="welcome">
+          <h3 v-show="welcome" id="welcome">
             Choisissez les consultations que vous souhaitez consulter
           </h3>
         </div>
@@ -83,7 +83,6 @@ import { mapGetters } from 'vuex';
 import MyProjectsParticipated from '../../components/MyProjectsParticipated.vue';
 import MyProjectsPublished from '../../components/MyProjectsPublished.vue';
 import MyProjectsNotPublished from '../../components/MyProjectsNotPublished.vue';
-
 export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser'])
