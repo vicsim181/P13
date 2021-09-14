@@ -88,5 +88,5 @@ export default {
   },
 
   // Nuxt parameter for deployment
-  target: 'server'
+  target: 'static'
 };

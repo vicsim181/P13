@@ -8,17 +8,17 @@ load_dotenv()
 
 SECRET_KEY = os.getenv('DJANGO_KEY')
 DEBUG = False
-ALLOWED_HOSTS = ['localhost']
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql', # we use the postgresql adaptator
-        'NAME': os.getenv('POSTGRESQL_DBNAME'),
-        'USER': os.getenv('POSTGRESQL_USER'),
-        'PASSWORD': os.getenv('POSTGRESQL'),
-        'HOST': '',
-        'PORT': '5432',
-    }
-}
+ALLOWED_HOSTS = ['*']
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql', # we use the postgresql adaptator
+#         'NAME': os.getenv('POSTGRESQL_DBNAME'),
+#         'USER': os.getenv('POSTGRESQL_USER'),
+#         'PASSWORD': os.getenv('POSTGRESQL'),
+#         'HOST': '',
+#         'PORT': '5432',
+#     }
+# }
 
 sentry_sdk.init(
     dsn="https://1d4c9e58518f4fc18b84065cd6b4fe31@o622128.ingest.sentry.io/5953587",

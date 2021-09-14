@@ -199,6 +199,7 @@ class ProjectTypeRetrieveView(generics.RetrieveAPIView):
     def get(self, request):
         type_name = request.GET['name']
         project_type = get_object_or_404(models.ProjectType, name=type_name)
+        print('RESULT PROJECT TYPE ', project_type)
         self.check_object_permissions(request, project_type)
         serializer = serializers.ProjectTypeSerializer(project_type)
         return Response(serializer.data)
