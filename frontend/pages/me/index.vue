@@ -1,7 +1,7 @@
 <template>
   <!DOCTYPE html>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container" v-if="isAuthenticated">
       <h1 class="row h-100 w-auto justify-content-center text-center">
         Mon profil
@@ -19,7 +19,7 @@
         </p>
         <strong>Adresse postale:</strong>
         <p v-if="loggedInUser.address[0]">{{ user_adress }}</p>
-        <AddressForm v-else />
+        <AddressForm v-else></AddressForm>
         <br />
         <b-button
           :to="{
@@ -57,13 +57,12 @@
         </b-button>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-
 export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser'])

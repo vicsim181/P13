@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="h-100 justify-content-center text-center">
         <h1>Mes conseils de quartier</h1>
@@ -58,23 +58,25 @@
             id="spinner"
             style="width: 6rem; height: 6rem;"
             label="Large Spinner"
-            v-if="showspinner"
+            v-show="showspinner"
           ></b-spinner>
           <Component
             :is="activeTab"
             project_type="Conseil de quartier"
             v-on:loaded="loading()"
-          />
-          <h3 v-if="welcome" id="welcome">
+          ></Component>
+          <h3 v-show="welcome" id="welcome">
             Choisissez les conseils que vous souhaitez consulter
           </h3>
         </div>
       </div>
       <div v-else>
-        <MyProjectsParticipated project_type="Conseil de quartier" />
+        <MyProjectsParticipated
+          project_type="Conseil de quartier"
+        ></MyProjectsParticipated>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 
@@ -83,7 +85,6 @@ import { mapGetters } from 'vuex';
 import MyProjectsParticipated from '../../components/MyProjectsParticipated.vue';
 import MyProjectsPublished from '../../components/MyProjectsPublished.vue';
 import MyProjectsNotPublished from '../../components/MyProjectsNotPublished.vue';
-
 export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser'])

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CustomNavbar />
+    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="row h-100 w-auto justify-content-center text-center">
         <h1>Page des consultations</h1>
@@ -8,12 +8,9 @@
       <div
         id="consultationForm"
         class="row h-100 w-auto justify-content-center text-center"
-        v-if="isAuthenticated"
+        v-show="isAuthenticated && loggedInUser.is_staff"
       >
-        <ConsultationForm
-          v-if="loggedInUser.is_staff"
-          button="Créer une consultation"
-        />
+        <ConsultationForm button="Créer une consultation"></ConsultationForm>
       </div>
       <div class="row justify-content-center">
         <ListOfProjects
@@ -23,16 +20,15 @@
           published="true"
           participated="false"
           img="../static/consultation.jpg"
-        />
+        ></ListOfProjects>
       </div>
     </div>
-    <CustomFooter />
+    <CustomFooter></CustomFooter>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex';
-
 export default {
   auth: false,
   computed: {

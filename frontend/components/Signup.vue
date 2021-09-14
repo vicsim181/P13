@@ -8,7 +8,7 @@
         <b-form
           @submit="onSubmit"
           @reset="onReset"
-          v-if="show"
+          v-show="show"
           validated
           novalidate
         >

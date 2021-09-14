@@ -125,7 +125,7 @@
         </b-form-group>
         <b-form-group
           label="Choisissez le nombre de réponses possibles (min = 2, max = 10)"
-          v-if="this.question_type_name === 'QCM'"
+          v-show="this.question_type_name === 'QCM'"
         >
           <b-form-spinbutton
             id="answers_number"
@@ -135,7 +135,7 @@
             @change="refreshChoices()"
           ></b-form-spinbutton>
         </b-form-group>
-        <div v-if="this.question_type_name === 'QCM'">
+        <div v-show="this.question_type_name === 'QCM'">
           <b-form-group
             label="Choix de réponse"
             invalid-feedback="Renseignez toutes les réponses possibles"
