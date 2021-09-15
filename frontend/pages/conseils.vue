@@ -8,12 +8,9 @@
       <div
         id="conseilForm"
         class="h-100 justify-content-center text-center"
-        v-if="isAuthenticated"
+        v-show="isAuthenticated && loggedInUser.is_staff"
       >
-        <ConseilForm
-          v-if="loggedInUser.is_staff"
-          button="Créer un conseil de quartier"
-        ></ConseilForm>
+        <ConseilForm button="Créer un conseil de quartier"></ConseilForm>
       </div>
       <div class="row justify-content-center">
         <ListOfProjects

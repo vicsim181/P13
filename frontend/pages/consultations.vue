@@ -8,12 +8,9 @@
       <div
         id="consultationForm"
         class="row h-100 w-auto justify-content-center text-center"
-        v-if="isAuthenticated"
+        v-show="isAuthenticated && loggedInUser.is_staff"
       >
-        <ConsultationForm
-          v-if="loggedInUser.is_staff"
-          button="Créer une consultation"
-        ></ConsultationForm>
+        <ConsultationForm button="Créer une consultation"></ConsultationForm>
       </div>
       <div class="row justify-content-center">
         <ListOfProjects

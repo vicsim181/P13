@@ -1,7 +1,9 @@
-FROM python:3.9
+FROM python:3.9-alpine3.14
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
-RUN mkdir /code
 WORKDIR /code
+COPY requirements.txt /code/
 COPY . /code/
-RUN pip install -r requirements.txt
+RUN apt-get update && apt-get install && pip install -r requirements.txt
+ENV PATH="/py/bin:$PATH"
+USER code

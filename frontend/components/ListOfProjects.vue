@@ -1,6 +1,6 @@
 <template>
   <div v-if="loaded">
-    <div v-if="projects.length > 0" class="project">
+    <div v-show="projects.length > 0" class="project">
       <b-card-group
         v-for="project in projects"
         :key="project.id_project"
@@ -30,14 +30,14 @@
                 </b-card-text>
               </li>
               <li>
-                <b-card-text v-if="project_type === 'Conseil de quartier'">
+                <b-card-text v-show="project_type === 'Conseil de quartier'">
                   Date du conseil: {{ project.end_date }}
                 </b-card-text>
-                <b-card-text v-else>
+                <b-card-text v-show="project_type !== 'Conseil de quartier'">
                   Prend fin le: {{ project.end_date }}
                 </b-card-text>
               </li>
-              <div v-if="project_type === 'Pétition'">
+              <div v-show="project_type === 'Pétition'">
                 <li>
                   <b-icon icon="hand-thumbs-up"></b-icon>
                   {{ project.liked_by.length }}
@@ -55,7 +55,7 @@
         </b-card>
       </b-card-group>
     </div>
-    <div v-if="projects_participated.length > 0" class="noresult">
+    <div v-show="projects_participated.length > 0" class="noresult">
       <p>Vous avez répondu au sondage du/des projet(s) suivant(s):</p>
       <ul
         v-for="project in projects_participated"
@@ -67,7 +67,7 @@
         </li>
       </ul>
     </div>
-    <div v-if="projects_liked.length > 0" class="noresult">
+    <div v-show="projects_liked.length > 0" class="noresult">
       <p>Vous avez liké le(s) projet(s) suivant(s):</p>
       <ul
         v-for="project in projects_liked"
@@ -79,7 +79,7 @@
         </li>
       </ul>
     </div>
-    <div v-if="projects_commented.length > 0" class="noresult">
+    <div v-show="projects_commented.length > 0" class="noresult">
       <p>Vous avez commenté le(s) projet(s) suivant(s):</p>
       <ul
         v-for="project in projects_commented"
@@ -92,7 +92,7 @@
       </ul>
     </div>
     <div
-      v-else-if="
+      v-show="
         projects.length === 0 &&
           projects_commented.length === 0 &&
           projects_participated.length === 0 &&
@@ -291,6 +291,7 @@ export default {
       }
     } else if (this.participated === 'false') {
       this.projects = await this.getProjects();
+      // console.log('PROJECTS ', this.projects);
     } else {
       if (this.project_type_id === this.petition_type_id) {
         this.projects_liked = await this.getProjectsLiked();

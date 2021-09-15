@@ -1,14 +1,14 @@
 version: "3.9"
 
 services:
-  # db:
-  #   image: postgres:13.4
-  #   volumes:
-  #     - ./db:/var/lib/postgresql/data
-  #   environment:
-  #     - POSTGRES_DB=participons_dev
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=japon+72-2
+  db:
+    image: postgres:13.4
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=participons_docker
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=japon+72-2
   backend:
     restart: always
     build:
@@ -19,17 +19,17 @@ services:
       - ./backend:/code
     ports:
       - "8000:8000"
-    # depends_on:
-    #   - db
-  frontend:
-    restart: always
-    build:
-      context: frontend
-      dockerfile: Dockerfile
-    command: npm run start
-    volumes:
-      - ./frontend:/code
-      - /code/node_modules
-      - /code/.nuxt
-    ports:
-      - "3000:3000"
+    depends_on:
+      - db
+  # frontend:
+  #   restart: always
+  #   build:
+  #     context: frontend
+  #     dockerfile: Dockerfile
+  #   command: npm run build
+  #   volumes:
+  #     - ./frontend:/code
+  #     - /code/node_modules
+  #     - /code/.nuxt
+  #   ports:
+  #     - "3000:3000"
