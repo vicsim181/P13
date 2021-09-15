@@ -7,7 +7,7 @@
       <b-form
         @submit="onSubmit"
         @reset="onReset"
-        v-if="show"
+        v-show="show"
         validated
         novalidate
       >
@@ -76,7 +76,6 @@ export default {
         );
       } catch (error) {
         window.alert("L'adresse email ou le mot de passe est incorrect.");
-        // console.log('error', error);
       }
     },
     onReset(event) {

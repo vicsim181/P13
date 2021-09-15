@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loaded">
+  <div v-show="loaded">
     <div v-show="projects.length > 0" class="project">
       <b-card-group
         v-for="project in projects"
@@ -107,7 +107,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-
 export default {
   props: ['project_type', 'my_projects', 'published', 'participated'],
   computed: {
@@ -137,9 +136,7 @@ export default {
     onlyUnique(value, index, self) {
       return self.indexOf(value) === index;
     },
-
     //  ADD FUNCTION TO CALL NEW VIEW FOR NON PUBLISHED PROJECTS
-
     // Function sending a request to the API to get the published projects created by the user
     async getMyPublishedProjects() {
       const data = {
@@ -153,7 +150,6 @@ export default {
         return [];
       }
     },
-
     // Function sending a request to the API to get the not published projects created by the user
     async getMyNOTPublishedProjects() {
       const data = {
@@ -169,7 +165,6 @@ export default {
         return [];
       }
     },
-
     // Function sending a request to the API to get the projects for which the user has participated (answering the question(s) of the form)
     async getProjects() {
       const data = {
@@ -182,7 +177,6 @@ export default {
         return [];
       }
     },
-
     // Function sending a request to the API to get the projects liked by the user
     async getProjectsLiked() {
       const data = {
@@ -195,31 +189,26 @@ export default {
         return [];
       }
     },
-
     // Function sending a request to the API to get the projects commented by the user
     async getProjectsCommented() {
       const data = { owner: this.loggedInUser.id };
       const response = await this.$axios.get('comment/', { params: data });
       return response.data;
     },
-
     // Function sending a request to the API to get the answers of the user to the different forms
     async getUserAnswers() {
       // const data = { owner: this.loggedInUser.id };
       const response = await this.$axios.get('user_answer/');
       return response.data;
     },
-
     // Function sending a request to the API to get the questions to which the user answered
     async getQuestionsAnswered(response, element) {
       return await this.$axios.get(`question/${response[element].question}`);
     },
-
     // Function sending a request to the API to get the project to which the user answered
     async getProject(id_project) {
       return await this.$axios.get(`project/${id_project}`);
     },
-
     // Function sorting out the comments obtained through a request to the API
     async sortComments(comments) {
       if (comments.length !== 0) {
@@ -235,7 +224,6 @@ export default {
         }
       }
     },
-
     // Function sorting the answers of the user and iterating throug the attached questions to find the concerned project
     async sortUserAnswers(response) {
       if (response.length !== 0) {
@@ -263,7 +251,6 @@ export default {
       }
     }
   },
-
   // Function fetching the data through requests to the API via other functions, depending on the projects requested by the user
   async fetch() {
     this.$emit('spinner');

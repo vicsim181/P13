@@ -19,7 +19,8 @@
           <u v-if="project.project_type === conseil_type_id"
             >Date du conseil:</u
           >
-          <u v-else>Prend fin le:</u> <br />{{ this.project.end_date }}
+          <u v-if="project.project_type !== conseil_type_id">Prend fin le:</u>
+          <br />{{ this.project.end_date }}
         </div>
       </div>
       <div v-if="loaded">
@@ -29,11 +30,11 @@
               this.project.ready_for_publication
           "
         >
-          <div id="form" v-if="this.project.question.length != 0">
-            <div v-if="userHasParticipated">
+          <div id="form" v-show="this.project.question.length != 0">
+            <div v-show="userHasParticipated">
               <p>Vous avez déjà participé à ce sondage.</p>
             </div>
-            <div v-else>
+            <div v-if="!userHasParticipated">
               <Questions
                 :project="project"
                 :user="loggedInUser.id"
@@ -53,22 +54,22 @@
           "
         >
           <div id="like">
-            <div v-if="userLikesProject">
+            <div v-show="userLikesProject">
               <b-button class="button" @click="cancelLikePetition()"
                 >Ne plus supporter la pétition</b-button
               >
             </div>
-            <div v-else>
+            <div v-show="!userLikesProject">
               <b-button class="button" variant="primary" @click="likePetition()"
                 >Soutenir la pétition</b-button
               >
             </div>
           </div>
           <div id="comment">
-            <div v-if="userHasCommented">
+            <div v-show="userHasCommented">
               <p>Vous avez déjà commenté la pétition</p>
             </div>
-            <div v-else>
+            <div v-show="!userHasCommented">
               <b-form-group label="Commenter la pétition" :state="commentState">
                 <b-form-textarea
                   id="user_comment"
@@ -119,7 +120,7 @@
                   >Supprimer la question</b-button
                 >
               </li>
-              <div v-if="question[1].length > 0">
+              <div v-show="question[1].length > 0">
                 <div
                   v-for="mcqanswer in question[1]"
                   :key="mcqanswer.id_answer"
@@ -166,7 +167,6 @@
 
 <script>
 import { mapGetters } from 'vuex';
-
 export default {
   computed: {
     ...mapGetters(['isAuthenticated', 'loggedInUser']),
@@ -217,6 +217,7 @@ export default {
     };
   },
   async fetch() {
+    console.log('LOADED ? ', this.loaded);
     await this.fetchProjectData();
     let data = { name: 'Conseil de quartier' };
     let response = await this.$axios.get('project_type', { params: data });
@@ -237,9 +238,10 @@ export default {
       await this.fetchCommentsPublished();
     }
     this.loaded = true;
+    // console.log('QUESTIONS FETCHED  ', this.questions);
+    console.log('LOADED ? ', this.loaded);
     // this.$nuxt.refresh();
   },
-
   methods: {
     // Function used to add a like from the user to this petition
     async likePetition() {
@@ -255,7 +257,6 @@ export default {
       }
       this.$nuxt.refresh();
     },
-
     // Function used to delete a like from the user to this petition
     async cancelLikePetition() {
       const data = { project_id: this.id_project, action: 'delete' };
@@ -270,14 +271,12 @@ export default {
       }
       this.$nuxt.refresh();
     },
-
     // Function refreshing the element
     async refresh() {
       await this.fetchProjectData();
       await this.fetchQuestions();
       this.$nuxt.refresh();
     },
-
     // Function sending a post request to the API to create a comment
     async postComment() {
       const data = { project: this.id_project, text: this.user_comment_input };
@@ -291,7 +290,6 @@ export default {
         window.alert(errorMessage);
       }
     },
-
     // Function called when a user decides to comment a petition
     async handleSubmitComment() {
       if (!this.commentState) {
@@ -301,18 +299,15 @@ export default {
       }
       this.$nuxt.refresh();
     },
-
     // Function called when a user wants to delete a question from one of his non published projects
     async handleDeleteQuestion(id) {
       await this.deleteQuestion(id);
     },
-
     // Function fetching the data of the project
     async fetchProjectData() {
       const response = await this.$axios.get(`project/${this.id_project}`);
       this.project = response.data;
     },
-
     // Function fecthing the questions to display for a non published project
     async fetchQuestions() {
       if (this.project.question.length > 0) {
@@ -341,7 +336,6 @@ export default {
         this.questions = {};
       }
     },
-
     // Function fetching the questions answered by the user, in order to check if the user has participated to this project
     async fetchQuestionsAnswered() {
       for (let question in Object.keys(this.questions)) {
@@ -352,17 +346,16 @@ export default {
           const response = await this.$axios.get('user_answer', {
             params: data
           });
-          console.log('RESPONSE ', response.data);
+          // console.log('RESPONSE ', response.data);
           if (typeof response.data[0] !== 'undefined') {
             this.questions_answered.push(response.data[0]);
           }
         } catch (error) {
-          console.log(error.data);
+          console.log();
         }
       }
-      console.log('QUESTIONS ANSWERED ', this.questions_answered);
+      // console.log('QUESTIONS ANSWERED ', this.questions_answered);
     },
-
     // Function fetching the comment saved by the user on this project, if there is one
     async fetchCommentSaved() {
       const data = { owner: this.loggedInUser.id, project: this.id_project };
@@ -371,7 +364,6 @@ export default {
         this.comment_saved = response.data[0]['id_comment'];
       }
     },
-
     // Function fetching the comments published if there are
     async fetchCommentsPublished() {
       this.comments_published = [];
@@ -383,7 +375,6 @@ export default {
         }
       }
     },
-
     // Function called when the user decides to delete a question on a not published project
     async deleteQuestion(id) {
       await this.$axios.delete(`question/${id}/`);

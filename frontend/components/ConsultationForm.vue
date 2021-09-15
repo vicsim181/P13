@@ -120,7 +120,7 @@
         </b-form-group>
         <b-form-group
           label="Choisissez le nombre de réponses possibles (min = 2, max = 10)"
-          v-if="this.question_type_name === 'QCM'"
+          v-show="this.question_type_name === 'QCM'"
         >
           <b-form-spinbutton
             id="answers_number"
@@ -130,7 +130,7 @@
             @change="refreshChoices()"
           ></b-form-spinbutton>
         </b-form-group>
-        <div v-if="this.question_type_name === 'QCM'">
+        <div v-show="this.question_type_name === 'QCM'">
           <b-form-group
             label="Choix de réponse"
             invalid-feedback="Renseignez toutes les réponses possibles"
@@ -253,16 +253,16 @@ export default {
 
     // We check the form with the question infos is valid
     checkForm2Validity() {
-      const valid = this.$refs.form.checkValidity();
+      // const valid = this.$refs.form.checkValidity();
       if (this.questionNameState && this.questionTypeState) {
         if (this.question_type_name === 'QCM') {
           if (this.answerState) {
-            return valid;
+            return true;
           } else {
             return false;
           }
         }
-        return valid;
+        return true;
       } else {
         return false;
       }
@@ -403,6 +403,7 @@ export default {
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit_2() {
       if (!this.checkForm2Validity()) {
+        console.log('PROBLEME FORM VALIDITY');
         return;
       }
       this.question.type = await this.getQuestionType();
