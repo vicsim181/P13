@@ -9,27 +9,28 @@ services:
       - POSTGRES_DB=participons_docker
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=japon+72-2
-  backend:
-    restart: always
+  app:
+    # restart: always
     build:
-      context: backend
+      context: app
       dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./backend:/code
+      - ./app:/code
     ports:
       - "8000:8000"
     depends_on:
       - db
-  # frontend:
-  #   restart: always
-  #   build:
-  #     context: frontend
-  #     dockerfile: Dockerfile
-  #   command: npm run build
-  #   volumes:
-  #     - ./frontend:/code
-  #     - /code/node_modules
-  #     - /code/.nuxt
-  #   ports:
-  #     - "3000:3000"
+
+  proxy:
+    build:
+      context: app/nginx
+      dockerfile: Dockerfile
+    volumes:
+      - static_data:/vol/static
+    ports:
+      - "8080:8080"
+    depends_on:
+      - app
+
+volumes:
+  static_data:

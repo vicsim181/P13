@@ -1,7 +1,0 @@
-{
-    "project_types": ["Consultation",
-                      "Pétition",
-                      "Conseil de quartier"],
-    "question_types": ["Réponse libre",
-                       "QCM"]
-}
