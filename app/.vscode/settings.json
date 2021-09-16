@@ -1,13 +1,13 @@
 {
-    "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true,
-    "python.linting.flake8Args": ["--max-line-length=120"],
-    "files.exclude": {
-        "**/.git": true,
-        "**/.DS_Store": true,
-        "**/*.pyc": {"when": "$(basename).py"}, 
-        "**/__pycache__": true,
-        "**/venv": true
-    },
-    "python.pythonPath": "C:\\Users\\Victor\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+  "python.linting.flake8Args": ["--max-line-length=120"],
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/*.pyc": { "when": "$(basename).py" },
+    "**/__pycache__": true,
+    "**/venv": true
+  },
+  "python.pythonPath": "C:\\Users\\Victor\\AppData\\Local\\Programs\\Python\\Python39\\python.exe"
 }
