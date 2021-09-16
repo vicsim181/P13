@@ -25,8 +25,6 @@ RUN python -m venv /env && \
 
 ENV PATH="/scripts:/env/bin:$PATH"   
 
-# ENV PYTHONDONTWRITEBYTECODE 1
-
 USER app
 
-CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "config.wsgi:applications"]
+CMD ["run.sh"]
