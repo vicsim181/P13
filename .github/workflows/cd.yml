@@ -1,0 +1,14 @@
+---
+name: Continuous Deployment
+
+on: push
+
+jobs:
+  hello-gh-actions:
+    name: Hello GitHub Actions
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Tests
+        run: echo "RUNNING TESTS!"
