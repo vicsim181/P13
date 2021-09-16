@@ -4,6 +4,6 @@ ENV PYTHONDONTWRITEBYTECODE 1
 WORKDIR /code
 COPY requirements.txt /code/
 COPY . /code/
-RUN apt-get update && apt-get install && pip install -r requirements.txt
+RUN pip install -r requirements.txt
 ENV PATH="/py/bin:$PATH"
 USER code
