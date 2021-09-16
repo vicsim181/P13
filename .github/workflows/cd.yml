@@ -4,11 +4,20 @@ name: Continuous Deployment
 on: push
 
 jobs:
-  hello-gh-actions:
-    name: Hello GitHub Actions
+  test:
+    name: Test
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Run Tests
-        run: echo "RUNNING TESTS!"
+      - name: Test
+        run: docker-compose run --rm backend sh -c "python manage.py test"
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Lint
+        run: docker-compose run --rm backend sh -c "flake8"
