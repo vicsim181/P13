@@ -29,7 +29,7 @@ services:
 
   proxy:
     build:
-      context: ./proxy
+      context: app/nginx
     restart: always
     depends_on:
       - app
