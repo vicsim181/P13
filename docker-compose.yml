@@ -6,14 +6,18 @@ services:
     volumes:
       - ./db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=participons_docker
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=japon+72-2
+      - POSTGRES_DB=${POSTGRESQL_DBNAME}
+      - POSTGRES_USER=${POSTGRESQL_USER}
+      - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
+
   app:
-    # restart: always
     build:
       context: app
       dockerfile: Dockerfile
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate &&
+             python manage.py db_types"
     volumes:
       - ./app:/code
     ports:
