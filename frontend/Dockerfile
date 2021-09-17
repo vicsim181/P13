@@ -6,8 +6,9 @@ RUN addgroup -S app && adduser -S app -G app
 # create the appropriate directories
 ENV HOME=/home/app
 ENV APP_HOME=/home/app/web/
-RUN mkdir $APP_HOME && mkdir $APP_HOME logs && touch $APP_HOME nginx-access.log && touch $APP_HOME logs/ginx-error.log
+RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
+RUN mkdir logs && touch nginx-access.log && touch logs/ginx-error.log
 
 RUN apk update && apk upgrade
 COPY package*.json $APP_HOME
