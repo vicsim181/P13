@@ -1,19 +1,10 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ "$DATABASE" = "postgres" ]
-then
-    echo "Waiting for postgres..."
+set -e
 
-    while ! nc -z $SQL_HOST $SQL_PORT; do
-      sleep 0.1
-    done
+whoami
 
-    echo "PostgreSQL started"
-fi
-
-exec "$@"
-
+python manage.py wait_for_db
 python manage.py collectstatic --noinput
-python manage.py createsuperuser --noinput
 python manage.py migrate --noinput
 python manage.py db_types
