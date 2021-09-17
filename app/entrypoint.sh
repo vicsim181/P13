@@ -1,3 +1,4 @@
+#!/bin/bash
 
 # set -e
 
@@ -14,7 +15,6 @@
 # gunicorn config.wsgi:application --bind 0.0.0.0:8000
 # # uwsgi --socket :9000 --workers 4 --master --enable-threads --module config.wsgi
 
-#!/bin/sh
 
 if [ "$DATABASE" = "postgres" ]
 then
