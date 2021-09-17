@@ -17,10 +17,10 @@ RUN python -m venv /env && \
     /env/bin/pip install -r requirements.txt && \
     apk del .tmp-deps && \
     adduser --disabled-password --no-create-home app && \
-    # mkdir -p /vol/web/static && \
-    # mkdir -p /vol/web/media && \
-    # chown -R app:app /vol && \
-    # chmod -R 755 /vol && \
+    mkdir -p /vol/web/static && \
+    mkdir -p /vol/web/media && \
+    chown -R app:app /vol && \
+    chmod -R 755 /vol && \
     chmod -R +x /scripts
 
 ENV PATH="/scripts:/env/bin:$PATH"   

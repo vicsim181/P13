@@ -15,8 +15,8 @@ services:
     build:
       context: app
     restart: always
-    # volumes:
-    #   - static-data:/vol/web
+    volumes:
+      - static-data:/vol/web
     environment:
       - DB_HOST=db
       - DB_NAME=${DB_NAME}
@@ -26,17 +26,17 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     depends_on:
       - db
-  # proxy:
-  #   build:
-  #     context: app/nginx
-  #   restart: always
-  #   depends_on:
-  #     - app
-  #   ports:
-  #     - 80:8000
-  #   volumes:
-  #     - static-data:/vol/static
+  proxy:
+    build:
+      context: app/nginx
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - 80:8000
+    volumes:
+      - static-data:/vol/static
 
 volumes:
   postgres-data:
-  # static-data:
+  static-data:
