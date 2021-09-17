@@ -18,6 +18,9 @@ COPY . $APP_HOME
 COPY ./entrypoint.sh .
 RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.sh
 
+# chown all the files to the app user
+RUN chown -R app:app $APP_HOME
+
 USER app
 
 RUN chmod +x  $APP_HOME/entrypoint.sh
