@@ -19,10 +19,10 @@ RUN pip install --upgrade pip &&\
     mkdir -p /vol/web/static && \
     mkdir -p /vol/web/media && \
     chown -R app:app /vol && \
-    chmod -R 755 /vol && \
+    chmod -R 755 /vol
     # chmod -R +x app/run.sh
 
-ENV PATH=":/bin:$PATH"   
+ENV PATH=":/bin:$PATH"
 
 USER app
 
