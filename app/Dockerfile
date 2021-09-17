@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED 1
 
 COPY requirements.txt /code/
 COPY . /code/
-COPY ./scripts /scripts
+# COPY ./scripts /scripts
 
 WORKDIR /code
 EXPOSE 8000
@@ -20,9 +20,9 @@ RUN pip install --upgrade pip &&\
     mkdir -p /vol/web/media && \
     chown -R app:app /vol && \
     chmod -R 755 /vol && \
-    chmod -R +x /scripts
+    chmod -R +x run.sh
 
-ENV PATH="/scripts:/bin:$PATH"   
+ENV PATH=":/bin:$PATH"   
 
 USER app
 
