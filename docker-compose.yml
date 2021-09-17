@@ -38,9 +38,12 @@ services:
   frontend:
     build: frontend
     volumes:
-      - ./:/home/app/web
+      - front_data:/home/app/web
+    expose:
+      - 3000
 
 volumes:
   postgres_data:
   static_volume:
   media_volume:
+  front_data:
