@@ -63,7 +63,7 @@ USER app
 RUN chmod +x  $APP_HOME/entrypoint.sh
 
 # run entrypoint.sh
-ENTRYPOINT ["sh", "/entrypoint.sh"]
+ENTRYPOINT ["sh", "/home/app/web/entrypoint.sh"]
 
 
 
