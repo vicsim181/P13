@@ -27,7 +27,7 @@ class Command(BaseCommand):
     #     self.stdout.write(self.style.SUCCESS('Database available!'))
 
     def handle(self, *args, **options):
-        self.stdout.write('Waiting 5 seconds for the database')
-        time.sleep(5)
+        self.stdout.write('Waiting 3 seconds for the database')
+        time.sleep(3)
         self.stdout.write('Trying to connect to the database')
 
