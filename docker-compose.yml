@@ -36,8 +36,7 @@ services:
       - media_volume:/home/app/web/mediafiles
 
   frontend:
-    image: node:12
-    container_name: frontend_vue
+    build: frontend
     volumes:
       - ./:/code
     working_dir: /code
