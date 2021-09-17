@@ -2,7 +2,7 @@
 
 set -e
 
-ls -la /vol/
+# ls -la /vol/
 # ls -la /vol/web
 
 whoami
