@@ -39,10 +39,6 @@ services:
     build: frontend
     volumes:
       - ./:/home/app/web
-    working_dir: /home/app/web
-    # env_file:
-    #   - .env
-    command: bash -c "npm i && npm run build"
 
 volumes:
   postgres_data:
