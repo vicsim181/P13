@@ -25,7 +25,7 @@ services:
       - ./.env.prod.db
 
   nginx:
-    build: app/nginx
+    build: nginx
     # restart: always
     depends_on:
       - app
