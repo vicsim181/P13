@@ -13,6 +13,7 @@ fi
 
 exec "$@"
 
+python manage.py collectstatic --noinput
 python manage.py createsuperuser --noinput
-python manage.py migrate
+python manage.py migrate --noinput
 python manage.py db_types
