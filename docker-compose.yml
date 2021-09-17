@@ -26,6 +26,7 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     depends_on:
       - db
+
   proxy:
     build:
       context: app/nginx
