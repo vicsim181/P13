@@ -15,7 +15,6 @@ selenium = "*"
 sentry-sdk = "*"
 flake8 = "*"
 psycopg2-binary = "*"
-gunicorn = "*"
 python-dotenv = "*"
 
 [dev-packages]
