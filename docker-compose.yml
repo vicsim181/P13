@@ -35,6 +35,16 @@ services:
       - static_volume:/home/app/web/staticfiles
       - media_volume:/home/app/web/mediafiles
 
+  frontend:
+    image: node:12
+    container_name: frontend_vue
+    volumes:
+      - ./:/code
+    working_dir: /code
+    env_file:
+      - .env
+    command: bash -c "npm i && npm run build"
+
 volumes:
   postgres_data:
   static_volume:
