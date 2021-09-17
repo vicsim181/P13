@@ -12,6 +12,7 @@ WORKDIR $APP_HOME
 RUN apk update && apk upgrade
 COPY package*.json $APP_HOME
 RUN npm install
+RUN npm run build
 COPY . $APP_HOME
 
 # copy entrypoint.sh
