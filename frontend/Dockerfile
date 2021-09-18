@@ -15,8 +15,6 @@ RUN npm install
 RUN npm run build
 COPY . $APP_HOME
 
-RUN touch nginx-access.log && touch nginx-error.log
-
 # copy entrypoint.sh
 COPY ./entrypoint.sh .
 RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.sh
