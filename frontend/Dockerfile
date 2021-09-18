@@ -29,4 +29,4 @@ RUN chmod +x  $APP_HOME entrypoint.sh
 # run entrypoint.sh
 ENTRYPOINT ["sh", "/home/app/web/entrypoint.sh"]
 
-ENV NUXT_HOST localhost
+ENV NUXT_HOST 127.0.0.1
