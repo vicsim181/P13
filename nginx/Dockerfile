@@ -1,5 +1,8 @@
 FROM nginx:1.21-alpine
 
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d
+
 # create the app user
 RUN addgroup -S app && adduser -S app -G app
 
@@ -14,6 +17,3 @@ RUN apk update && apk upgrade
 RUN chown -R app:app $APP_HOME
 
 RUN touch nginx-access.log && touch nginx-error.log
-
-RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx.conf /etc/nginx/conf.d
