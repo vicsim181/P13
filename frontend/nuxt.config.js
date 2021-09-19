@@ -43,6 +43,7 @@ export default {
   auth: {
     strategies: {
       local: {
+        url: 'http://localhost:8000',
         scheme: 'refresh',
         localStorage: {
           prefix: 'auth.'
@@ -65,9 +66,9 @@ export default {
           autoFetch: true
         },
         endpoints: {
-          login: { url: 'http://207.154.218.14/login', method: 'post' },
-          refresh: { url: 'http://207.154.218.14/token_refresh', method: 'post' },
-          user: { url: 'http://207.154.218.14/me', method: 'get' },
+          login: { url: '/login', method: 'post' },
+          refresh: { url: '/token_refresh', method: 'post' },
+          user: { url: '/me', method: 'get' },
           logout: false // { url: '/logout', method: 'post' }
         }
         // autoLogout: false
