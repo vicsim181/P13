@@ -65,9 +65,9 @@ export default {
           autoFetch: true
         },
         endpoints: {
-          login: { url: '/login', method: 'post' },
-          refresh: { url: '/token_refresh', method: 'post' },
-          user: { url: '/me', method: 'get' },
+          login: { url: 'http://0.0.0.0:8000/login', method: 'post' },
+          refresh: { url: 'http://0.0.0.0:8000/token_refresh', method: 'post' },
+          user: { url: 'http://0.0.0.0:8000/me', method: 'get' },
           logout: false // { url: '/logout', method: 'post' }
         }
         // autoLogout: false
