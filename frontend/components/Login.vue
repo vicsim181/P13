@@ -67,7 +67,7 @@ export default {
       const data = this.form;
       console.log(data);
       try {
-        const response = await this.$auth.loginWith('local', { data: data });
+        const response = await this.$axios.post('login', { data: data });
         console.log(response);
         this.$auth.$storage.setUniversal('email', response.data.email);
         await this.$auth.setUserToken(
