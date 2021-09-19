@@ -43,7 +43,7 @@ export default {
   auth: {
     strategies: {
       local: {
-        url: 'http://localhost:8000',
+        url: 'http://0.0.0.0:8000',
         scheme: 'refresh',
         localStorage: {
           prefix: 'auth.'
