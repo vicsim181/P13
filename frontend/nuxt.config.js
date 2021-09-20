@@ -31,7 +31,7 @@ export default {
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
     '@nuxtjs/axios', {
-    baseURL: 'http://207.154.218.14:3000/'
+      baseURL: 'http://207.154.218.14:3000/'
     },
     '@nuxtjs/auth-next'
   ],
