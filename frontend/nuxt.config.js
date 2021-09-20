@@ -30,16 +30,14 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
-    '@nuxtjs/axios', {
-      baseURL: 'http://207.154.218.14:3000/'
-    },
+    '@nuxtjs/axios',
     '@nuxtjs/auth-next'
   ],
 
   // Axios module configuration
-  // axios: {
-  //   baseURL: 'http://207.154.218.14:3000/'
-  // },
+  axios: {
+    baseURL: 'http://207.154.218.14:3000/'
+  },
 
   // Auth module configuration: https://auth.nuxtjs.org/guide/setup
   auth: {
