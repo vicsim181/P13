@@ -36,7 +36,12 @@ export default {
 
   // Axios module configuration
   axios: {
-    baseURL: 'http://207.154.218.14:3000/'
+    // baseURL: 'http://207.154.218.14:3000/'
+    proxy: true
+  },
+
+  proxy: {
+    "/app/": "http://207.154.218.14:3000/"
   },
 
   // Auth module configuration: https://auth.nuxtjs.org/guide/setup
