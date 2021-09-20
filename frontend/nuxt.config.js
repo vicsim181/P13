@@ -35,8 +35,24 @@ export default {
   ],
 
   // Axios module configuration
+  // axios: {
+  //   baseURL: 'http://207.154.218.14:8000/'
+  // },
+
   axios: {
-    baseURL: 'http://207.154.218.14:8000/'
+    progress: true
+  },
+
+  publicRuntimeConfig: {
+    axios: {
+      browserBaseURL: "http://localhost:8000/"
+    }
+  },
+
+  privateRuntimeConfig: {
+    axios: {
+      baseURL: "http://app:8000/"
+    }
   },
 
   // Auth module configuration: https://auth.nuxtjs.org/guide/setup

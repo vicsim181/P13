@@ -38,7 +38,6 @@ ENV HOME=/home/app
 ENV APP_HOME=/home/app/api/
 RUN mkdir $APP_HOME
 RUN mkdir $APP_HOME/staticfiles
-RUN mkdir $APP_HOME/mediafiles
 WORKDIR $APP_HOME
 
 # install dependencies
