@@ -92,7 +92,7 @@ export default {
       const data = this.form;
       console.log('THIS FORM  :', data);
       try {
-        const response = await this.$nuxt.$axios.post('users/', data);
+        const response = await this.$nuxt.$axios.post('http://207.154.218.14:8000/users/', data);
         console.log(response);
         this.$router.push('/');
       } catch (error) {
