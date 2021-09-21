@@ -1,6 +1,4 @@
 <template>
-  <div>
-    <CustomNavbar></CustomNavbar>
     <div class="container">
       <div class="row h-100 w-auto justify-content-center text-center">
         <h1>Prenez part à la vie de votre ville</h1>
@@ -24,8 +22,6 @@
         </h3>
       </div>
     </div>
-    <CustomFooter></CustomFooter>
-  </div>
 </template>
 
 <script>
