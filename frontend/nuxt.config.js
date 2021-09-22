@@ -36,8 +36,8 @@ export default {
 
   // Axios module configuration
   axios: {
-    baseURL: 'http://app:3000/',
-    browserBaseURL: 'http://207.154.218.14:3000/'
+    baseURL: 'http://localhost:8000/',
+    browserBaseURL: 'http://localhost:8000/'
   },
 
   // Auth module configuration: https://auth.nuxtjs.org/guide/setup

@@ -1,8 +1,6 @@
 <template>
   <div>
-    <CustomNavbar></CustomNavbar>
     <Login class="login"></Login>
-    <CustomFooter></CustomFooter>
   </div>
 </template>
 

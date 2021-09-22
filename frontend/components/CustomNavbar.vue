@@ -31,12 +31,10 @@
               />
             </svg>
           </template>
-          <b-dropdown-item href="/me">Mon Profil</b-dropdown-item>
-          <b-dropdown-item href="#" @click="logout"
-            >Me déconnecter</b-dropdown-item
-          >
+          <b-dropdown-item to="/me">Mon Profil</b-dropdown-item>
+          <b-dropdown-item @click="logout">Me déconnecter</b-dropdown-item>
         </b-nav-item-dropdown>
-        <b-nav-item href="/login" class="col-md-3 item" v-else
+        <b-nav-item to="/login" class="col-md-3 item" v-else
           ><b>Se connecter / S'inscrire</b></b-nav-item
         >
       </b-navbar-nav>

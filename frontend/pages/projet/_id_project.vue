@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <CustomNavbar></CustomNavbar>
+  <div v-show="loaded">
     <div v-if="this.project" v-bind="this.project" class="container">
       <div class="column" id="top">
         <h1>
@@ -161,7 +160,6 @@
     <div v-else class="not-found text-center">
       <h3>Le projet recherché n'existe pas.</h3>
     </div>
-    <CustomFooter></CustomFooter>
   </div>
 </template>
 
@@ -386,9 +384,9 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
-  padding-top: 8.4rem;
+  padding-top: 2.4rem;
   padding-bottom: 10rem;
   min-width: 100%;
   padding-left: 0;

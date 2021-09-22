@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
+import django_heroku
 from pathlib import Path
 from datetime import timedelta
 import sentry_sdk
@@ -28,12 +29,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [""]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "nuxt-essai.herokuapp.com"]
 
 
 # Application definition
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -69,7 +71,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, '../frontend/.nuxt/dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -91,9 +93,9 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql', # we use the postgresql adaptator
-        'NAME': os.environ.get('DB_NAME', 'postgres'),
+        'NAME': os.environ.get('DB_NAME', 'participons_dev'),
         'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'japon+72-2'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
@@ -139,12 +141,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "api/staticfiles"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, '../frontend/.nuxt/dist')
+]
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "api/mediafiles"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -167,14 +172,10 @@ SIMPLE_JWT = {
 
 
 # DJANGO CORS HEADERS
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5000',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
-    'http://172.19.0.3:3000',
-    'http://127.0.0.1:8000',
-    'http://*'
 ]
 
 
@@ -191,3 +192,6 @@ sentry_sdk.init(
     # django.contrib.auth) you may enable sending PII data.
     send_default_pii=True
 )
+
+
+django_heroku.settings(locals())

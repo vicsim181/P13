@@ -11,23 +11,24 @@
   "dependencies": {
     "@nuxtjs/auth-next": "5.0.0-1624817847.21691f1",
     "@nuxtjs/axios": "^5.13.6",
-    "@popperjs/core": "^2.9.2",
+    "@popperjs/core": "^2.10.1",
     "bootstrap": "^4.6.0",
     "bootstrap-vue": "^2.21.2",
-    "core-js": "^3.15.2",
-    "nuxt": "^2.15.7",
-    "portal-vue": "^2.1.7"
+    "core-js": "^3.18.0",
+    "nuxt": "^2.15.8",
+    "portal-vue": "^2.1.7",
+    "vue-router": "^3.5.2"
   },
   "devDependencies": {
-    "eslint": "^7.31.0",
+    "eslint": "^7.32.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-promise": "^5.1.0",
-    "eslint-plugin-vue": "^7.14.0",
+    "eslint-plugin-vue": "^7.18.0",
     "prettier": "^1.19.1"
   }
 }
