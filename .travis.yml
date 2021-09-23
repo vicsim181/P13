@@ -26,5 +26,4 @@ services:
   - postgresql
 
 script:
-  - cd app/
   - python manage.py test tests
