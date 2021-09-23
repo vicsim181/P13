@@ -24,6 +24,11 @@ DATABASES = {
 }
 
 
+CORS_ALLOWED_ORIGINS = [
+    os.environ.get('CORS_FRONTEND')
+]
+
+
 sentry_sdk.init(
     dsn="https://1d4c9e58518f4fc18b84065cd6b4fe31@o622128.ingest.sentry.io/5953587",
     integrations=[DjangoIntegration()],
