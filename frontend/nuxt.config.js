@@ -36,8 +36,8 @@ export default {
 
   // Axios module configuration
   axios: {
-    baseURL: 'http://localhost:8000/',
-    browserBaseURL: 'http://localhost:8000/'
+    baseURL: process.env.HEROKU_BACKEND_API_URL,
+    browserBaseURL: process.env.HEROKU_BACKEND_API_URL
   },
 
   // Auth module configuration: https://auth.nuxtjs.org/guide/setup
