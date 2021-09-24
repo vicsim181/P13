@@ -24,7 +24,7 @@ DATABASES = {
 }
 
 
-CORS_ALLOWED_ORIGINS = [
+CORS_ORIGIN_WHITELIST = [
     os.environ.get('CORS_FRONTEND')
 ]
 
