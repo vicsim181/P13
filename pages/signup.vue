@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div v-if="$auth.loggedIn">
+    <div v-show="$auth.loggedIn">
       <h3>Vous êtes déjà connecté avec un compte.</h3>
     </div>
-    <div v-else>
+    <div v-show="!$auth.loggedIn">
       <Signup></Signup>
     </div>
   </div>
