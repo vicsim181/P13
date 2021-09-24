@@ -23,10 +23,10 @@ DATABASES = {
     }
 }
 
-
-CORS_ALLOWED_ORIGINS = [
-    'https://participons-backend.herokuapp.com/'
-]
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = [
+#     'https://participons-backend.herokuapp.com/'
+# ]
 
 
 sentry_sdk.init(
