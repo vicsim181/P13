@@ -74,7 +74,7 @@
 
 <script>
 export default {
-  name: 'Signup',
+  // name: 'Signup',
   data() {
     return {
       form: {
@@ -90,11 +90,11 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       const data = this.form;
-      console.log('THIS FORM  :', data);
+      // console.log('THIS FORM  :', data);
       try {
         const response = await this.$axios.post('users/', data);
         console.log(response);
-        this.$router.push('/');
+        // this.$router.push('/');
       } catch (error) {
         console.log(error.response.data);
         const keys = Object.keys(error.response.data);
@@ -120,10 +120,10 @@ export default {
 </script>
 
 <style>
-body {
+.container {
   min-width: 100%;
-  padding-top: 6rem;
-  padding-bottom: 7rem;
+  /* padding-top: 6rem;
+  padding-bottom: 7rem; */
   color: rgb(0, 14, 116);
 }
 .title {

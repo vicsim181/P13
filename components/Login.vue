@@ -44,9 +44,6 @@
       </b-form>
     </div>
     <br />
-    <div class="row h-100 w-auto justify-content-center text-center">
-      <nuxt-link to="signup/">Pas encore inscrit ? Cliquez ici.</nuxt-link>
-    </div>
   </div>
 </template>
 
@@ -65,7 +62,7 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       const data = this.form;
-      console.log(data);
+      // console.log(data);
       try {
         const response = await this.$auth.loginWith('local', { data: data });
         console.log(response);
