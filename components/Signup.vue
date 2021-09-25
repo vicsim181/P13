@@ -92,7 +92,7 @@ export default {
       const data = this.form;
       // console.log('THIS FORM  :', data);
       try {
-        const response = await this.$axios.post('users/', data);
+        const response = await $axios.post('users/', data);
         console.log(response);
         // this.$router.push('/');
       } catch (error) {

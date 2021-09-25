@@ -36,8 +36,6 @@ export default {
 
   // Axios module configuration
   axios: {
-    proxy: true,
-    progress: true,
     baseURL: process.env.HEROKU_BACKEND_API_URL,
     browserBaseURL: process.env.HEROKU_BACKEND_API_URL
   },
