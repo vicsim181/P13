@@ -7,3 +7,10 @@ export const getters = {
     return state.auth.user;
   }
 };
+
+export const state = () => ({
+  busy: false,
+  loggedIn: false,
+  strategy: "local",
+  user: false
+});
