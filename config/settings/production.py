@@ -28,14 +28,12 @@ CORS_ALLOWED_ORIGINS = [
     'https://participons.herokuapp.com/*'
 ]
 
-# CORS_ALLOW_METHODS = [
-#     "DELETE",
-#     "GET",
-#     "OPTIONS",
-#     "PATCH",
-#     "POST",
-#     "PUT",
-# ]
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "POST",
+    "PUT",
+]
 
 
 sentry_sdk.init(
