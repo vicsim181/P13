@@ -18,7 +18,7 @@ export default {
   css: [],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ["~/plugins/axios"],
+  plugins: [],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -36,6 +36,8 @@ export default {
 
   // Axios module configuration
   axios: {
+    proxy: true,
+    progress: true,
     baseURL: process.env.HEROKU_BACKEND_API_URL,
     browserBaseURL: process.env.HEROKU_BACKEND_API_URL
   },
