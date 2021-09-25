@@ -12,6 +12,14 @@ load_dotenv()
 SECRET_KEY = os.environ.get('DJANGO_KEY')
 DEBUG = False
 ALLOWED_HOSTS = ['https://participons-backend.herokuapp.com/']
+
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'https://*'
+]
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',  # we use the postgresql adaptator
@@ -23,10 +31,6 @@ DATABASES = {
     }
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    'https://*'
-]
 
 
 sentry_sdk.init(
