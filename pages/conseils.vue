@@ -53,7 +53,7 @@ export default {
   }
   .container {
     max-width: 50%;
-    padding-top: 5rem;
+    padding-top: 10rem;
     padding-bottom: 6rem;
     color: rgb(0, 14, 116);
   }
