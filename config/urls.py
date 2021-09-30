@@ -33,7 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('token_obtain', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token_refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
     path('login', authentication.views.login, name="login"),
     path('me', authentication.views.UserDataView.as_view(), name='current_user'),
     path('like', project.views.LikeViews.as_view(), name='like-view'),
