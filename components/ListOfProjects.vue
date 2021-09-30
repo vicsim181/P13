@@ -145,6 +145,7 @@ export default {
       };
       try {
         const res = await this.$axios.get('project', { params: data });
+        console.log('PROJECTS ', res.data);
         return res.data;
       } catch (error) {
         return [];
@@ -278,7 +279,7 @@ export default {
       }
     } else if (this.participated === 'false') {
       this.projects = await this.getProjects();
-      // console.log('PROJECTS ', this.projects);
+      console.log('PROJECTS ', this.projects);
     } else {
       if (this.project_type_id === this.petition_type_id) {
         this.projects_liked = await this.getProjectsLiked();
