@@ -6,7 +6,7 @@
     <div
       id="consultationForm"
       class="row h-100 w-auto justify-content-center text-center"
-      v-show="$auth.loggedIn && loggedInUser.is_staff"
+      v-show="isAuthenticated && loggedInUser.is_staff"
     >
       <ConsultationForm button="Créer une consultation"></ConsultationForm>
     </div>

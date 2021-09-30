@@ -4,7 +4,6 @@ $axios.onRequest((config) => {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
     'Authorization': store.state.auth.tokenlocal, // refers to nuxt.config.js->auth.token
-    'Access-Control-Allow-Origin': '*',
     }
 })
 
