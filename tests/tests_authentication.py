@@ -1,4 +1,4 @@
-from config.settings.base import DATABASES
+from config.settings import DATABASES
 import json
 
 from urllib3 import PoolManager
