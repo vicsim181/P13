@@ -1,6 +1,6 @@
 language: python
 python:
-  - '3.9'
+  - "3.9"
 
 addons:
   firefox: latest
@@ -17,10 +17,9 @@ before_script:
   - sudo mv geckodriver /usr/local/bin/
   - pip install --upgrade sentry-sdk
 
-
 env:
-  global: 
-    - DJANGO_SETTINGS_MODULE="config.settings.travis"
+  global:
+    - DJANGO_SETTINGS_MODULE="config.travis"
 
 services:
   - postgresql
