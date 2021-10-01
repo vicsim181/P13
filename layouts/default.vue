@@ -2,9 +2,7 @@
   <div>
     <CustomNavbar></CustomNavbar>
     <b-container>
-      <b-container>
         <Nuxt></Nuxt>
-      </b-container>
     </b-container>
     <CustomFooter></CustomFooter>
   </div>
