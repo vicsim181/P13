@@ -19,6 +19,7 @@ python-dotenv = "*"
 gunicorn = "*"
 whitenoise = "*"
 django-heroku = "*"
+django-cors-middleware = "*"
 
 [dev-packages]
 
