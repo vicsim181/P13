@@ -70,7 +70,7 @@ MIDDLEWARE = [
 # DJANGO CORS HEADERS
 # CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    os.environ.get('FRONT_URL'),
+    'https://participons.herokuapp.com',
 ]
 
 
