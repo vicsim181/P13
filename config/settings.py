@@ -51,11 +51,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt.token_blacklist',
-    # 'corsheaders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
-    'config.cors.CorsMiddleware',
+    # 'config.cors.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -68,6 +69,10 @@ MIDDLEWARE = [
 
 # DJANGO CORS HEADERS
 # CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    os.environ.get('FRONT_URL'),
+]
+
 
 ROOT_URLCONF = 'config.urls'
 

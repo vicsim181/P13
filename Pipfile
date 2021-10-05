@@ -9,7 +9,6 @@ djangorestframework = "*"
 django-filter = "*"
 djangorestframework-simplejwt = "*"
 coverage = "*"
-django-cors-headers = "*"
 requests = "*"
 selenium = "*"
 sentry-sdk = "*"
@@ -19,6 +18,7 @@ python-dotenv = "*"
 gunicorn = "*"
 whitenoise = "*"
 django-heroku = "*"
+django-cors-headers = "*"
 
 [dev-packages]
 
