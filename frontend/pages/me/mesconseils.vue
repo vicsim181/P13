@@ -141,7 +141,7 @@ export default {
   .container {
     max-width: 50%;
     padding-top: 10rem;
-    padding-bottom: 3rem;
+    padding-bottom: 9rem;
     color: rgb(0, 14, 116);
   }
   #welcome {
