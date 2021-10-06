@@ -198,16 +198,29 @@ export default {
     // Function sending a request to the API to get the answers of the user to the different forms
     async getUserAnswers() {
       // const data = { owner: this.loggedInUser.id };
-      const response = await this.$axios.get("user_answer/");
-      return response.data;
+      console.log("GET USER ANSWERS LAUNCHED");
+      try {
+        const response = await this.$axios.get("user_answer/");
+        return response.data;
+      } catch (error) {
+        return [];
+      }
     },
     // Function sending a request to the API to get the questions to which the user answered
     async getQuestionsAnswered(response, element) {
-      return await this.$axios.get(`question/${response[element].question}`);
+      try {
+        return await this.$axios.get(`question/${response[element].question}`);
+      } catch (error) {
+        return [];
+      }
     },
     // Function sending a request to the API to get the project to which the user answered
     async getProject(id_project) {
-      return await this.$axios.get(`project/${id_project}`);
+      try {
+        return await this.$axios.get(`project/${id_project}`);
+      } catch (error) {
+        return [];
+      }
     },
     // Function sorting out the comments obtained through a request to the API
     async sortComments(comments) {
@@ -285,10 +298,13 @@ export default {
         await this.sortComments(comments);
       } else {
         const response = await this.getUserAnswers();
+        console.log("AWAIT FOR GETUSERANSWERS FINISHED");
         await this.sortUserAnswers(response);
+        console.log("AWAIT FOR SORTUSERANSWERS FINISHED");
       }
     }
-    // console.log('PROJECTS  ', this.projects);
+    console.log("PROJECTS  ", this.projects);
+    console.log("USERANSWERS  ", this.projects_participated);
     const delay = ms => new Promise(res => setTimeout(res, ms));
     this.$emit("loaded");
     await delay(2000);
