@@ -44,9 +44,6 @@
       </b-form>
     </div>
     <br />
-    <div class="row h-100 w-auto justify-content-center text-center">
-      <nuxt-link to="signup/">Pas encore inscrit ? Cliquez ici.</nuxt-link>
-    </div>
   </div>
 </template>
 
@@ -55,8 +52,8 @@ export default {
   data() {
     return {
       form: {
-        email: '',
-        password: ''
+        email: "",
+        password: ""
       },
       show: true
     };
@@ -67,9 +64,9 @@ export default {
       const data = this.form;
       console.log(data);
       try {
-        const response = await this.$auth.loginWith('local', { data: data });
+        const response = await this.$auth.loginWith("local", { data: data });
         console.log(response);
-        this.$auth.$storage.setUniversal('email', response.data.email);
+        this.$auth.$storage.setUniversal("email", response.data.email);
         await this.$auth.setUserToken(
           response.data.access_token,
           response.data.refresh_token
@@ -81,8 +78,8 @@ export default {
     onReset(event) {
       event.preventDefault();
       // Reset our form values
-      this.form.email = '';
-      this.form.password = '';
+      this.form.email = "";
+      this.form.password = "";
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {

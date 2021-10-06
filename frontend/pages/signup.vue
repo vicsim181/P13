@@ -1,29 +1,27 @@
 <template>
-  <div v-if="isAuthenticated">
-    <CustomNavbar></CustomNavbar>
-    <h3>Vous êtes déjà connecté avec un compte.</h3>
-    <CustomFooter></CustomFooter>
-  </div>
-  <div v-else>
-    <CustomNavbar></CustomNavbar>
-    <Signup></Signup>
-    <CustomFooter></CustomFooter>
+  <div>
+    <Signup class="signup"></Signup>
+    <div class="row h-100 w-auto justify-content-center text-center">
+      <nuxt-link to="signup/">Pas encore inscrit ? Cliquez ici.</nuxt-link>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 export default {
-  computed: {
-    ...mapGetters(['isAuthenticated'])
-  },
-  auth: false
+  auth: false,
+  middleware: "guest"
 };
 </script>
 
 <style>
-h3 {
-  margin-top: 8rem;
-  text-align: center;
+.signup {
+  padding-top: 13rem;
+  padding-bottom: 7rem;
+}
+@media (min-width: 1200px) and (max-width: 1565px) {
+  .signup {
+    padding-top: 18rem;
+  }
 }
 </style>

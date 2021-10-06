@@ -1,13 +1,11 @@
 <template>
   <div>
-    <CustomNavbar></CustomNavbar>
     <Login class="login"></Login>
-    <CustomFooter></CustomFooter>
   </div>
 </template>
 
 <script>
-export default { middleware: 'guest' };
+export default { middleware: "guest" };
 </script>
 
 <style>

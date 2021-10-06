@@ -1,48 +1,44 @@
 <template>
-  <div>
-    <CustomNavbar></CustomNavbar>
-    <div class="container">
-      <div class="row h-100 w-auto justify-content-center text-center">
-        <h1>Page des consultations</h1>
-      </div>
-      <div
-        id="consultationForm"
-        class="row h-100 w-auto justify-content-center text-center"
-        v-show="isAuthenticated && loggedInUser.is_staff"
-      >
-        <ConsultationForm button="Créer une consultation"></ConsultationForm>
-      </div>
-      <div class="row justify-content-center">
-        <ListOfProjects
-          class="text-center"
-          project_type="Consultation"
-          my_projects="false"
-          published="true"
-          participated="false"
-          img="../static/consultation.jpg"
-        ></ListOfProjects>
-      </div>
+  <div class="container">
+    <div class="row h-100 w-auto justify-content-center text-center">
+      <h1>Page des consultations</h1>
     </div>
-    <CustomFooter></CustomFooter>
+    <div
+      id="consultationForm"
+      class="row h-100 w-auto justify-content-center text-center"
+      v-show="isAuthenticated && loggedInUser.is_staff"
+    >
+      <ConsultationForm button="Créer une consultation"></ConsultationForm>
+    </div>
+    <div class="row justify-content-center">
+      <ListOfProjects
+        class="text-center"
+        project_type="Consultation"
+        my_projects="false"
+        published="true"
+        participated="false"
+        img="../static/consultation.jpg"
+      ></ListOfProjects>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 export default {
   auth: false,
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser'])
+    ...mapGetters(["isAuthenticated", "loggedInUser"])
   },
-  middleware: 'auth'
+  middleware: "auth"
 };
 </script>
 
 <style scoped>
 .container {
   min-width: 100%;
-  padding-top: 12rem;
-  padding-bottom: 10rem;
+  padding-top: 13rem;
+  padding-bottom: 6rem;
   color: rgb(0, 14, 116);
 }
 .container h1 {
@@ -58,8 +54,8 @@ export default {
   }
   .container {
     max-width: 50%;
-    padding-top: 9rem;
-    padding-bottom: 13rem;
+    padding-top: 10rem;
+    padding-bottom: 6rem;
     color: rgb(0, 14, 116);
   }
 }
