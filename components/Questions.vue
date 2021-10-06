@@ -115,8 +115,8 @@ export default {
     response = await this.$axios.get('question_type', { params: data });
     type_id = response.data['id_question_type'];
     this.free_type_id = type_id;
-    console.log('QUESTIONS RECEIVED ', this.questions);
-    console.log('NOMBRE DE QUESTIONS  ', Object.keys(this.questions).length);
+    // console.log('QUESTIONS RECEIVED ', this.questions);
+    // console.log('NOMBRE DE QUESTIONS  ', Object.keys(this.questions).length);
     // this.loaded = true;
   },
 
@@ -146,9 +146,9 @@ export default {
         };
         try {
           const response = await this.$axios.post('user_answer/', data);
-          console.log(response.data);
+          // console.log(response.data);
         } catch (error) {
-          console.log(error.response);
+          // console.log(error.response);
           const keys = Object.keys(error.response.data);
           const errorMessage = error.response.data[keys[0]];
           window.alert(errorMessage);
@@ -164,7 +164,7 @@ export default {
         return;
       } else {
         const response = await this.postUserAnswer();
-        console.log('response ', response);
+        // console.log('response ', response);
         this.$nextTick(() => {
           if (response) {
             this.$bvModal.hide('modal-questions');

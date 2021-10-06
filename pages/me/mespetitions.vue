@@ -90,7 +90,7 @@ export default {
       const delay = ms => new Promise(res => setTimeout(res, ms));
       await delay(2000);
       this.showspinner = false;
-      console.log("SPINNER ", this.showspinner);
+      // console.log("SPINNER ", this.showspinner);
     }
   },
   middleware: "auth"

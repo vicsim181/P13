@@ -62,10 +62,10 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       const data = this.form;
-      console.log(data);
+      // console.log(data);
       try {
         const response = await this.$auth.loginWith("local", { data: data });
-        console.log(response);
+        // console.log(response);
         this.$auth.$storage.setUniversal("email", response.data.email);
         await this.$auth.setUserToken(
           response.data.access_token,

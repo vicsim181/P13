@@ -215,7 +215,7 @@ export default {
     };
   },
   async fetch() {
-    console.log("LOADED ? ", this.loaded);
+    // console.log("LOADED ? ", this.loaded);
     await this.fetchProjectData();
     let data = { name: "Conseil de quartier" };
     let response = await this.$axios.get("project_type", { params: data });
@@ -237,7 +237,7 @@ export default {
     }
     this.loaded = true;
     // console.log('QUESTIONS FETCHED  ', this.questions);
-    console.log("LOADED ? ", this.loaded);
+    // console.log("LOADED ? ", this.loaded);
     // this.$nuxt.refresh();
   },
   methods: {
@@ -246,9 +246,9 @@ export default {
       const data = { project_id: this.id_project, action: "add" };
       try {
         const response = await this.$axios.put("like", data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -260,9 +260,9 @@ export default {
       const data = { project_id: this.id_project, action: "delete" };
       try {
         const response = await this.$axios.put("like", data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -280,9 +280,9 @@ export default {
       const data = { project: this.id_project, text: this.user_comment_input };
       try {
         const response = await this.$axios.post("comment/", data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.data);
+        // console.log(error.data);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys];
         window.alert(errorMessage);
@@ -349,7 +349,6 @@ export default {
             this.questions_answered.push(response.data[0]);
           }
         } catch (error) {
-          console.log();
         }
       }
       // console.log('QUESTIONS ANSWERED ', this.questions_answered);

@@ -314,11 +314,11 @@ export default {
       };
       try {
         const response = await this.$axios.post('project/', data);
-        console.log(response.data);
+        // console.log(response.data);
         this.id_project = response.data['id_project'];
         this.id_owner = response.data['owner'];
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -346,7 +346,7 @@ export default {
         }
         this.question.choices = [];
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const errorMessage = error.response.data;
         window.alert(errorMessage);
         this.question.choices = [];
@@ -403,7 +403,7 @@ export default {
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit_2() {
       if (!this.checkForm2Validity()) {
-        console.log('PROBLEME FORM VALIDITY');
+        // console.log('PROBLEME FORM VALIDITY');
         return;
       }
       this.question.type = await this.getQuestionType();

@@ -399,9 +399,9 @@ export default {
           `project/${this.consultation.id_project}/`,
           data
         );
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -422,9 +422,9 @@ export default {
           `project/${this.consultation.id_project}/`,
           data
         );
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -452,7 +452,7 @@ export default {
       };
       try {
         const response_1 = await this.$axios.post('question/', question_data);
-        console.log(response_1.data);
+        // console.log(response_1.data);
         const question_id = response_1.data['id_question'];
         if (this.question_type_name === 'QCM') {
           for (const choice in this.question.choices) {
@@ -465,7 +465,7 @@ export default {
         }
         this.question.choices = [];
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         // const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data;
         window.alert(errorMessage);

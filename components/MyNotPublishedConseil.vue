@@ -372,7 +372,7 @@ export default {
           this.question.choices.pop();
         }
       }
-      console.log('NUMBER OF CHOCIES ', this.question.number_of_choices);
+      // console.log('NUMBER OF CHOCIES ', this.question.number_of_choices);
     },
 
     // We send a GET request to the API to get the id of the project type Conseil
@@ -385,7 +385,7 @@ export default {
 
     // We send a POST request to the API with the data about the Conseil
     async putConseilData() {
-      console.log('END DATE ', this.end_date);
+      // console.log('END DATE ', this.end_date);
       const data = {
         name: this.conseil.name,
         place: this.conseil.place,
@@ -397,9 +397,9 @@ export default {
           `project/${this.conseil.id_project}/`,
           data
         );
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -420,9 +420,9 @@ export default {
           `project/${this.conseil.id_project}/`,
           data
         );
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -446,7 +446,7 @@ export default {
       };
       try {
         const response_1 = await this.$axios.post('question/', question_data);
-        console.log(response_1.data);
+        // console.log(response_1.data);
         const question_id = response_1.data['id_question'];
         if (this.question_type_name === 'QCM') {
           for (const choice in this.question.choices) {
@@ -459,7 +459,7 @@ export default {
         }
         this.question.choices = [];
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         // const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data;
         window.alert(errorMessage);

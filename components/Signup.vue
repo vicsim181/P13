@@ -88,13 +88,13 @@ export default {
     async onSubmit(event) {
       event.preventDefault();
       const data = this.form;
-      console.log("THIS FORM  :", data);
+      // console.log("THIS FORM  :", data);
       try {
         const response = await this.$axios.post("users/", data);
-        console.log(response);
+        // console.log(response);
         this.$router.push("/");
       } catch (error) {
-        console.log(error.response.data);
+        // console.log(error.response.data);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);

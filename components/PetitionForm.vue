@@ -144,11 +144,11 @@ export default {
       };
       try {
         const response = await this.$axios.post('project/', data);
-        console.log(response.data);
+        // console.log(response.data);
         this.id_project = response.data['id_project'];
         this.id_owner = response.data['owner'];
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);

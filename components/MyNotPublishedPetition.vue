@@ -179,9 +179,9 @@ export default {
           `project/${this.petition.id_project}/`,
           data
         );
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -190,7 +190,7 @@ export default {
 
     // Set the end_date of the project when published
     async setEndDate() {
-      console.log('END DATE ', this.end_date);
+      // console.log('END DATE ', this.end_date);
       const data = {
         name: this.petition.name,
         place: this.petition.place,
@@ -203,9 +203,9 @@ export default {
           `project/${this.petition.id_project}/`,
           data
         );
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
-        console.log(error.response);
+        // console.log(error.response);
         const keys = Object.keys(error.response.data);
         const errorMessage = error.response.data[keys[0]];
         window.alert(errorMessage);
@@ -246,7 +246,7 @@ export default {
 
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit() {
-      console.log('PUBLICATION EN COURS ');
+      // console.log('PUBLICATION EN COURS ');
       //   await this.putPetitionData();
       await this.setEndDate();
       const publish_response = await this.publishPetition();
