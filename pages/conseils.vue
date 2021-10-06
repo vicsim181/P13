@@ -23,13 +23,13 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 export default {
   auth: false,
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser'])
+    ...mapGetters(["isAuthenticated", "loggedInUser"])
   },
-  middleware: 'auth'
+  middleware: "auth"
 };
 </script>
 
@@ -37,7 +37,7 @@ export default {
 .container {
   min-width: 100%;
   padding-top: 13rem;
-  padding-bottom: 6rem;
+  padding-bottom: 10rem;
   color: rgb(0, 14, 116);
 }
 .container h1 {
@@ -54,7 +54,6 @@ export default {
   .container {
     max-width: 50%;
     padding-top: 10rem;
-    padding-bottom: 6rem;
     color: rgb(0, 14, 116);
   }
 }

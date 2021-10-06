@@ -164,10 +164,10 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 export default {
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser']),
+    ...mapGetters(["isAuthenticated", "loggedInUser"]),
     userLikesProject() {
       return this.project.liked_by.some(
         liker => liker.id === this.loggedInUser.id
@@ -189,7 +189,7 @@ export default {
     commentState() {
       if (this.user_comment_input.length === 0) {
         return false;
-      } else if (this.user_comment_input === ' ') {
+      } else if (this.user_comment_input === " ") {
         return false;
       } else {
         return true;
@@ -202,32 +202,32 @@ export default {
       project: null,
       questions: {},
       questions_not_published: {},
-      conseil_type_id: '',
-      consultation_type_id: '',
-      petition_type_id: '',
+      conseil_type_id: "",
+      consultation_type_id: "",
+      petition_type_id: "",
       questions_answered: [],
       loaded: false,
       comment_saved: null,
-      user_comment_input: '',
+      user_comment_input: "",
       comments_published: [],
       nombre: null,
       mcqanswers: {}
     };
   },
   async fetch() {
-    console.log('LOADED ? ', this.loaded);
+    console.log("LOADED ? ", this.loaded);
     await this.fetchProjectData();
-    let data = { name: 'Conseil de quartier' };
-    let response = await this.$axios.get('project_type', { params: data });
-    let type_id = response.data['id_project_type'];
+    let data = { name: "Conseil de quartier" };
+    let response = await this.$axios.get("project_type", { params: data });
+    let type_id = response.data["id_project_type"];
     this.conseil_type_id = type_id;
-    data = { name: 'Pétition' };
-    response = await this.$axios.get('project_type', { params: data });
-    type_id = response.data['id_project_type'];
+    data = { name: "Pétition" };
+    response = await this.$axios.get("project_type", { params: data });
+    type_id = response.data["id_project_type"];
     this.petition_type_id = type_id;
-    data = { name: 'Consultation' };
-    response = await this.$axios.get('project_type', { params: data });
-    type_id = response.data['id_project_type'];
+    data = { name: "Consultation" };
+    response = await this.$axios.get("project_type", { params: data });
+    type_id = response.data["id_project_type"];
     this.consultation_type_id = type_id;
     await this.fetchQuestions();
     if (this.project.ready_for_publication) {
@@ -237,15 +237,15 @@ export default {
     }
     this.loaded = true;
     // console.log('QUESTIONS FETCHED  ', this.questions);
-    console.log('LOADED ? ', this.loaded);
+    console.log("LOADED ? ", this.loaded);
     // this.$nuxt.refresh();
   },
   methods: {
     // Function used to add a like from the user to this petition
     async likePetition() {
-      const data = { project_id: this.id_project, action: 'add' };
+      const data = { project_id: this.id_project, action: "add" };
       try {
-        const response = await this.$axios.put('like', data);
+        const response = await this.$axios.put("like", data);
         console.log(response.data);
       } catch (error) {
         console.log(error.response);
@@ -257,9 +257,9 @@ export default {
     },
     // Function used to delete a like from the user to this petition
     async cancelLikePetition() {
-      const data = { project_id: this.id_project, action: 'delete' };
+      const data = { project_id: this.id_project, action: "delete" };
       try {
-        const response = await this.$axios.put('like', data);
+        const response = await this.$axios.put("like", data);
         console.log(response.data);
       } catch (error) {
         console.log(error.response);
@@ -279,7 +279,7 @@ export default {
     async postComment() {
       const data = { project: this.id_project, text: this.user_comment_input };
       try {
-        const response = await this.$axios.post('comment/', data);
+        const response = await this.$axios.post("comment/", data);
         console.log(response.data);
       } catch (error) {
         console.log(error.data);
@@ -313,10 +313,10 @@ export default {
           let response = await this.$axios.get(this.project.question[question]);
           let answers = [];
           let mcqanswers_wording = [];
-          if (response.data['mcqanswer'].length > 0) {
-            for (const mcqanswer in response.data['mcqanswer']) {
+          if (response.data["mcqanswer"].length > 0) {
+            for (const mcqanswer in response.data["mcqanswer"]) {
               const response_mcqanswer = await this.$axios.get(
-                response.data['mcqanswer'][mcqanswer]
+                response.data["mcqanswer"][mcqanswer]
               );
               answers.push(response_mcqanswer.data);
               mcqanswers_wording.push(response_mcqanswer.data.wording);
@@ -341,11 +341,11 @@ export default {
           question: this.questions[question][0].id_question
         };
         try {
-          const response = await this.$axios.get('user_answer', {
+          const response = await this.$axios.get("user_answer", {
             params: data
           });
           // console.log('RESPONSE ', response.data);
-          if (typeof response.data[0] !== 'undefined') {
+          if (typeof response.data[0] !== "undefined") {
             this.questions_answered.push(response.data[0]);
           }
         } catch (error) {
@@ -357,17 +357,17 @@ export default {
     // Function fetching the comment saved by the user on this project, if there is one
     async fetchCommentSaved() {
       const data = { owner: this.loggedInUser.id, project: this.id_project };
-      const response = await this.$axios.get('comment', { params: data });
-      if (typeof response.data[0] !== 'undefined') {
-        this.comment_saved = response.data[0]['id_comment'];
+      const response = await this.$axios.get("comment", { params: data });
+      if (typeof response.data[0] !== "undefined") {
+        this.comment_saved = response.data[0]["id_comment"];
       }
     },
     // Function fetching the comments published if there are
     async fetchCommentsPublished() {
       this.comments_published = [];
       const data = { project: this.id_project };
-      const response = await this.$axios.get('comment', { params: data });
-      if (typeof response.data[0] !== 'undefined') {
+      const response = await this.$axios.get("comment", { params: data });
+      if (typeof response.data[0] !== "undefined") {
         for (const element in response.data) {
           this.comments_published.push(response.data[element]);
         }
@@ -386,8 +386,8 @@ export default {
 
 <style scoped>
 .container {
-  padding-top: 2.4rem;
-  padding-bottom: 10rem;
+  padding-top: 8rem;
+  padding-bottom: 6rem;
   min-width: 100%;
   padding-left: 0;
   padding-right: 0;
@@ -457,7 +457,7 @@ export default {
 }
 @media (min-width: 500px) and (max-width: 1200px) {
   .container {
-    padding-top: 6rem;
+    padding-top: 8rem;
   }
   #top {
     padding-top: 3.5rem;
@@ -497,7 +497,7 @@ export default {
 }
 @media (max-width: 499px) {
   .container {
-    padding-top: 5rem;
+    padding-top: 8rem;
   }
   #top {
     padding-top: 4rem;

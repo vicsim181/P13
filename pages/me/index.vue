@@ -57,27 +57,27 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 export default {
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser'])
+    ...mapGetters(["isAuthenticated", "loggedInUser"])
   },
   data() {
     return {
-      user_adress: ''
+      user_adress: ""
     };
   },
   async fetch() {
     if (this.loggedInUser.address[0]) {
       const response = await this.$axios.get(this.loggedInUser.address[0]);
       const address =
-        response.data['num'] +
-        ', ' +
-        response.data['street'] +
-        ' - ' +
-        response.data['postal_code'] +
-        ' ' +
-        response.data['city'];
+        response.data["num"] +
+        ", " +
+        response.data["street"] +
+        " - " +
+        response.data["postal_code"] +
+        " " +
+        response.data["city"];
       this.user_adress = address;
     }
   }
@@ -87,8 +87,8 @@ export default {
 <style scoped>
 .container {
   min-width: 100%;
-  padding-top: 6rem;
-  padding-bottom: 0rem;
+  padding-top: 13rem;
+  padding-bottom: 6rem;
   color: rgb(0, 14, 116);
 }
 .button {
@@ -105,14 +105,15 @@ export default {
     margin-bottom: 3rem;
   }
   .container {
-    padding-top: 4rem;
-    padding-bottom: 3rem;
+    padding-top: 10rem;
+    padding-bottom: 7rem;
   }
 }
 @media (min-width: 1200px) and (max-width: 1565px) {
   .container {
-    padding-top: 4rem;
-    padding-bottom: 0rem;
+    padding-top: 10rem;
+    padding-bottom: 7rem;
   }
 }
 </style>
+

@@ -5,7 +5,8 @@
     </div>
     <div class="row h-100 w-auto justify-content-center text-center">
       <h3>
-        Vous souhaitez participer à une consultation lancée par la municipalité ?
+        Vous souhaitez participer à une consultation lancée par la municipalité
+        ?
       </h3>
     </div>
     <div class="row h-100 w-auto justify-content-center text-center">
@@ -20,9 +21,6 @@
         concitoyens ?
       </h3>
     </div>
-    <div class="row h-100 w-auto justify-content-center text-center">
-      <nuxt-link to="signup/">Pas encore inscrit ? Cliquez ici.</nuxt-link>
-    </div>
   </div>
 </template>
 
@@ -32,11 +30,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   min-width: 100%;
-  padding-top: 5rem;
-  padding-bottom: 0rem;
+  padding-top: 13rem;
+  padding-bottom: 6rem;
   color: rgb(0, 14, 116);
 }
 .container h1 {
@@ -58,12 +56,14 @@ export default {
     font-size: 1.5rem;
   }
   .container {
-    padding-top: 2rem;
+    padding-top: 10rem;
+    padding-bottom: 6rem;
   }
 }
 @media (min-width: 1200px) and (max-width: 1565px) {
   .container {
-    padding-top: 3rem;
+    padding-top: 10rem;
+    padding-bottom: 7rem;
   }
 }
 </style>

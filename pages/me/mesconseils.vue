@@ -77,13 +77,13 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import MyProjectsParticipated from '../../components/MyProjectsParticipated.vue';
-import MyProjectsPublished from '../../components/MyProjectsPublished.vue';
-import MyProjectsNotPublished from '../../components/MyProjectsNotPublished.vue';
+import { mapGetters } from "vuex";
+import MyProjectsParticipated from "../../components/MyProjectsParticipated.vue";
+import MyProjectsPublished from "../../components/MyProjectsPublished.vue";
+import MyProjectsNotPublished from "../../components/MyProjectsNotPublished.vue";
 export default {
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser'])
+    ...mapGetters(["isAuthenticated", "loggedInUser"])
   },
   components: {
     MyProjectsParticipated,
@@ -94,7 +94,7 @@ export default {
     return {
       welcome: true,
       showspinner: false,
-      activeTab: '',
+      activeTab: "",
       participatedState: false,
       publishedState: false,
       notPublishedState: false
@@ -107,14 +107,14 @@ export default {
       this.showspinner = false;
     }
   },
-  middleware: 'auth'
+  middleware: "auth"
 };
 </script>
 
 <style scoped>
 .container {
   min-width: 100%;
-  padding-top: 6rem;
+  padding-top: 13rem;
   padding-bottom: 6rem;
   color: rgb(0, 14, 116);
 }
@@ -140,9 +140,15 @@ export default {
   }
   .container {
     max-width: 50%;
-    padding-top: 5rem;
-    padding-bottom: 6rem;
+    padding-top: 10rem;
+    padding-bottom: 3rem;
     color: rgb(0, 14, 116);
+  }
+  #welcome {
+    padding-top: 3rem;
+  }
+  #spinner {
+    margin-top: 3rem;
   }
 }
 </style>
