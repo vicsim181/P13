@@ -17,7 +17,7 @@
     </div>
     <div class="row h-100 w-auto justify-content-center text-justify">
       <ul>
-        <li>Django REACT</li>
+        <li>Django REST</li>
         <li>NuxtJS</li>
         <li>Python, JS, HTML5/CSS3</li>
       </ul>
@@ -53,11 +53,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   min-width: 100%;
-  padding-top: 3rem;
-  padding-bottom: 0rem;
+  padding-top: 13rem;
+  padding-bottom: 6rem;
   color: rgb(0, 14, 116);
 }
 .container h1 {
@@ -82,8 +82,8 @@ export default {
     padding-right: 3rem;
   }
   .container {
-    padding-top: 2rem;
-    padding-bottom: 0rem;
+    padding-top: 10rem;
+    padding-bottom: 8rem;
   }
   .container p {
     padding-top: 1rem;
@@ -94,8 +94,8 @@ export default {
 @media (min-width: 1200px) and (max-width: 1565px) {
   .container {
     min-width: 100%;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding-top: 10rem;
+    padding-bottom: 7rem;
     color: rgb(0, 14, 116);
   }
   .container h1 {

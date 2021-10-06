@@ -386,8 +386,8 @@ export default {
 
 <style scoped>
 .container {
-  padding-top: 2.4rem;
-  padding-bottom: 10rem;
+  padding-top: 8rem;
+  padding-bottom: 6rem;
   min-width: 100%;
   padding-left: 0;
   padding-right: 0;
@@ -457,7 +457,7 @@ export default {
 }
 @media (min-width: 500px) and (max-width: 1200px) {
   .container {
-    padding-top: 6rem;
+    padding-top: 8rem;
   }
   #top {
     padding-top: 3.5rem;
@@ -497,7 +497,7 @@ export default {
 }
 @media (max-width: 499px) {
   .container {
-    padding-top: 5rem;
+    padding-top: 8rem;
   }
   #top {
     padding-top: 4rem;

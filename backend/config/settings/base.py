@@ -85,18 +85,18 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': 'mydatabase',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'mydatabase',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'participons_dev',
+        'USER': 'postgres',
+        'PASSWORD': 'japon+72-2',
+        # 'HOST': 'db',
+        'PORT': '5432',
     }
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'participons_dev',
-#         'USER': 'postgres',
-#         'PASSWORD': 'japon+72-2',
-#         # 'HOST': 'db',
-#         'PORT': '5432',
-#     }
 }
 
 
@@ -162,7 +162,9 @@ SIMPLE_JWT = {
 
 
 # DJANGO CORS HEADERS
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
 
 
 sentry_sdk.init(

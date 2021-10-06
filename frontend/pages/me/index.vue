@@ -87,8 +87,8 @@ export default {
 <style scoped>
 .container {
   min-width: 100%;
-  padding-top: 6rem;
-  padding-bottom: 0rem;
+  padding-top: 13rem;
+  padding-bottom: 6rem;
   color: rgb(0, 14, 116);
 }
 .button {
@@ -105,14 +105,14 @@ export default {
     margin-bottom: 3rem;
   }
   .container {
-    padding-top: 4rem;
-    padding-bottom: 3rem;
+    padding-top: 10rem;
+    padding-bottom: 7rem;
   }
 }
 @media (min-width: 1200px) and (max-width: 1565px) {
   .container {
-    padding-top: 4rem;
-    padding-bottom: 0rem;
+    padding-top: 10rem;
+    padding-bottom: 7rem;
   }
 }
 </style>

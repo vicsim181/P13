@@ -1,9 +1,6 @@
 <template>
   <div>
     <Signup class="signup"></Signup>
-    <div class="row h-100 w-auto justify-content-center text-center">
-      <nuxt-link to="signup/">Pas encore inscrit ? Cliquez ici.</nuxt-link>
-    </div>
   </div>
 </template>
 
@@ -14,14 +11,21 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .signup {
   padding-top: 13rem;
-  padding-bottom: 7rem;
+  padding-bottom: 6rem;
 }
 @media (min-width: 1200px) and (max-width: 1565px) {
   .signup {
-    padding-top: 18rem;
+    padding-top: 10rem;
+    padding-bottom: 7rem;
+  }
+}
+@media (max-width: 1200px) {
+  .signup {
+    padding-top: 10rem;
+    padding-bottom: 7rem;
   }
 }
 </style>

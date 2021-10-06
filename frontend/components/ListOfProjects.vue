@@ -106,20 +106,20 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 export default {
-  props: ['project_type', 'my_projects', 'published', 'participated'],
+  props: ["project_type", "my_projects", "published", "participated"],
   computed: {
-    ...mapGetters(['isAuthenticated', 'loggedInUser'])
+    ...mapGetters(["isAuthenticated", "loggedInUser"])
   },
   data() {
     return {
       image: null,
       loaded: false,
       project_type_id: null,
-      petition_type_id: '',
-      conseil_type_id: '',
-      consultation_type_id: '',
+      petition_type_id: "",
+      conseil_type_id: "",
+      consultation_type_id: "",
       projects: [],
       projects_participated: [],
       projects_liked: [],
@@ -129,8 +129,8 @@ export default {
   methods: {
     async getProjectType() {
       const data = { name: this.project_type };
-      const response = await this.$axios.get('project_type', { params: data });
-      const type_id = response.data['id_project_type'];
+      const response = await this.$axios.get("project_type", { params: data });
+      const type_id = response.data["id_project_type"];
       return type_id;
     },
     onlyUnique(value, index, self) {
@@ -144,7 +144,7 @@ export default {
         owner_id: this.loggedInUser.id
       };
       try {
-        const res = await this.$axios.get('project', { params: data });
+        const res = await this.$axios.get("project", { params: data });
         return res.data;
       } catch (error) {
         return [];
@@ -157,7 +157,7 @@ export default {
         owner_id: this.loggedInUser.id
       };
       try {
-        const res = await this.$axios.get('not_published', {
+        const res = await this.$axios.get("not_published", {
           params: data
         });
         return res.data;
@@ -171,7 +171,7 @@ export default {
         project_type: this.project_type_id
       };
       try {
-        const res = await this.$axios.get('project', { params: data });
+        const res = await this.$axios.get("project", { params: data });
         return res.data;
       } catch (error) {
         return [];
@@ -183,7 +183,7 @@ export default {
         liked_by: this.loggedInUser.id
       };
       try {
-        const res = await this.$axios.get('project', { params: data });
+        const res = await this.$axios.get("project", { params: data });
         return res.data;
       } catch (error) {
         return [];
@@ -192,13 +192,13 @@ export default {
     // Function sending a request to the API to get the projects commented by the user
     async getProjectsCommented() {
       const data = { owner: this.loggedInUser.id };
-      const response = await this.$axios.get('comment/', { params: data });
+      const response = await this.$axios.get("comment/", { params: data });
       return response.data;
     },
     // Function sending a request to the API to get the answers of the user to the different forms
     async getUserAnswers() {
       // const data = { owner: this.loggedInUser.id };
-      const response = await this.$axios.get('user_answer/');
+      const response = await this.$axios.get("user_answer/");
       return response.data;
     },
     // Function sending a request to the API to get the questions to which the user answered
@@ -243,40 +243,40 @@ export default {
     },
     async setImage() {
       if (this.project_type_id === this.consultation_type_id) {
-        this.image = require('../static/consultation.jpg');
+        this.image = require("../static/consultation.jpg");
       } else if (this.project_type_id === this.petition_type_id) {
-        this.image = require('../static/petition.jpeg');
+        this.image = require("../static/petition.jpeg");
       } else if (this.project_type_id === this.conseil_type_id) {
-        this.image = require('../static/conseil.jpg');
+        this.image = require("../static/conseil.jpg");
       }
     }
   },
   // Function fetching the data through requests to the API via other functions, depending on the projects requested by the user
   async fetch() {
-    this.$emit('spinner');
+    this.$emit("spinner");
     this.loaded = false;
     this.projects = [];
     this.projects_participated = [];
     this.projects_liked = [];
     this.projects_commented = [];
     this.project_type_id = await this.getProjectType();
-    let data = { name: 'Pétition' };
-    let response = await this.$axios.get('project_type', { params: data });
-    this.petition_type_id = response.data['id_project_type'];
-    data = { name: 'Consultation' };
-    response = await this.$axios.get('project_type', { params: data });
-    this.consultation_type_id = response.data['id_project_type'];
-    data = { name: 'Conseil de quartier' };
-    response = await this.$axios.get('project_type', { params: data });
-    this.conseil_type_id = response.data['id_project_type'];
+    let data = { name: "Pétition" };
+    let response = await this.$axios.get("project_type", { params: data });
+    this.petition_type_id = response.data["id_project_type"];
+    data = { name: "Consultation" };
+    response = await this.$axios.get("project_type", { params: data });
+    this.consultation_type_id = response.data["id_project_type"];
+    data = { name: "Conseil de quartier" };
+    response = await this.$axios.get("project_type", { params: data });
+    this.conseil_type_id = response.data["id_project_type"];
     await this.setImage();
-    if (this.my_projects === 'true') {
-      if (this.published === 'true') {
+    if (this.my_projects === "true") {
+      if (this.published === "true") {
         this.projects = await this.getMyPublishedProjects();
       } else {
         this.projects = await this.getMyNOTPublishedProjects();
       }
-    } else if (this.participated === 'false') {
+    } else if (this.participated === "false") {
       this.projects = await this.getProjects();
     } else {
       if (this.project_type_id === this.petition_type_id) {
@@ -290,7 +290,7 @@ export default {
     }
     // console.log('PROJECTS  ', this.projects);
     const delay = ms => new Promise(res => setTimeout(res, ms));
-    this.$emit('loaded');
+    this.$emit("loaded");
     await delay(2000);
     this.loaded = true;
     this.$nuxt.refresh;
@@ -325,7 +325,7 @@ export default {
 }
 .noresult {
   text-align: center;
-  margin-top: 5rem;
+  margin-top: 2.5rem;
 }
 .button {
   color: rgb(247, 247, 247);
