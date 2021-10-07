@@ -13,7 +13,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 class UnitaryUserViewSetTests(APITestCase):
     """
-    Test class for the registration functionnality.
     Sends a post request with a new user informations and check the response.status_code.
     """
     def setUp(self):
