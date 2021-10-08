@@ -92,7 +92,7 @@ export default {
       try {
         const response = await this.$axios.post("users/", data);
         // console.log(response);
-        this.$router.push("/");
+        this.$router.push("login/");
       } catch (error) {
         // console.log(error.response.data);
         const keys = Object.keys(error.response.data);
