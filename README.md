@@ -24,9 +24,9 @@ On Linux:
 > pip3 install -r requirements.txt
 ```
 
-Remember to modify the settings, for example the environement variables that will be used to connect to your database.
+**Remember to modify the settings, for example the environement variables that will be used to connect to your database.**
 
-If you modify the models, you need to update the migrations:
+**If you modify the models, you need to update the migrations:**
 
 On Windows:
 
@@ -40,7 +40,7 @@ On Linux:
 > python manage.py makemigrations
 ```
 
-To apply the migrations to the database, use the following commands:
+**To apply the migrations to the database, use the following commands:**
 
 On Windows:
 
@@ -71,7 +71,7 @@ A management command has been created to set the different types of project and 
 > python manage.py db_types.
 ```
 
-The types are hold in "types.json" next to the command:
+The types (in french) are held in "types.json" next to the command:
 
 ```json
 {
@@ -79,3 +79,11 @@ The types are hold in "types.json" next to the command:
   "question_types": ["Réponse libre", "QCM"]
 }
 ```
+
+### The permission file
+
+A "permission.py" is held in the "applications/" folder.
+
+It contains the different permissions that were needed to ensure the security of the data and a limited access to some of it and the actions on it to the admin users only.
+
+You can modify these permissions as needed, just remember to check the views to see where the modified permission is used.
