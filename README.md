@@ -6,7 +6,7 @@ Two applications composes this API, one managing the authentication process (use
 
 For detailed informations on how to use and settle Django REST, check the [official documentation](https://www.django-rest-framework.org/).
 
-## **How to install the backend?**
+## **How to install it?**
 
 Make sure to have a Python version installed greater or equal to the 3.6.
 
@@ -34,3 +34,9 @@ The User Model is slightly different than the vanilla one as I wanted the email 
 ### The project application
 
 This application contains the models, views and serializers managing the different actions on the various models used to manage the projects. It includes the projects themselves, questions, comments, the types of project and questions, the possible answers when using a multiple choices question and the answers of the users who participate to the polls.
+
+A management command has been created to set the different types of project and questions into the database when used as follow:
+
+```bash
+> python manage.py db_types.
+```
