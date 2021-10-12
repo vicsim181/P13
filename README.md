@@ -24,6 +24,7 @@ On Linux:
 > pip3 install -r requirements.txt
 ```
 
+===
 If you modify the models, you need to update the migrations:
 
 On Windows:
@@ -38,6 +39,7 @@ On Linux:
 > python manage.py makemigrations
 ```
 
+===
 To apply the migrations to the database, use the following commands:
 
 On Windows:
