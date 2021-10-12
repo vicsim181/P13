@@ -24,7 +24,8 @@ On Linux:
 > pip3 install -r requirements.txt
 ```
 
-=======
+Remember to modify the settings, for example the environement variables that will be used to connect to your database.
+
 If you modify the models, you need to update the migrations:
 
 On Windows:
@@ -39,7 +40,6 @@ On Linux:
 > python manage.py makemigrations
 ```
 
-=======
 To apply the migrations to the database, use the following commands:
 
 On Windows:
@@ -69,4 +69,13 @@ A management command has been created to set the different types of project and 
 
 ```bash
 > python manage.py db_types.
+```
+
+The types are hold in "types.json" next to the command:
+
+```json
+{
+  "project_types": ["Consultation", "Pétition", "Conseil de quartier"],
+  "question_types": ["Réponse libre", "QCM"]
+}
 ```
