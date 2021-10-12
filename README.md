@@ -24,6 +24,34 @@ On Linux:
 > pip3 install -r requirements.txt
 ```
 
+If you modify the models, you need to update the migrations:
+
+On Windows:
+
+```bash
+> py manage.py makemigrations
+```
+
+On Linux:
+
+```bash
+> python manage.py makemigrations
+```
+
+To apply the migrations to the database, use the following commands:
+
+On Windows:
+
+```bash
+> py manage.py migrate
+```
+
+On Linux:
+
+```bash
+> python manage.py migrate
+```
+
 ### The authentication application
 
 This application contains the models, views and serializers managing the different actions on the User and Address models as well as the login function.
