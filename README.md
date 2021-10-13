@@ -1,4 +1,6 @@
-# frontend
+# **Participons - frontend**
+
+The frontend is using Nuxt.js, a Vue.js based framework. It communicates with the backend API ([branch heroku-backend](https://github.com/vicsim181/P13/tree/heroku-backend)).
 
 ## Build Setup
 
