@@ -8,7 +8,6 @@
     </h1>
     <h1 v-else>An error occured ({{ error.statusCode }})</h1>
     <div>{{ error.message }}</div>
-    <!-- <NuxtLink to="/">Go back to the Home page</NuxtLink> -->
   </div>
 </template>
 
