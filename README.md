@@ -59,7 +59,7 @@ On Linux:
 This application contains the models, views and serializers managing the different actions on the User and Address models as well as the login function.
 
 The main views concerning the User and Address are accessible through urls defined by the Django REST ModelViewSet object. The UserDataView is accessed by the special url "me/", giving the detailed informations about the loggedin user when called.
-The User Model is slightly different than the vanilla one as I wanted the email field to be used as a username and 3 fields have been added: - first name; - last name; - is_active.
+The User Model is slightly different than the vanilla one as I wanted the email field to be used as username and 3 fields have been added: - first name; - last name; - is_active.
 
 ### The project application
 
