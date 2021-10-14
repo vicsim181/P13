@@ -5,9 +5,7 @@
 </template>
 
 <script>
-export default {
-  middleware: "guest"
-};
+export default { auth: false, middleware: "guest" };
 </script>
 
 <style scoped>
