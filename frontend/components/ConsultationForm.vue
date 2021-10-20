@@ -180,7 +180,7 @@
 
 <script>
 export default {
-  props: ['button'],
+  props: ["button"],
   computed: {
     dateState() {
       return this.end_day.length > 0 ? true : false;
@@ -207,7 +207,7 @@ export default {
         for (const choice in this.question.choices) {
           if (this.question.choices[choice].length === 0) {
             return false;
-          } else if (this.question.choices[choice] === ' ') {
+          } else if (this.question.choices[choice] === " ") {
             return false;
           }
         }
@@ -228,20 +228,20 @@ export default {
       publish: false,
       quit: false,
       consultation: {
-        name: '',
-        place: '',
-        description: '',
-        project_type: ''
+        name: "",
+        place: "",
+        description: "",
+        project_type: ""
       },
       question: {
-        type: '',
-        wording: '',
+        type: "",
+        wording: "",
         number_of_choices: 2,
         choices: []
       },
-      id_project: '',
-      id_owner: '',
-      question_type_name: ''
+      id_project: "",
+      id_owner: "",
+      question_type_name: ""
     };
   },
   methods: {
@@ -253,9 +253,8 @@ export default {
 
     // We check the form with the question infos is valid
     checkForm2Validity() {
-      // const valid = this.$refs.form.checkValidity();
       if (this.questionNameState && this.questionTypeState) {
-        if (this.question_type_name === 'QCM') {
+        if (this.question_type_name === "QCM") {
           if (this.answerState) {
             return true;
           } else {
@@ -270,16 +269,16 @@ export default {
 
     // We reset the data of the first form, the consultation basic infos
     resetModal() {
-      this.consultation.name = '';
-      this.consultation.place = '';
-      this.consultation.description = '';
+      this.consultation.name = "";
+      this.consultation.place = "";
+      this.consultation.description = "";
       this.quit = false;
     },
 
     // We reset the data of the second form, question infos
     resetModal_2() {
-      this.question.wording = '';
-      this.question.type = '';
+      this.question.wording = "";
+      this.question.type = "";
       this.question.number_of_choices = 2;
       this.quit = false;
     },
@@ -298,9 +297,9 @@ export default {
 
     // We send a POST request to the API with the data about the Consultation
     async getConsultationType() {
-      const data = { name: 'Consultation' };
-      const response = await this.$axios.get('project_type', { params: data });
-      const type_id = response.data['id_project_type'];
+      const data = { name: "Consultation" };
+      const response = await this.$axios.get("project_type", { params: data });
+      const type_id = response.data["id_project_type"];
       return type_id;
     },
 
@@ -313,10 +312,10 @@ export default {
         project_type: this.projectType
       };
       try {
-        const response = await this.$axios.post('project/', data);
+        const response = await this.$axios.post("project/", data);
         console.log(response.data);
-        this.id_project = response.data['id_project'];
-        this.id_owner = response.data['owner'];
+        this.id_project = response.data["id_project"];
+        this.id_owner = response.data["owner"];
       } catch (error) {
         console.log(error.response);
         const keys = Object.keys(error.response.data);
@@ -333,15 +332,15 @@ export default {
         project: this.id_project
       };
       try {
-        const response_1 = await this.$axios.post('question/', question_data);
-        const question_id = response_1.data['id_question'];
-        if (this.question_type_name === 'QCM') {
+        const response_1 = await this.$axios.post("question/", question_data);
+        const question_id = response_1.data["id_question"];
+        if (this.question_type_name === "QCM") {
           for (const choice in this.question.choices) {
             const answer_data = {
               wording: this.question.choices[choice],
               question: question_id
             };
-            await this.$axios.post('mcq_answer/', answer_data);
+            await this.$axios.post("mcq_answer/", answer_data);
           }
         }
         this.question.choices = [];
@@ -356,8 +355,8 @@ export default {
     // We send a GET request to the API to get the id of the question type depending on the radio buttons choice
     async getQuestionType() {
       const data = { name: this.question_type_name };
-      const response = await this.$axios.get('question_type', { params: data });
-      const question_type_id = response.data['id_question_type'];
+      const response = await this.$axios.get("question_type", { params: data });
+      const question_type_id = response.data["id_question_type"];
       return question_type_id;
     },
 
@@ -381,11 +380,11 @@ export default {
       this.projectType = await this.getConsultationType();
       await this.postConsultationData();
       this.$nextTick(() => {
-        this.$bvModal.hide('modal-prevent-closing-1');
+        this.$bvModal.hide("modal-prevent-closing-1");
         if (this.quit === false) {
-          this.$bvModal.show('modal-prevent-closing-2');
+          this.$bvModal.show("modal-prevent-closing-2");
         } else {
-          this.$bvModal.show('modal-validation');
+          this.$bvModal.show("modal-validation");
         }
       });
     },
@@ -403,17 +402,16 @@ export default {
     // Function called by the previous ones, taking care of the different steps
     async handleSubmit_2() {
       if (!this.checkForm2Validity()) {
-        console.log('PROBLEME FORM VALIDITY');
         return;
       }
       this.question.type = await this.getQuestionType();
       this.postQuestionData();
       this.$nextTick(() => {
-        this.$bvModal.hide('modal-prevent-closing-2');
+        this.$bvModal.hide("modal-prevent-closing-2");
         if (this.quit === false) {
-          this.$bvModal.show('modal-prevent-closing-2');
+          this.$bvModal.show("modal-prevent-closing-2");
         } else {
-          this.$bvModal.show('modal-validation');
+          this.$bvModal.show("modal-validation");
         }
       });
     }

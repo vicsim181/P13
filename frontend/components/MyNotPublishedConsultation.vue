@@ -245,8 +245,9 @@
 </template>
 
 <script>
+import conseilsVue from "../pages/conseils.vue";
 export default {
-  props: ['button', 'project_data'],
+  props: ["button", "project_data"],
   computed: {
     dateState() {
       return this.end_day.length > 0;
@@ -276,7 +277,7 @@ export default {
         for (const choice in this.question.choices) {
           if (this.question.choices[choice].length === 0) {
             return false;
-          } else if (this.question.choices[choice] === ' ') {
+          } else if (this.question.choices[choice] === " ") {
             return false;
           }
         }
@@ -304,16 +305,16 @@ export default {
         questions: [this.project_data.question]
       },
       question: {
-        type: '',
-        wording: '',
+        type: "",
+        wording: "",
         number_of_choices: 2,
         choices: []
       },
       min_date: minDate,
-      end_day: '',
-      end_time: '',
-      end_date: '',
-      question_type_name: ''
+      end_day: "",
+      end_time: "",
+      end_date: "",
+      question_type_name: ""
     };
   },
   methods: {
@@ -325,16 +326,15 @@ export default {
 
     // We check the form with the question infos is valid
     checkForm2Validity() {
-      const valid = this.$refs.form.checkValidity();
       if (this.questionNameState && this.questionTypeState) {
-        if (this.question_type_name === 'QCM') {
+        if (this.question_type_name === "QCM") {
           if (this.answerState) {
-            return valid;
+            return true;
           } else {
             return false;
           }
         }
-        return valid;
+        return true;
       } else {
         return false;
       }
@@ -344,7 +344,7 @@ export default {
     checkForm3Validity() {
       const valid = this.$refs.form.checkValidity();
       if (this.dateState && this.timeState) {
-        this.end_date = this.end_day + ' ' + this.end_time;
+        this.end_date = this.end_day + " " + this.end_time;
         return valid;
       } else {
         return false;
@@ -353,17 +353,17 @@ export default {
 
     // We reset the data of the second form, question infos
     resetModal() {
-      this.question.wording = '';
-      this.question.type = '';
+      this.question.wording = "";
+      this.question.type = "";
       this.question.number_of_choices = 2;
       this.question.choices = [];
     },
 
     // We reset the data of the second form, question infos
     resetModal_2() {
-      this.end_day = '';
-      this.end_time = '';
-      this.end_date = '';
+      this.end_day = "";
+      this.end_time = "";
+      this.end_date = "";
     },
 
     // Function refreshing the question.choices list depending on the number of fields displayed in the question configuration modal
@@ -380,9 +380,9 @@ export default {
 
     // We send a GET request to the API to get the id of the project type Consultation
     async getConsultationType() {
-      const data = { name: 'Consultation' };
-      const response = await this.$axios.get('project_type', { params: data });
-      const type_id = response.data['id_project_type'];
+      const data = { name: "Consultation" };
+      const response = await this.$axios.get("project_type", { params: data });
+      const type_id = response.data["id_project_type"];
       return type_id;
     },
 
@@ -434,7 +434,7 @@ export default {
     // We send a PUT request to the API with the id of the Conseil project to publish it
     async publishConsultation() {
       try {
-        const response = await this.$axios.put('publication', {
+        const response = await this.$axios.put("publication", {
           project_id: this.project_data.id_project
         });
         return response.status;
@@ -451,16 +451,16 @@ export default {
         project: this.project_data.id_project
       };
       try {
-        const response_1 = await this.$axios.post('question/', question_data);
+        const response_1 = await this.$axios.post("question/", question_data);
         console.log(response_1.data);
-        const question_id = response_1.data['id_question'];
-        if (this.question_type_name === 'QCM') {
+        const question_id = response_1.data["id_question"];
+        if (this.question_type_name === "QCM") {
           for (const choice in this.question.choices) {
             const answer_data = {
               wording: this.question.choices[choice],
               question: question_id
             };
-            await this.$axios.post('mcq_answer/', answer_data);
+            await this.$axios.post("mcq_answer/", answer_data);
           }
         }
         this.question.choices = [];
@@ -476,8 +476,8 @@ export default {
     // We send a GET request to the API to get the id of the question type depending on the radio buttons choice
     async getQuestionType() {
       const data = { name: this.question_type_name };
-      const response = await this.$axios.get('question_type', { params: data });
-      const question_type_id = response.data['id_question_type'];
+      const response = await this.$axios.get("question_type", { params: data });
+      const question_type_id = response.data["id_question_type"];
       return question_type_id;
     },
 
@@ -495,8 +495,8 @@ export default {
       }
       await this.putConsultationData();
       this.$nextTick(() => {
-        this.$emit('done');
-        this.$bvModal.hide('modal-modify-project');
+        this.$emit("done");
+        this.$bvModal.hide("modal-modify-project");
       });
     },
 
@@ -513,8 +513,8 @@ export default {
       await this.setEndDate();
       const publish_response = await this.publishConsultation();
       if (publish_response === 200) {
-        this.$bvModal.hide('modal-modify-project');
-        this.$bvModal.show('modal-validation');
+        this.$bvModal.hide("modal-modify-project");
+        this.$bvModal.show("modal-validation");
       } else {
         window.alert(
           "Erreur lors de la publication du projet. \n Assurez-vous d'avoir créé au moins une question rattachée à cette consultation."
@@ -524,7 +524,7 @@ export default {
 
     // Function called when Ok is clicked on the confirmation the project is published
     projectPublished() {
-      this.$emit('done');
+      this.$emit("done");
     },
 
     // Alternative to handleOkQuestion() in case we want to quit (publish or just save) without adding new question
@@ -539,8 +539,8 @@ export default {
       this.question.type = await this.getQuestionType();
       await this.postQuestionData();
       this.$nextTick(() => {
-        this.$emit('done');
-        this.$bvModal.hide('modal-add-question');
+        this.$emit("done");
+        this.$bvModal.hide("modal-add-question");
       });
     }
   },
@@ -549,10 +549,10 @@ export default {
     if (this.consultation.questions.length > 0) {
       for (const question in this.consultation.questions) {
         let mcq = this.consultation.questions[question].mcqanswer;
-        if (typeof mcq !== 'undefined' && mcq.length > 0) {
+        if (typeof mcq !== "undefined" && mcq.length > 0) {
           for (const choice in mcq) {
             const response = await this.$axios.get(mcq[choice]);
-            this.mcq_answers.push(response.data['wording']);
+            this.mcq_answers.push(response.data["wording"]);
           }
         }
       }
