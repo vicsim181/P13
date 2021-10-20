@@ -325,16 +325,15 @@ export default {
 
     // We check the form with the question infos is valid
     checkForm2Validity() {
-      const valid = this.$refs.form.checkValidity();
       if (this.questionNameState && this.questionTypeState) {
         if (this.question_type_name === 'QCM') {
           if (this.answerState) {
-            return valid;
+            return true;
           } else {
             return false;
           }
         }
-        return valid;
+        return true;
       } else {
         return false;
       }
