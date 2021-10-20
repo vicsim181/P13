@@ -6,7 +6,7 @@
     <br />
     <div class="row h-100 w-auto justify-content-center text-justify">
       <p>
-        Les images utilisées proviennet de différentes sources.
+        Les images utilisées proviennent de différentes sources.
       </p>
     </div>
     <br />
